@@ -9,7 +9,11 @@ import IntermediateQuiz from './components/Skill Assessment/IntermediateQuiz';
 import AdvancedQuiz from './components/Skill Assessment/AdvancedQuiz';
 import Login from './components/User_Management/Login';
 import Register from './components/User_Management/Register';
+import CompleteProfile from './components/User_Management/CompleteProfile';
+import ViewProfile from './components/User_Management/ViewProfile';
+import EditProfile from './components/User_Management/EditProfile';
 import Dashboard from './components/Admin/Dashboard';
+import UserManagement from './components/Admin/UserManagement';
 import UserServices from './components/User/UserServices';
 import BookingPage from './components/Counselling/BookingPage';
 import NewBooking from './components/Counselling/NewBooking';
@@ -35,7 +39,11 @@ function App() {
           <Route path="/assessment/advanced" element={<AdvancedQuiz />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/complete-profile" element={<CompleteProfile />} />
+          <Route path="/view-profile" element={<ViewProfile />} />
+          <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/admin" element={<Dashboard />} />
+          <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/services" element={<UserServices />} />
           <Route path="/counselling" element={<BookingPage />} />
           <Route path="/counselling/newbooking" element={<NewBooking />} />

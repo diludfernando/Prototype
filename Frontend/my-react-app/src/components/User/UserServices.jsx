@@ -1,13 +1,31 @@
-import React from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Briefcase, BookOpen, ChevronRight, BookAlert, Compass, LogOut } from 'lucide-react';
+import { GraduationCap, Briefcase, BookOpen, ChevronRight, BookAlert, Compass, LogOut, User } from 'lucide-react';
 import './UserServices.css';
 
 const UserServices = () => {
     const navigate = useNavigate();
 
+    const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setShowDropdown(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const handleLogout = () => {
+        localStorage.clear();
         navigate('/');
+    };
+
+    const toggleDropdown = () => {
+        setShowDropdown(!showDropdown);
     };
 
     const services = [
@@ -50,10 +68,35 @@ const UserServices = () => {
             <div className="container">
                 <header className="services-header">
                     <div className="header-top-actions">
-                        <button className="logout-btn" onClick={handleLogout}>
-                            <LogOut size={18} />
-                            <span>Logout</span>
-                        </button>
+                        <div
+                            className={`profile-header-section ${showDropdown ? 'active' : ''}`}
+                            ref={dropdownRef}
+                            onClick={toggleDropdown}
+                        >
+                            <div className="profile-icon-container">
+                                <User size={24} className="profile-icon-placeholder" />
+                            </div>
+
+                            {showDropdown && (
+                                <div className="profile-dropdown-menu animate-slide-up">
+                                    <button
+                                        className="dropdown-item"
+                                        onClick={() => navigate('/view-profile')}
+                                    >
+                                        <User size={16} />
+                                        <span>View Profile</span>
+                                    </button>
+                                    <div className="dropdown-divider"></div>
+                                    <button
+                                        className="dropdown-item logout"
+                                        onClick={handleLogout}
+                                    >
+                                        <LogOut size={16} />
+                                        <span>Logout</span>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
                     </div>
                     <div className="text-center">
                         <h1 className="text-4xl font-bold">Your Learning Hub</h1>

@@ -1,0 +1,264 @@
+{
+  "info": {
+    "name": "Skill Bridge Lanka API",
+    "description": "Complete API collection for Skill Bridge Lanka User Management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080/api",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@university.lk\",\n  \"password\": \"SecurePass123\",\n  \"fullName\": \"John Doe\",\n  \"university\": \"University of Colombo\",\n  \"degreeProgram\": \"Computer Science\",\n  \"yearLevel\": 3\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login - Student",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"john.doe@university.lk\",\n  \"password\": \"SecurePass123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login - Admin",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@skillbridge.lk\",\n  \"password\": \"Admin@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Student Profile",
+      "item": [
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/student/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile (PUT)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"phone\": \"+94771234567\",\n  \"university\": \"University of Colombo\",\n  \"degreeProgram\": \"Computer Science\",\n  \"yearLevel\": 4,\n  \"careerGoals\": \"Become a Full Stack Developer and Tech Lead\",\n  \"interests\": \"Web Development, AI, Cloud Computing, DevOps\",\n  \"about\": \"Passionate computer science student with 2 years of internship experience\",\n  \"linkedinUrl\": \"https://linkedin.com/in/johndoe\",\n  \"githubUrl\": \"https://github.com/johndoe\",\n  \"profileImageUrl\": \"https://example.com/profile.jpg\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile (PATCH)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"phone\": \"+94771234567\",\n  \"careerGoals\": \"Become a Full Stack Developer\",\n  \"linkedinUrl\": \"https://linkedin.com/in/johndoe\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Get Profile Completion",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/student/profile/completion",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile", "completion"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get All Users",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users"]
+            }
+          }
+        },
+        {
+          "name": "Get User By ID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "2"]
+            }
+          }
+        },
+        {
+          "name": "Create Counselor",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"counselor@skillbridge.lk\",\n  \"fullName\": \"Jane Smith\",\n  \"tempPassword\": \"TempPass@123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/counselors",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "counselors"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Counselor",
+      "item": [
+        {
+          "name": "Get Dashboard",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/counselor/dashboard",
+              "host": ["{{baseUrl}}"],
+              "path": ["counselor", "dashboard"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

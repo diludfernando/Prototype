@@ -1,20 +1,35 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { UserPlus } from 'lucide-react';
 import './Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    username: '',
-    specialization: '',
+    fullName: '',
     email: '',
     password: '',
+    confirmPassword: '',
+    selectedCareerPath: '',
+    // Hidden fields for backend compatibility
+    university: 'Not Specified',
+    degreeProgram: 'Not Specified',
+    yearLevel: 1,
   });
 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const careerPaths = [
+    { value: 'Software Engineer', label: 'Software Engineer' },
+    { value: 'Data Scientist', label: 'Data Scientist' },
+    { value: 'UI/UX Designer', label: 'UI/UX Designer' },
+    { value: 'IT Consultant', label: 'IT Consultant' },
+    { value: 'DevOps Engineer', label: 'DevOps Engineer' },
+    { value: 'Cloud Architect', label: 'Cloud Architect' },
+  ];
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -26,21 +41,34 @@ const Register = () => {
     setMessage('');
     setError('');
 
+    // Password Confirmation Check
+    if (formData.password !== formData.confirmPassword) {
+      setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:8081/api/register', {
+      const response = await fetch('http://localhost:8081/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          fullName: formData.fullName,
+          email: formData.email,
+          password: formData.password,
+          university: formData.university,
+          degreeProgram: formData.degreeProgram,
+          yearLevel: formData.yearLevel,
+          selectedCareerPath: formData.selectedCareerPath
+        }),
       });
 
-      if (response.ok) {
-        const text = await response.text();
-        setMessage(text || 'Registration successful!');
-        // Redirect to login after a short delay
+      const data = await response.json();
+      if (response.ok && data.success) {
+        setMessage(data.message || 'Registration successful!');
         setTimeout(() => navigate('/login'), 1500);
       } else {
-        const errText = await response.text();
-        setError(errText || 'Registration failed. Please try again.');
+        setError(data.message || 'Registration failed. Please try again.');
       }
     } catch (err) {
       setError('Unable to connect to the server. Make sure the backend is running.');
@@ -62,33 +90,15 @@ const Register = () => {
 
         <form className="register-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="fullName">Full Name</label>
             <input
               type="text"
-              id="username"
-              placeholder="johndoe123"
-              value={formData.username}
+              id="fullName"
+              placeholder="Enter your full name"
+              value={formData.fullName}
               onChange={handleChange}
               required
             />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="specialization">Specialization</label>
-            <select
-              id="specialization"
-              className="form-select"
-              value={formData.specialization}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>Select your field</option>
-              <option value="development">Software Development</option>
-              <option value="design">UI/UX Design</option>
-              <option value="marketing">Digital Marketing</option>
-              <option value="data">Data Science</option>
-              <option value="business">Business Strategy</option>
-            </select>
           </div>
 
           <div className="form-group">
@@ -96,7 +106,7 @@ const Register = () => {
             <input
               type="email"
               id="email"
-              placeholder="name@company.com"
+              placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
               required
@@ -108,15 +118,51 @@ const Register = () => {
             <input
               type="password"
               id="password"
-              placeholder="••••••••"
+              placeholder="Enter password"
               value={formData.password}
               onChange={handleChange}
               required
             />
           </div>
 
-          <button type="submit" className="btn-primary" disabled={loading}>
-            {loading ? 'Creating Account...' : 'Create Account'}
+          <div className="form-group">
+            <label htmlFor="confirmPassword">Confirm Password</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              placeholder="Confirm your password"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="selectedCareerPath">Selected Career Path</label>
+            <select
+              id="selectedCareerPath"
+              className="form-select"
+              value={formData.selectedCareerPath}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>Select a career path</option>
+              {careerPaths.map((path) => (
+                <option key={path.value} value={path.value}>
+                  {path.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button type="submit" className="btn-primary register-btn" disabled={loading}>
+            {loading ? (
+              'Creating Account...'
+            ) : (
+              <>
+                <UserPlus size={20} className="btn-icon" /> Register
+              </>
+            )}
           </button>
         </form>
 

@@ -15,6 +15,9 @@ const Navbar = () => {
   const isAdminPage = location.pathname.startsWith('/admin');
   const isCounsellingPage = location.pathname.startsWith('/counselling');
   const isLearningResourcesPage = location.pathname.startsWith('/learning-resources');
+  const isCompleteProfilePage = location.pathname.startsWith('/complete-profile');
+  const isViewProfilePage = location.pathname.startsWith('/view-profile');
+  const isEditProfilePage = location.pathname.startsWith('/edit-profile');
 
 
   useEffect(() => {
@@ -25,9 +28,14 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    // Scroll to top on route change
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   const isServicesPage = location.pathname === '/services';
 
-  if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage) {
+  if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage || isCompleteProfilePage || isViewProfilePage || isEditProfilePage) {
     return null;
   }
   // Navbar is visible on all pages except login and register

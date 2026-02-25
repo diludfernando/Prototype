@@ -1,0 +1,163 @@
+/* CompleteProfile.css */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --color-primary: #0F172A;
+    --color-accent: #0EA5E9;
+    --color-accent-hover: #0284C7;
+    --color-background: #F8FAFC;
+    --color-surface: #FFFFFF;
+    --color-text-main: #0F172A;
+    --color-text-muted: #64748B;
+    --color-border: #E2E8F0;
+    --radius-md: 0.5rem;
+    --radius-lg: 1rem;
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.complete-profile-page {
+    background-color: var(--color-background);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Inter', sans-serif;
+    padding: 3rem 1rem;
+}
+
+.complete-profile-card {
+    background-color: var(--color-surface);
+    width: 100%;
+    max-width: 600px;
+    padding: 3rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+}
+
+.complete-profile-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.complete-profile-title {
+    color: var(--color-text-main);
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.025em;
+}
+
+.complete-profile-subtitle {
+    color: var(--color-text-muted);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.complete-profile-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.complete-profile-form label {
+    display: block;
+    color: var(--color-text-main);
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.625rem;
+}
+
+.complete-profile-form input,
+.complete-profile-form select,
+.complete-profile-form textarea {
+    width: 100%;
+    padding: 0.875rem;
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    color: var(--color-text-main);
+    background-color: #fff;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.complete-profile-form textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.complete-profile-form input:focus,
+.complete-profile-form select:focus,
+.complete-profile-form textarea:focus {
+    outline: none;
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+}
+
+.complete-profile-page .btn-primary {
+    width: 100%;
+    background-color: var(--color-accent);
+    color: white;
+    padding: 1rem;
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 1.5rem;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    box-shadow: 0 4px 6px -1px rgba(14, 165, 233, 0.2);
+}
+
+.complete-profile-page .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+}
+
+.complete-profile-page .btn-primary:active {
+    transform: translateY(0);
+}
+
+.complete-profile-page .btn-primary:disabled {
+    background-color: #94a3b8;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.form-success {
+    background-color: #f0fdf4;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form-error {
+    background-color: #fef2f2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .complete-profile-card {
+        padding: 2rem;
+    }
+
+    .complete-profile-title {
+        font-size: 1.5rem;
+    }
+}

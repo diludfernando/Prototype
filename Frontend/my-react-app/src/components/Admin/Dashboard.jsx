@@ -14,6 +14,7 @@ import { useNavigate } from 'react-router-dom';
 import QuestionManagement from './QuestionManagement';
 import CounsellingManagement from './CounsellingManagement';
 import ResourceManagement from './ResourceManagement';
+import UserManagement from './UserManagement';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -52,12 +53,7 @@ const Dashboard = () => {
           >
             <BookOpen size={20} /> <span>Questions</span>
           </button>
-          <button
-            className={`nav-item ${activeTab === 'settings' ? 'active' : ''}`}
-            onClick={() => setActiveTab('settings')}
-          >
-            <Settings size={20} /> <span>Settings</span>
-          </button>
+         
           <button
             className={`nav-item ${activeTab === 'counselling' ? 'active' : ''}`}
             onClick={() => setActiveTab('counselling')}
@@ -179,9 +175,11 @@ const Dashboard = () => {
 
           {activeTab === 'resources' && <ResourceManagement />}
 
-          {(activeTab === 'users' || activeTab === 'settings') && (
+          {activeTab === 'users' && <UserManagement />}
+
+          {activeTab === 'settings' && (
             <div className="placeholder-section">
-              <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}</h2>
+              <h2>Settings</h2>
               <p className="text-muted">This module is under development.</p>
             </div>
           )}

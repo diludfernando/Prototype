@@ -5,7 +5,7 @@ import './Login.css';
 const Login = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
   });
   const [message, setMessage] = useState('');
@@ -13,7 +13,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
 
   // --- HARDCODED CREDENTIALS ---
-  const ADMIN_USER = "admin";
+  const ADMIN_EMAIL = "admin@skillbridge.lk";
   const ADMIN_PASS = "admin123";
 
   const handleChange = (e) => {
@@ -27,8 +27,8 @@ const Login = () => {
     setError('');
 
     // 1. Check for Hardcoded Admin First
-    if (formData.username === ADMIN_USER && formData.password === ADMIN_PASS) {
-      localStorage.setItem('username', ADMIN_USER);
+    if (formData.email === ADMIN_EMAIL && formData.password === ADMIN_PASS) {
+      localStorage.setItem('username', ADMIN_EMAIL);
       setMessage('Admin Login successful!');
       setTimeout(() => navigate('/admin'), 1500);
       setLoading(false);
@@ -37,19 +37,28 @@ const Login = () => {
 
     // 2. If not admin, proceed to API call for regular users
     try {
-      const response = await fetch('http://localhost:8081/api/login', {
+      const response = await fetch('http://localhost:8081/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
 
-      const text = await response.text();
-      if (response.ok && text === 'Login successful!') {
-        localStorage.setItem('username', formData.username);
-        setMessage(text);
-        setTimeout(() => navigate('/services'), 1500);
+      const data = await response.json();
+      if (response.ok && data.success) {
+        localStorage.setItem('username', formData.email);
+        localStorage.setItem('token', data.data.token);
+        localStorage.setItem('userId', data.data.userId);
+        localStorage.setItem('role', data.data.role);
+
+        setMessage(data.message || 'Login successful!');
+        const userRole = data.data.role;
+        if (userRole === 'STUDENT' || userRole === 'ROLE_STUDENT') {
+          setTimeout(() => navigate('/complete-profile'), 1500);
+        } else {
+          setTimeout(() => navigate('/services'), 1500);
+        }
       } else {
-        setError(text || 'Login failed. Please try again.');
+        setError(data.message || 'Login failed. Please try again.');
       }
     } catch (err) {
       setError('Unable to connect to the server. Make sure the backend is running.');
@@ -71,12 +80,12 @@ const Login = () => {
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email Address</label>
             <input
-              type="text"
-              id="username"
-              placeholder="e.g. alex_skill"
-              value={formData.username}
+              type="email"
+              id="email"
+              placeholder="e.g. alex@skillbridge.lk"
+              value={formData.email}
               onChange={handleChange}
               required
             />
