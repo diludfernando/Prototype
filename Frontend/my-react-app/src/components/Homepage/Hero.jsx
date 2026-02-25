@@ -1,4 +1,4 @@
-import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowRight, Play } from 'lucide-react';
 import './Hero.css';
 
@@ -7,7 +7,7 @@ const Hero = () => {
         <section className="hero">
             <div className="container hero-content">
                 <div className="hero-text">
-                   
+
                     <h1 className="hero-title">
                         Master the Skills to <span className="text-highlight">Drive Your Career</span>
                     </h1>
@@ -15,13 +15,13 @@ const Hero = () => {
                         Join 50,000+ learners worldwide. Access top-rated courses in confident programming, design, and business strategy.
                     </p>
                     <div className="hero-actions">
-                        <button className="btn btn-primary btn-lg">
+                        <Link to="/learning-resources" className="btn btn-primary btn-lg">
                             Start Learning Free <ArrowRight size={20} />
-                        </button>
-                        
+                        </Link>
+
                     </div>
-                   
-                    
+
+
                 </div>
                 <div className="hero-visual">
                     <div className="abstract-shape shape-1"></div>

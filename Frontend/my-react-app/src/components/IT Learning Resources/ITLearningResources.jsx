@@ -21,15 +21,15 @@ const ITLearningResources = () => {
         const fetchResources = async () => {
             try {
                 setLoading(true);
-                const response = await fetch('http://localhost:8084/api/resources');
+                const response = await fetch('http://localhost:8084/api/courses');
                 if (!response.ok) {
-                    throw new Error('Failed to fetch resources');
+                    throw new Error('Failed to fetch courses');
                 }
                 const data = await response.json();
                 setResources(data);
                 setError(null);
             } catch (err) {
-                console.error('Error fetching resources:', err);
+                console.error('Error fetching courses:', err);
                 setError('Failed to load courses. Please make sure the backend is running.');
             } finally {
                 setLoading(false);
@@ -43,11 +43,11 @@ const ITLearningResources = () => {
     const filteredResources = resources.filter(resource => {
         const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             resource.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            resource.description?.toLowerCase().includes(searchTerm.toLowerCase());
+            resource.skillsCovered?.toLowerCase().includes(searchTerm.toLowerCase());
 
         const matchesCategory = category === 'All' || resource.category === category;
         const matchesDifficulty = difficulty === 'All' || resource.difficultyLevel === difficulty;
-        const matchesCost = cost === 'All' || resource.costType === cost;
+        const matchesCost = cost === 'All' || (cost === 'Free' ? resource.cost === 0 : resource.cost > 0);
 
         return matchesSearch && matchesCategory && matchesDifficulty && matchesCost;
     });

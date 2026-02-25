@@ -7,27 +7,24 @@ const ResourceManagement = () => {
         provider: '',
         category: 'Programming',
         difficultyLevel: 'Beginner',
-        duration: '',
-        costType: 'Free',
+        cost: 0,
         rating: 0,
         skillsCovered: '',
-        courseUrl: '',
-        language: 'English',
-        description: ''
+        courseLink: ''
     });
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({
             ...formData,
-            [name]: value
+            [name]: name === 'cost' || name === 'rating' ? parseFloat(value) : value
         });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:8084/api/resources', {
+            const response = await fetch('http://localhost:8084/api/courses', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -36,10 +33,10 @@ const ResourceManagement = () => {
             });
 
             if (response.ok) {
-                alert('Resource added successfully!');
+                alert('Course added successfully!');
                 handleCancel();
             } else {
-                alert('Failed to add resource. Please try again.');
+                alert('Failed to add course. Please try again.');
             }
         } catch (error) {
             console.error('Error submitting form:', error);
@@ -48,28 +45,24 @@ const ResourceManagement = () => {
     };
 
     const handleCancel = () => {
-        // Reset form or navigate back
         setFormData({
             title: '',
             provider: '',
             category: 'Programming',
             difficultyLevel: 'Beginner',
-            duration: '',
-            costType: 'Free',
+            cost: 0,
             rating: 0,
             skillsCovered: '',
-            courseUrl: '',
-            language: 'English',
-            description: ''
+            courseLink: ''
         });
     };
 
     return (
         <div className="resource-management">
             <div className="resource-header">
-                <h2>Add New Resource</h2>
+                <h2>Add New Course</h2>
                 <div className="header-underline"></div>
-                <p className="subtitle">Fill in the details to add a new learning resource</p>
+                <p className="subtitle">Fill in the details to add a new course to the catalog</p>
             </div>
 
             <div className="resource-card shadow-lg">
@@ -102,10 +95,11 @@ const ResourceManagement = () => {
                             <label>Category *</label>
                             <select name="category" value={formData.category} onChange={handleInputChange}>
                                 <option value="Programming">Programming</option>
+                                <option value="Data Science">Data Science</option>
+                                <option value="Cloud Computing">Cloud Computing</option>
+                                <option value="Cybersecurity">Cybersecurity</option>
                                 <option value="Design">Design</option>
                                 <option value="Business">Business</option>
-                                <option value="Marketing">Marketing</option>
-                                <option value="Personal Development">Personal Development</option>
                             </select>
                         </div>
                         <div className="form-group">
@@ -118,26 +112,18 @@ const ResourceManagement = () => {
                         </div>
 
                         <div className="form-group">
-                            <label>Duration *</label>
+                            <label>Cost ($) *</label>
                             <input
-                                type="text"
-                                name="duration"
-                                value={formData.duration}
+                                type="number"
+                                name="cost"
+                                min="0"
+                                step="0.01"
+                                value={formData.cost}
                                 onChange={handleInputChange}
-                                placeholder="e.g., 10 hours, 6 weeks"
                                 required
                             />
                         </div>
                         <div className="form-group">
-                            <label>Cost Type *</label>
-                            <select name="costType" value={formData.costType} onChange={handleInputChange}>
-                                <option value="Free">Free</option>
-                                <option value="Paid">Paid</option>
-                                <option value="Subscription">Subscription</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group full-width">
                             <label>Rating (0-5)</label>
                             <input
                                 type="number"
@@ -166,39 +152,17 @@ const ResourceManagement = () => {
                             <label>Course URL</label>
                             <input
                                 type="url"
-                                name="courseUrl"
-                                value={formData.courseUrl}
+                                name="courseLink"
+                                value={formData.courseLink}
                                 onChange={handleInputChange}
                                 placeholder="https://udemy.com/course-name"
                             />
-                        </div>
-
-                        <div className="form-group full-width">
-                            <label>Language</label>
-                            <select name="language" value={formData.language} onChange={handleInputChange}>
-                                <option value="English">English</option>
-                                <option value="Spanish">Spanish</option>
-                                <option value="French">French</option>
-                                <option value="German">German</option>
-                                <option value="Hindi">Hindi</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group full-width">
-                            <label>Description</label>
-                            <textarea
-                                name="description"
-                                value={formData.description}
-                                onChange={handleInputChange}
-                                placeholder="Provide a detailed description of the course..."
-                                rows="5"
-                            ></textarea>
                         </div>
                     </div>
 
                     <div className="form-actions">
                         <button type="button" className="btn-cancel" onClick={handleCancel}>Cancel</button>
-                        <button type="submit" className="btn-submit">Add Resource</button>
+                        <button type="submit" className="btn-submit">Add Course</button>
                     </div>
                 </form>
             </div>

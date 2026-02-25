@@ -22,7 +22,7 @@ const ResourceCard = ({ resource }) => {
                 <div className="card-image-wrapper">
                     <img src={getPlaceholderImage(resource.category)} alt={resource.title} className="card-image" />
                     <div className="card-badge">{resource.category}</div>
-                    {resource.costType === 'Free' && <div className="free-badge">FREE</div>}
+                    {resource.cost === 0 && <div className="free-badge">FREE</div>}
                 </div>
 
                 <div className="card-content">
@@ -35,12 +35,8 @@ const ResourceCard = ({ resource }) => {
                             <span>{resource.rating || 'N/A'}</span>
                         </div>
                         <div className="meta-item">
-                            <Clock className="meta-icon" size={16} />
-                            <span>{resource.duration}</span>
-                        </div>
-                        <div className="meta-item">
                             <Award className="meta-icon" size={16} />
-                            <span className={`difficulty-badge ${resource.difficultyLevel.toLowerCase()}`}>
+                            <span className={`difficulty-badge ${resource.difficultyLevel?.toLowerCase()}`}>
                                 {resource.difficultyLevel}
                             </span>
                         </div>
@@ -55,9 +51,8 @@ const ResourceCard = ({ resource }) => {
             </Link>
 
             <div className="card-footer">
-                <div className="language-info">
-                    <Globe size={14} className="meta-icon" />
-                    <span>{resource.language}</span>
+                <div className="price-info">
+                    {resource.cost > 0 ? `$${resource.cost}` : 'Free'}
                 </div>
                 <Link to={`/learning-resources/${resource.id}`} className="btn-view">
                     View Course <ExternalLink size={14} />
