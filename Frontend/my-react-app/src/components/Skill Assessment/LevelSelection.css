@@ -1,0 +1,137 @@
+/* LevelSelection.css */
+.level-selection-container {
+    padding: calc(var(--header-height) + var(--spacing-xl)) var(--spacing-md) var(--spacing-lg);
+    min-height: 100vh;
+    background-color: var(--color-background);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.level-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    animation: fadeIn 0.5s ease-out;
+}
+
+.level-header h1 {
+    font-size: var(--text-4xl);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-sm);
+}
+
+.level-header p {
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+}
+
+.category-selection {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+    width: 100%;
+    max-width: 800px;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.category-selection h3 {
+    font-size: var(--text-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+}
+
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--spacing-sm);
+}
+
+.cat-btn {
+    padding: 0.75rem 1.5rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    transition: var(--transition);
+    cursor: pointer;
+}
+
+.cat-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    transform: translateY(-2px);
+}
+
+.cat-btn.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2);
+}
+
+.levels-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-lg);
+    width: 100%;
+    max-width: 1000px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+@media (min-width: 768px) {
+    .levels-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+.level-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    text-align: center;
+    box-shadow: var(--shadow-md);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.level-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--color-accent);
+}
+
+.level-icon {
+    margin-bottom: var(--spacing-md);
+    color: var(--color-accent);
+    /* Default fall back, overridden inline */
+}
+
+.level-card h2 {
+    font-size: var(--text-xl);
+    color: var(--color-text-main);
+    margin-bottom: var(--spacing-sm);
+}
+
+.level-card p {
+    font-size: var(--text-base);
+    color: var(--color-text-muted);
+    margin-bottom: var(--spacing-md);
+    flex-grow: 1;
+    /* Pushes footer down */
+}
+
+.level-footer {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-muted);
+    padding-top: var(--spacing-md);
+    border-top: 1px solid var(--color-border);
+    width: 100%;
+}
