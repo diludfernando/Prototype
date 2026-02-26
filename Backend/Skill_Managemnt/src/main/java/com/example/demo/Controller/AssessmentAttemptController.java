@@ -1,7 +1,7 @@
 package com.example.demo.Controller;
 
 import com.example.demo.Model.AssessmentAttempt;
-import com.example.demo.Repository.AssessmentAttemptRepository;
+import com.example.demo.Service.AssessmentAttemptService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,20 +13,20 @@ import java.util.List;
 public class AssessmentAttemptController {
 
     @Autowired
-    private AssessmentAttemptRepository repository;
+    private AssessmentAttemptService service;
 
     @GetMapping
     public List<AssessmentAttempt> getAllAttempts() {
-        return repository.findAll();
+        return service.getAllAttempts();
     }
 
     @GetMapping("/student/{studentId}")
     public List<AssessmentAttempt> getAttemptsByStudent(@PathVariable Long studentId) {
-        return repository.findByStudentId(studentId);
+        return service.getAttemptsByStudent(studentId);
     }
 
     @PostMapping
     public AssessmentAttempt createAttempt(@RequestBody AssessmentAttempt attempt) {
-        return repository.save(attempt);
+        return service.createAttempt(attempt);
     }
 }

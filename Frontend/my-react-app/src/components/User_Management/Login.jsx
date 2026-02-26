@@ -14,7 +14,7 @@ const Login = () => {
 
   // --- HARDCODED CREDENTIALS ---
   const ADMIN_EMAIL = "admin@skillbridge.lk";
-  const ADMIN_PASS = "admin123";
+  const ADMIN_PASS = "Admin@123";
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -54,6 +54,8 @@ const Login = () => {
         const userRole = data.data.role;
         if (userRole === 'STUDENT' || userRole === 'ROLE_STUDENT') {
           setTimeout(() => navigate('/complete-profile'), 1500);
+        } else if (userRole === 'ADMIN' || userRole === 'ROLE_ADMIN') {
+          setTimeout(() => navigate('/admin'), 1500);
         } else {
           setTimeout(() => navigate('/services'), 1500);
         }

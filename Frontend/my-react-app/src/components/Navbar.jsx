@@ -18,6 +18,10 @@ const Navbar = () => {
   const isCompleteProfilePage = location.pathname.startsWith('/complete-profile');
   const isViewProfilePage = location.pathname.startsWith('/view-profile');
   const isEditProfilePage = location.pathname.startsWith('/edit-profile');
+  const isUserManagementPage = location.pathname.startsWith('/admin/users');
+  const isCreateCounselorPage = location.pathname.startsWith('/admin/create-counselor');
+  
+
 
 
   useEffect(() => {
@@ -35,7 +39,7 @@ const Navbar = () => {
 
   const isServicesPage = location.pathname === '/services';
 
-  if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage || isCompleteProfilePage || isViewProfilePage || isEditProfilePage) {
+  if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage || isCompleteProfilePage || isViewProfilePage || isEditProfilePage || isUserManagementPage || isCreateCounselorPage || isLearningResourcesPage) {
     return null;
   }
   // Navbar is visible on all pages except login and register

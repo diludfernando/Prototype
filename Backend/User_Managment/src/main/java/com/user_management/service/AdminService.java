@@ -1,6 +1,7 @@
 package com.user_management.service;
 
 import com.user_management.dto.request.CreateCounselorRequest;
+import com.user_management.dto.request.UpdateUserRequest;
 import com.user_management.dto.response.UserResponse;
 import com.user_management.entity.CounselorProfile;
 import com.user_management.entity.User;
@@ -96,6 +97,30 @@ public class AdminService {
         }
 
         userRepository.delete(user);
+    }
+
+    @Transactional
+    public UserResponse updateUser(Long userId, UpdateUserRequest request) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
+            if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
+                throw new RuntimeException("Email already registered");
+            }
+            user.setEmail(request.getEmail());
+        }
+
+        if (request.getRole() != null) {
+            try {
+                user.setRole(Role.valueOf(request.getRole().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                throw new RuntimeException("Invalid role provided");
+            }
+        }
+
+        user = userRepository.save(user);
+        return mapToUserResponse(user);
     }
 
     private UserResponse mapToUserResponse(User user) {

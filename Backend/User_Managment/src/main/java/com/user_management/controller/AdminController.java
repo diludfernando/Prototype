@@ -1,6 +1,7 @@
 package com.user_management.controller;
 
 import com.user_management.dto.request.CreateCounselorRequest;
+import com.user_management.dto.request.UpdateUserRequest;
 import com.user_management.dto.response.ApiResponse;
 import com.user_management.dto.response.UserResponse;
 import com.user_management.service.AdminService;
@@ -39,6 +40,19 @@ public class AdminController {
             return ResponseEntity.ok(ApiResponse.success("User retrieved successfully", user));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/users/{id}")
+    public ResponseEntity<ApiResponse<UserResponse>> updateUser(
+            @PathVariable Long id,
+            @RequestBody UpdateUserRequest request) {
+        try {
+            UserResponse user = adminService.updateUser(id, request);
+            return ResponseEntity.ok(ApiResponse.success("User updated successfully", user));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
                     .body(ApiResponse.error(e.getMessage()));
         }
     }
