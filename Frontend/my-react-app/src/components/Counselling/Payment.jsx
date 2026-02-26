@@ -62,7 +62,7 @@ const Checkout = () => {
             <form className="checkout-form" onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>Cardholder Name</label>
-                    <input type="text" name="cardHolder" value={formData.cardHolder} onChange={handleChange} placeholder="John Doe" required />
+                    <input type="text" name="cardHolder" value={formData.cardHolder} onChange={handleChange} placeholder="Holder name" required />
                 </div>
 
                 <div className="form-group">

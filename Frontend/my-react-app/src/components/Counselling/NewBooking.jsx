@@ -130,9 +130,9 @@ const NewBooking = () => {
                             <label>Select Counsellor</label>
                             <div className="select-wrapper">
                                 <select name="counsellorId" value={formData.counsellorId} onChange={handleChange}>
-                                    <option value="1">Dr. Alan Turing - AI Specialist</option>
-                                    <option value="2">Ada Lovelace - Logic Specialist</option>
-                                    <option value="3">Grace Hopper - Systems Specialist</option>
+                                    <option value="1">Dr. kapila jinadasha- AI Specialist</option>
+                                    <option value="2">jayaindu vithana - Logic Specialist</option>
+                                    <option value="3">chathushi gunawardhna - Systems Specialist</option>
                                 </select>
                             </div>
                         </div>
