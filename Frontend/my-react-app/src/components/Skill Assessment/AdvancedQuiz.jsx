@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Trophy, AlertCircle, RotateCcw, ArrowLeft, ChevronRight, Award, Star, CheckCircle, Target, ShieldCheck } from 'lucide-react';
+import { Trophy, AlertCircle, RotateCcw, ArrowLeft, ChevronRight, Award, Star, CheckCircle, Target, ShieldCheck, Clock } from 'lucide-react';
 import './AdvancedQuiz.css';
 
 const AdvancedQuiz = () => {
@@ -14,6 +14,7 @@ const AdvancedQuiz = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [timeLeft, setTimeLeft] = useState(null); // Global Quiz Timer
     const [feedback, setFeedback] = useState({ title: '', message: '' });
     const [isSavingResult, setIsSavingResult] = useState(false);
 
@@ -35,7 +36,9 @@ const AdvancedQuiz = () => {
                         correctAnswer: [q.option1, q.option2, q.option3, q.option4].indexOf(q.correctAnswer)
                     }));
                     // Advanced quiz usually has more questions, taking up to 20
-                    setQuestions(mappedQuestions.slice(0, 20));
+                    const finalQuestions = mappedQuestions.slice(0, 20);
+                    setQuestions(finalQuestions);
+                    setTimeLeft(finalQuestions.length * 60);
                 }
             } catch (err) {
                 setError(err.message);
@@ -46,6 +49,20 @@ const AdvancedQuiz = () => {
 
         fetchAdvancedQuestions();
     }, [category]);
+
+    useEffect(() => {
+        if (timeLeft === null || timeLeft <= 0 || showScore || isSavingResult) return;
+        const timer = setInterval(() => {
+            setTimeLeft(prev => prev - 1);
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [timeLeft, showScore, isSavingResult]);
+
+    useEffect(() => {
+        if (timeLeft === 0 && !showScore && !isSavingResult) {
+            handleQuizCompletion(score);
+        }
+    }, [timeLeft, showScore, isSavingResult, score]);
 
     const handleOptionClick = (index) => {
         setSelectedOption(index);
@@ -128,6 +145,7 @@ const AdvancedQuiz = () => {
         setScore(0);
         setShowScore(false);
         setSelectedOption(null);
+        setTimeLeft(questions.length * 60);
     };
 
     const getResultIcon = () => {
@@ -251,6 +269,20 @@ const AdvancedQuiz = () => {
                                         <span className="stat-label">Total Challenges</span>
                                     </div>
                                 </div>
+                                <div className="stat-item-premium">
+                                    <div className="stat-icon-wrapper rating">
+                                        <Star size={20} />
+                                    </div>
+                                    <div className="stat-info">
+                                        <span className="stat-value">
+                                            {Math.round((score / questions.length) * 100) >= 80 ? 5 :
+                                                Math.round((score / questions.length) * 100) >= 60 ? 4 :
+                                                    Math.round((score / questions.length) * 100) >= 40 ? 3 :
+                                                        Math.round((score / questions.length) * 100) >= 20 ? 2 : 1}/5
+                                        </span>
+                                        <span className="stat-label">Rating</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -280,7 +312,16 @@ const AdvancedQuiz = () => {
                             <div className="flex items-center gap-1 text-sky-600 font-bold">
                                 <ShieldCheck size={16} /> Elite Level
                             </div>
-                            <div className="timer-display"></div>
+                            <div className="timer-display">
+                                {timeLeft !== null && (
+                                    <div className={`flex items-center gap-1 font-mono font-bold ${timeLeft < 60 ? 'text-red-500' : 'text-slate-600'}`}>
+                                        <Clock size={16} />
+                                        <span>
+                                            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                             <span className="difficulty-badge" style={{ backgroundColor: '#f0f9ff', color: '#0ea5e9', border: '1px solid #bae6fd' }}>Advanced</span>
                         </div>
 

@@ -7,6 +7,7 @@ import LevelSelection from './components/Skill Assessment/LevelSelection';
 import BeginnerQuiz from './components/Skill Assessment/BeginnerQuiz';
 import IntermediateQuiz from './components/Skill Assessment/IntermediateQuiz';
 import AdvancedQuiz from './components/Skill Assessment/AdvancedQuiz';
+import SkillGapAnalysis from './components/Skill Assessment/SkillGapAnalysis';
 import Login from './components/User_Management/Login';
 import Register from './components/User_Management/Register';
 import CompleteProfile from './components/User_Management/CompleteProfile';
@@ -37,6 +38,7 @@ function App() {
           <Route path="/assessment/beginner" element={<BeginnerQuiz />} />
           <Route path='/assessment/intermediate' element={<IntermediateQuiz />} />
           <Route path="/assessment/advanced" element={<AdvancedQuiz />} />
+          <Route path="/skill-gap-analysis" element={<SkillGapAnalysis />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/complete-profile" element={<CompleteProfile />} />

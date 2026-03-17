@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Trophy, AlertCircle, RotateCcw, ArrowLeft, ChevronRight, Award, Star, CheckCircle, Target } from 'lucide-react';
+import { Trophy, AlertCircle, RotateCcw, ArrowLeft, ChevronRight, Award, Star, CheckCircle, Target, Clock } from 'lucide-react';
 import './BeginnerQuiz.css';
 
 const BeginnerQuiz = () => {
@@ -14,7 +14,7 @@ const BeginnerQuiz = () => {
     const [selectedOption, setSelectedOption] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [timeLeft, setTimeLeft] = useState(0); // Timer state
+    const [timeLeft, setTimeLeft] = useState(null); // Global Quiz Timer
     const [feedback, setFeedback] = useState({ title: '', message: '' });
     const [isSavingResult, setIsSavingResult] = useState(false);
 
@@ -34,7 +34,9 @@ const BeginnerQuiz = () => {
                         options: [q.option1, q.option2, q.option3, q.option4],
                         correctAnswer: [q.option1, q.option2, q.option3, q.option4].indexOf(q.correctAnswer)
                     }));
-                    setQuestions(mappedQuestions.slice(0, 10));
+                    const finalQuestions = mappedQuestions.slice(0, 10);
+                    setQuestions(finalQuestions);
+                    setTimeLeft(finalQuestions.length * 60);
                 }
             } catch (err) {
                 setError(err.message);
@@ -46,7 +48,19 @@ const BeginnerQuiz = () => {
         fetchBeginnerQuestions();
     }, []);
 
+    useEffect(() => {
+        if (timeLeft === null || timeLeft <= 0 || showScore || isSavingResult) return;
+        const timer = setInterval(() => {
+            setTimeLeft(prev => prev - 1);
+        }, 1000);
+        return () => clearInterval(timer);
+    }, [timeLeft, showScore, isSavingResult]);
 
+    useEffect(() => {
+        if (timeLeft === 0 && !showScore && !isSavingResult) {
+            handleQuizCompletion(score);
+        }
+    }, [timeLeft, showScore, isSavingResult, score]);
 
     const handleOptionClick = (index) => {
         setSelectedOption(index);
@@ -130,7 +144,7 @@ const BeginnerQuiz = () => {
         setScore(0);
         setShowScore(false);
         setSelectedOption(null);
-        setTimeLeft(0);
+        setTimeLeft(questions.length * 60);
     };
 
     const getResultIcon = () => {
@@ -257,6 +271,20 @@ const BeginnerQuiz = () => {
                                         <span className="stat-label">Total</span>
                                     </div>
                                 </div>
+                                <div className="stat-item-premium">
+                                    <div className="stat-icon-wrapper rating">
+                                        <Star size={20} />
+                                    </div>
+                                    <div className="stat-info">
+                                        <span className="stat-value">
+                                            {Math.round((score / questions.length) * 100) >= 80 ? 5 :
+                                                Math.round((score / questions.length) * 100) >= 60 ? 4 :
+                                                    Math.round((score / questions.length) * 100) >= 40 ? 3 :
+                                                        Math.round((score / questions.length) * 100) >= 20 ? 2 : 1}/5
+                                        </span>
+                                        <span className="stat-label">Rating</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -287,8 +315,14 @@ const BeginnerQuiz = () => {
                         <div className="card-header-grid">
                             <span className="points-badge">Points are graded</span>
                             <div className="timer-display">
-
-
+                                {timeLeft !== null && (
+                                    <div className={`flex items-center gap-1 font-mono font-bold ${timeLeft < 60 ? 'text-red-500' : 'text-slate-600'}`}>
+                                        <Clock size={16} />
+                                        <span>
+                                            {String(Math.floor(timeLeft / 60)).padStart(2, '0')}:{String(timeLeft % 60).padStart(2, '0')}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                             <span className="difficulty-badge">Beginner</span>
                         </div>

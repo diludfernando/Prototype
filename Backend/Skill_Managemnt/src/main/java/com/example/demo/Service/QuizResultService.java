@@ -15,12 +15,22 @@ public class QuizResultService {
     private QuizResultRepository quizResultRepository;
 
     public Map<String, Object> saveResult(QuizResult result) {
-        // Save the result to the database
-        QuizResult savedResult = quizResultRepository.save(result);
-
         // Calculate performance feedback
-        double percentage = (double) savedResult.getScore() / savedResult.getTotalQuestions() * 100;
+        double percentage = (double) result.getScore() / result.getTotalQuestions() * 100;
         
+        int rating = 1;
+        if (percentage >= 80) {
+            rating = 5;
+        } else if (percentage >= 60) {
+            rating = 4;
+        } else if (percentage >= 40) {
+            rating = 3;
+        } else if (percentage >= 20) {
+            rating = 2;
+        }
+        
+        result.setRating(rating);
+
         String title;
         String message;
 
@@ -37,6 +47,9 @@ public class QuizResultService {
             title = "Keep Learning!";
             message = "Review the basics and try again. Practice makes perfect.";
         }
+
+        // Save the result to the database
+        QuizResult savedResult = quizResultRepository.save(result);
 
         // Prepare the response
         Map<String, Object> response = new HashMap<>();

@@ -16,6 +16,11 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
+    @GetMapping("/categories")
+    public List<String> getAllCategories() {
+        return questionService.getAllCategories();
+    }
+
     @GetMapping
     public List<Question> getQuestions(
             @RequestParam(required = false) String category,

@@ -26,16 +26,7 @@ const Login = () => {
     setMessage('');
     setError('');
 
-    // 1. Check for Hardcoded Admin First
-    if (formData.email === ADMIN_EMAIL && formData.password === ADMIN_PASS) {
-      localStorage.setItem('username', ADMIN_EMAIL);
-      setMessage('Admin Login successful!');
-      setTimeout(() => navigate('/admin'), 1500);
-      setLoading(false);
-      return; // Stop here so it doesn't call the API
-    }
-
-    // 2. If not admin, proceed to API call for regular users
+    // 1. Proceed to API call for all users
     try {
       const response = await fetch('http://localhost:8081/api/auth/login', {
         method: 'POST',

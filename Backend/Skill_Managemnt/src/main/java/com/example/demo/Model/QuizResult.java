@@ -17,6 +17,7 @@ public class QuizResult {
     private int totalQuestions;
     private String category;
     private String level;
+    private int rating;
     private LocalDateTime timestamp;
 
     @PrePersist

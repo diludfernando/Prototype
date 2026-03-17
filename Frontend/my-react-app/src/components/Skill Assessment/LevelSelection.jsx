@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Brain, Trophy } from 'lucide-react';
+import { GraduationCap, Brain, Trophy, ChevronLeft } from 'lucide-react';
 import './LevelSelection.css';
 
 const LevelSelection = () => {
@@ -10,7 +10,7 @@ const LevelSelection = () => {
     const handleLevelSelect = (level) => {
         if (level === 'easy') {
             navigate(`/assessment/beginner?category=${selectedCategory}`);
-        } else if(level === 'medium'){
+        } else if (level === 'medium') {
             navigate(`/assessment/intermediate?category=${selectedCategory}`)
 
         } else if (level === 'hard') {
@@ -20,7 +20,35 @@ const LevelSelection = () => {
         }
     };
 
-    const categories = ['Java', 'HTML', 'CSS', 'JavaScript', 'React'];
+    const handleBack = () => {
+        navigate('/services');
+    };
+
+    const [categories, setCategories] = useState([]);
+    const [isLoadingCategories, setIsLoadingCategories] = useState(true);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('http://localhost:8082/api/questions/categories');
+                if (response.ok) {
+                    const data = await response.json();
+                    setCategories(data);
+                    if (data.length > 0 && selectedCategory === 'Java') {
+                        setSelectedCategory(data[0]); // Default to first available category
+                    }
+                } else {
+                    console.error('Failed to fetch categories');
+                }
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            } finally {
+                setIsLoadingCategories(false);
+            }
+        };
+
+        fetchCategories();
+    }, []);
 
     const levels = [
         {
@@ -52,6 +80,13 @@ const LevelSelection = () => {
 
     return (
         <div className="level-selection-container">
+            <div className="back-button-wrapper">
+                <button className="back-button" onClick={handleBack}>
+                    <ChevronLeft size={20} />
+                    <span>Back to Services</span>
+                </button>
+            </div>
+
             <div className="level-header">
                 <h1>Select Your Level</h1>
                 <p>Choose a category and difficulty level to start your assessment.</p>
@@ -60,15 +95,21 @@ const LevelSelection = () => {
             <div className="category-selection">
                 <h3>Choose Category</h3>
                 <div className="category-buttons">
-                    {categories.map((cat) => (
-                        <button
-                            key={cat}
-                            className={`cat-btn ${selectedCategory === cat ? 'active' : ''}`}
-                            onClick={() => setSelectedCategory(cat)}
-                        >
-                            {cat}
-                        </button>
-                    ))}
+                    {isLoadingCategories ? (
+                        <p>Loading categories...</p>
+                    ) : categories.length > 0 ? (
+                        categories.map((cat) => (
+                            <button
+                                key={cat}
+                                className={`cat-btn ${selectedCategory === cat ? 'active' : ''}`}
+                                onClick={() => setSelectedCategory(cat)}
+                            >
+                                {cat}
+                            </button>
+                        ))
+                    ) : (
+                        <p>No categories found.</p>
+                    )}
                 </div>
             </div>
 

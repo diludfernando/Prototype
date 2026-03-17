@@ -24,6 +24,10 @@ public class QuestionService {
         return questionRepository.findAll();
     }
 
+    public List<String> getAllCategories() {
+        return questionRepository.findDistinctCategories();
+    }
+
     public Question createQuestion(Question question) {
         return questionRepository.save(question);
     }

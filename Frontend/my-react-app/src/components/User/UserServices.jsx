@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Briefcase, BookOpen, ChevronRight, BookAlert, Compass, LogOut, User } from 'lucide-react';
+import { GraduationCap, Briefcase, BookOpen, ChevronRight, Target, Compass, LogOut, User } from 'lucide-react';
 import './UserServices.css';
 
 const UserServices = () => {
@@ -60,6 +60,14 @@ const UserServices = () => {
             icon: <Compass size={40} className="service-icon" />,
             path: '/counselling',
             label: 'Start Counselling'
+        },
+        {
+            id: 'Skill Gap Analizys',
+            title: 'Skill Gap Analysis',
+            description: 'Check the real gap between your skills and your dream job',
+            icon: <Target size={40} className="service-icon" />,
+            path: '/skill-gap-analysis',
+            label: 'Start'
         }
     ];
 

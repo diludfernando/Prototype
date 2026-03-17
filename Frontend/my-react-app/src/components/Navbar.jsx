@@ -20,6 +20,8 @@ const Navbar = () => {
   const isEditProfilePage = location.pathname.startsWith('/edit-profile');
   const isUserManagementPage = location.pathname.startsWith('/admin/users');
   const isCreateCounselorPage = location.pathname.startsWith('/admin/create-counselor');
+  const isSkillGapAnalysisPage = location.pathname.startsWith('/skill-gap-analysis');
+  
   
 
 
@@ -39,7 +41,8 @@ const Navbar = () => {
 
   const isServicesPage = location.pathname === '/services';
 
-  if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage || isCompleteProfilePage || isViewProfilePage || isEditProfilePage || isUserManagementPage || isCreateCounselorPage || isLearningResourcesPage) {
+  if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage || isCompleteProfilePage 
+    || isViewProfilePage || isEditProfilePage || isUserManagementPage || isCreateCounselorPage || isLearningResourcesPage || isSkillGapAnalysisPage) {
     return null;
   }
   // Navbar is visible on all pages except login and register
