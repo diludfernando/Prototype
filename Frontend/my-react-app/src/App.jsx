@@ -11,11 +11,13 @@ import SkillGapAnalysis from './components/Skill Assessment/SkillGapAnalysis';
 import Login from './components/User_Management/Login';
 import Register from './components/User_Management/Register';
 import CompleteProfile from './components/User_Management/CompleteProfile';
+import CounselorCompleteProfile from './components/User_Management/CounselorCompleteProfile';
 import ViewProfile from './components/User_Management/ViewProfile';
 import EditProfile from './components/User_Management/EditProfile';
 import Dashboard from './components/Admin/Dashboard';
 import UserManagement from './components/Admin/UserManagement';
 import UserServices from './components/User/UserServices';
+import CounselorDashboard from './components/Counselor/CounselorDashboard';
 import BookingPage from './components/Counselling/BookingPage';
 import NewBooking from './components/Counselling/NewBooking';
 import Payment from './components/Counselling/Payment';
@@ -42,10 +44,12 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/complete-profile" element={<CompleteProfile />} />
+          <Route path="/counselor/complete-profile" element={<CounselorCompleteProfile />} />
           <Route path="/view-profile" element={<ViewProfile />} />
           <Route path="/edit-profile" element={<EditProfile />} />
           <Route path="/admin" element={<Dashboard />} />
           <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
           <Route path="/services" element={<UserServices />} />
           <Route path="/counselling" element={<BookingPage />} />
           <Route path="/counselling/newbooking" element={<NewBooking />} />

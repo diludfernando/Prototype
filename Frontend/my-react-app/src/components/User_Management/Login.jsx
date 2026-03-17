@@ -45,6 +45,24 @@ const Login = () => {
         const userRole = data.data.role;
         if (userRole === 'STUDENT' || userRole === 'ROLE_STUDENT') {
           setTimeout(() => navigate('/complete-profile'), 1500);
+        } else if (userRole === 'COUNSELOR' || userRole === 'ROLE_COUNSELOR') {
+          try {
+            const checkResponse = await fetch('http://localhost:8081/api/counselor/profile/check-mandatory', {
+              headers: { 'Authorization': `Bearer ${data.data.token}` }
+            });
+            const checkData = await checkResponse.json();
+            
+            if (checkResponse.ok && checkData.success && checkData.data === true) {
+              // Profile is complete, go to new dashboard
+              setTimeout(() => navigate('/counselor/dashboard'), 1500); 
+            } else {
+              // Profile is NOT complete, go to completion page
+              setTimeout(() => navigate('/counselor/complete-profile'), 1500);
+            }
+          } catch (checkErr) {
+            console.error("Error checking profile status:", checkErr);
+            setTimeout(() => navigate('/counselor/complete-profile'), 1500); // Fallback
+          }
         } else if (userRole === 'ADMIN' || userRole === 'ROLE_ADMIN') {
           setTimeout(() => navigate('/admin'), 1500);
         } else {

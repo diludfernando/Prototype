@@ -53,7 +53,7 @@ const Dashboard = () => {
           >
             <BookOpen size={20} /> <span>Questions</span>
           </button>
-         
+
           <button
             className={`nav-item ${activeTab === 'counselling' ? 'active' : ''}`}
             onClick={() => setActiveTab('counselling')}
