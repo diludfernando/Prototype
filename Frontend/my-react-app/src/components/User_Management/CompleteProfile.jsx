@@ -162,7 +162,7 @@ const CompleteProfile = () => {
                             required
                         >
                             <option value="" disabled>Select year level</option>
-                            {[1, 2, 3, 4, 5, 6, 7].map(level => (
+                            {[1, 2, 3, 4].map(level => (
                                 <option key={level} value={level}>Year {level}</option>
                             ))}
                         </select>

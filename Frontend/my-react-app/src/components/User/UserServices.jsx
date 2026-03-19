@@ -15,17 +15,14 @@ const UserServices = () => {
                 setShowDropdown(false);
             }
         };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        // Use capture phase to ensure it runs reliably
+        document.addEventListener('click', handleClickOutside, true);
+        return () => document.removeEventListener('click', handleClickOutside, true);
     }, []);
 
     const handleLogout = () => {
         localStorage.clear();
         navigate('/');
-    };
-
-    const toggleDropdown = () => {
-        setShowDropdown(!showDropdown);
     };
 
     const services = [
@@ -76,32 +73,36 @@ const UserServices = () => {
             <div className="container">
                 <header className="services-header">
                     <div className="header-top-actions">
-                        <div
-                            className={`profile-header-section ${showDropdown ? 'active' : ''}`}
-                            ref={dropdownRef}
-                            onClick={toggleDropdown}
-                        >
-                            <div className="profile-icon-container">
-                                <User size={24} className="profile-icon-placeholder" />
-                            </div>
+                        <div className="new-profile-menu-wrapper" ref={dropdownRef}>
+                            <button 
+                                className={`new-profile-avatar-btn ${showDropdown ? 'active' : ''}`}
+                                onClick={() => setShowDropdown(!showDropdown)}
+                                aria-label="Profile Menu"
+                            >
+                                <User size={24} />
+                            </button>
 
                             {showDropdown && (
-                                <div className="profile-dropdown-menu animate-slide-up">
-                                    <button
-                                        className="dropdown-item"
-                                        onClick={() => navigate('/view-profile')}
-                                    >
-                                        <User size={16} />
-                                        <span>View Profile</span>
-                                    </button>
-                                    <div className="dropdown-divider"></div>
-                                    <button
-                                        className="dropdown-item logout"
-                                        onClick={handleLogout}
-                                    >
-                                        <LogOut size={16} />
-                                        <span>Logout</span>
-                                    </button>
+                                <div className="new-profile-dropdown">
+                                    <div className="new-dropdown-header">
+                                        <p>My Account</p>
+                                    </div>
+                                    <div className="new-dropdown-body">
+                                        <button 
+                                            className="new-dropdown-btn"
+                                            onClick={() => navigate('/view-profile')}
+                                        >
+                                            <User size={18} />
+                                            <span>View Profile</span>
+                                        </button>
+                                        <button 
+                                            className="new-dropdown-btn logout"
+                                            onClick={handleLogout}
+                                        >
+                                            <LogOut size={18} />
+                                            <span>Logout</span>
+                                        </button>
+                                    </div>
                                 </div>
                             )}
                         </div>
