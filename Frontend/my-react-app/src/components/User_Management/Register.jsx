@@ -13,8 +13,8 @@ const Register = () => {
     confirmPassword: '',
     selectedCareerPath: '',
     // Hidden fields for backend compatibility
-    university: 'Not Specified',
-    degreeProgram: 'Not Specified',
+    university: '',
+    degreeProgram: '',
     yearLevel: 1,
   });
 

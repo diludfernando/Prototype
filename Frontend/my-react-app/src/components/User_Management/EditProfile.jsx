@@ -44,22 +44,22 @@ const EditProfile = () => {
 
                 const data = await response.json();
                 if (response.ok && data.success) {
-                    const profile = data.data;
+                    const clean = (val) => (val === 'Not Specified' ? '' : (val || ''));
                     setFormData({
-                        fullName: profile.fullName || '',
-                        phone: profile.phone || '',
-                        university: profile.university || '',
-                        degreeProgram: profile.degreeProgram || '',
+                        fullName: clean(profile.fullName),
+                        phone: clean(profile.phone),
+                        university: clean(profile.university),
+                        degreeProgram: clean(profile.degreeProgram),
                         yearLevel: profile.yearLevel ? profile.yearLevel.toString() : '',
-                        selectedCareerPath: profile.selectedCareerPath || '',
-                        careerGoals: profile.careerGoals || '',
-                        skills: profile.skills || '',
-                        interests: profile.interests || '',
-                        about: profile.about || '',
+                        selectedCareerPath: clean(profile.selectedCareerPath),
+                        careerGoals: clean(profile.careerGoals),
+                        skills: clean(profile.skills),
+                        interests: clean(profile.interests),
+                        about: clean(profile.about),
                         gpa: profile.gpa ? profile.gpa.toString() : '',
-                        linkedinUrl: profile.linkedinUrl || '',
-                        githubUrl: profile.githubUrl || '',
-                        profileImageUrl: profile.profileImageUrl || ''
+                        linkedinUrl: clean(profile.linkedinUrl),
+                        githubUrl: clean(profile.githubUrl),
+                        profileImageUrl: clean(profile.profileImageUrl)
                     });
                 } else {
                     setError('Failed to load profile data.');
@@ -83,7 +83,8 @@ const EditProfile = () => {
 
         let completedCount = 0;
         coreFields.forEach(field => {
-            if (formData[field] !== null && formData[field] !== '' && formData[field] !== undefined) {
+            const val = formData[field];
+            if (val !== null && val !== '' && val !== undefined && val !== 'Not Specified') {
                 completedCount++;
             }
         });

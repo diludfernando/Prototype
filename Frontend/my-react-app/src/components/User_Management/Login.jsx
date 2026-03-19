@@ -44,7 +44,21 @@ const Login = () => {
         setMessage(data.message || 'Login successful!');
         const userRole = data.data.role;
         if (userRole === 'STUDENT' || userRole === 'ROLE_STUDENT') {
-          setTimeout(() => navigate('/complete-profile'), 1500);
+          try {
+            const checkResponse = await fetch('http://localhost:8081/api/student/profile/check-mandatory', {
+              headers: { 'Authorization': `Bearer ${data.data.token}` }
+            });
+            const checkData = await checkResponse.json();
+            
+            if (checkResponse.ok && checkData.success && checkData.data === true) {
+              setTimeout(() => navigate('/services'), 1500);
+            } else {
+              setTimeout(() => navigate('/complete-profile'), 1500);
+            }
+          } catch (err) {
+            console.error("Error checking student profile status:", err);
+            setTimeout(() => navigate('/complete-profile'), 1500);
+          }
         } else if (userRole === 'COUNSELOR' || userRole === 'ROLE_COUNSELOR') {
           try {
             const checkResponse = await fetch('http://localhost:8081/api/counselor/profile/check-mandatory', {

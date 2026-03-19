@@ -39,14 +39,16 @@ const CompleteProfile = () => {
                 const data = await response.json();
                 if (response.ok && data.success) {
                     const profile = data.data;
+                    const cleanValue = (val) => (val === 'Not Specified' ? '' : (val || ''));
+                    
                     setFormData({
-                        university: profile.university || '',
-                        degreeProgram: profile.degreeProgram || '',
+                        university: cleanValue(profile.university),
+                        degreeProgram: cleanValue(profile.degreeProgram),
                         yearLevel: profile.yearLevel ? profile.yearLevel.toString() : '',
-                        careerGoals: profile.careerGoals || '',
-                        skills: profile.skills || '',
-                        interests: profile.interests || '',
-                        phone: profile.phone || '',
+                        careerGoals: cleanValue(profile.careerGoals),
+                        skills: cleanValue(profile.skills),
+                        interests: cleanValue(profile.interests),
+                        phone: cleanValue(profile.phone),
                     });
                 } else {
                     setError('Failed to fetch profile details.');

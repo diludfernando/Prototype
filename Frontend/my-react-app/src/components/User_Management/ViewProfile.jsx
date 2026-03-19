@@ -51,7 +51,8 @@ const ViewProfile = () => {
 
         let completedCount = 0;
         coreFields.forEach(field => {
-            if (profile[field] !== null && profile[field] !== '' && profile[field] !== undefined) {
+            const val = profile[field];
+            if (val !== null && val !== '' && val !== undefined && val !== 'Not Specified') {
                 completedCount++;
             }
         });
@@ -80,7 +81,7 @@ const ViewProfile = () => {
     const completion = calculateCompletion();
 
     const renderValue = (value) => {
-        if (value === null || value === '' || value === undefined) {
+        if (value === null || value === '' || value === undefined || value === 'Not Specified') {
             return <span className="not-provided">Not provided</span>;
         }
         return value;

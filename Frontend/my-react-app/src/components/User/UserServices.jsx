@@ -68,19 +68,28 @@ const UserServices = () => {
         }
     ];
 
+    const email = localStorage.getItem('username') || 'User';
+    const displayName = email.includes('@') ? email.split('@')[0] : email;
+    const formattedName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+
     return (
         <div className="services-page animate-fade-in">
             <div className="container">
                 <header className="services-header">
                     <div className="header-top-actions">
                         <div className="new-profile-menu-wrapper" ref={dropdownRef}>
-                            <button 
-                                className={`new-profile-avatar-btn ${showDropdown ? 'active' : ''}`}
+                            <div 
+                                className="profile-trigger-container"
                                 onClick={() => setShowDropdown(!showDropdown)}
-                                aria-label="Profile Menu"
                             >
-                                <User size={24} />
-                            </button>
+                                <span className="profile-greeting">Hi, {formattedName}</span>
+                                <button 
+                                    className={`new-profile-avatar-btn ${showDropdown ? 'active' : ''}`}
+                                    aria-label="Profile Menu"
+                                >
+                                    <User size={24} />
+                                </button>
+                            </div>
 
                             {showDropdown && (
                                 <div className="new-profile-dropdown">
