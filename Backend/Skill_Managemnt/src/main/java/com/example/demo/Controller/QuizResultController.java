@@ -3,6 +3,7 @@ package com.example.demo.Controller;
 import com.example.demo.Model.QuizResult;
 import com.example.demo.Service.QuizResultService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -16,7 +17,12 @@ public class QuizResultController {
     private QuizResultService service;
 
     @PostMapping
-    public Map<String, Object> saveResult(@RequestBody QuizResult result) {
-        return service.saveResult(result);
+    public ResponseEntity<?> saveResult(@RequestBody QuizResult result) {
+        try {
+            return ResponseEntity.ok(service.saveResult(result));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Error saving result: " + e.getMessage());
+        }
     }
 }

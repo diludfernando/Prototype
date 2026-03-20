@@ -1,13 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Brain, Trophy, ChevronLeft } from 'lucide-react';
+import { GraduationCap, Brain, Trophy, ChevronLeft, Lock } from 'lucide-react';
 import './LevelSelection.css';
 
 const LevelSelection = () => {
     const navigate = useNavigate();
     const [selectedCategory, setSelectedCategory] = React.useState('Java');
+    const [skillProgress, setSkillProgress] = useState(null);
+
+    useEffect(() => {
+        const fetchSkillProgress = async () => {
+            const username = localStorage.getItem('username');
+            if (!username) return;
+
+            try {
+                const response = await fetch(`http://localhost:8082/api/progress/${username}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setSkillProgress(data);
+                }
+            } catch (error) {
+                console.error('Error fetching skill progress:', error);
+            }
+        };
+
+        fetchSkillProgress();
+    }, []);
+
+    const isLevelLocked = (levelId) => {
+        if (!skillProgress) return levelId !== 'easy'; // Only beginner open by default
+        
+        const highest = skillProgress.highestLevelPassed?.toLowerCase() || 'none';
+        
+        if (levelId === 'easy') return false;
+        if (levelId === 'medium') return highest === 'none'; // Needs beginner
+        if (levelId === 'hard') return highest === 'none' || highest === 'beginner'; // Needs intermediate
+        return false;
+    };
 
     const handleLevelSelect = (level) => {
+        if (isLevelLocked(level)) {
+            alert("Please clear the previous level first!");
+            return;
+        }
+
         if (level === 'easy') {
             navigate(`/assessment/beginner?category=${selectedCategory}`);
         } else if (level === 'medium') {
@@ -117,10 +153,15 @@ const LevelSelection = () => {
                 {levels.map((level) => (
                     <div
                         key={level.id}
-                        className="level-card"
+                        className={`level-card ${isLevelLocked(level.id) ? 'locked' : ''}`}
                         onClick={() => handleLevelSelect(level.id)}
                     >
-                        <div className="level-icon" style={{ Color: level.color }}>
+                        {isLevelLocked(level.id) && (
+                            <div className="lock-overlay">
+                                <Lock size={32} />
+                            </div>
+                        )}
+                        <div className="level-icon" style={{ color: level.color }}>
                             {level.icon}
                         </div>
                         <h2>{level.title}</h2>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Edit, ArrowLeft, CheckCircle, Circle } from 'lucide-react';
+import { User, Edit, ArrowLeft, CheckCircle, Circle, Star } from 'lucide-react';
 import './ViewProfile.css';
 
 const ViewProfile = () => {
@@ -8,6 +8,26 @@ const ViewProfile = () => {
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [skillProgress, setSkillProgress] = useState(null);
+
+    useEffect(() => {
+        const fetchSkillProgress = async () => {
+            const username = localStorage.getItem('username');
+            if (!username) return;
+
+            try {
+                const response = await fetch(`http://localhost:8082/api/progress/${username}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setSkillProgress(data);
+                }
+            } catch (err) {
+                console.error('Error fetching skill progress:', err);
+            }
+        };
+
+        fetchSkillProgress();
+    }, []);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -127,6 +147,26 @@ const ViewProfile = () => {
                         <div className="picture-info">
                             <h3>Profile Picture</h3>
                             <p>No profile picture set. Click "Edit Profile" to add one.</p>
+                        </div>
+                    </div>
+
+                    {/* Skill Progress Card */}
+                    <div className="profile-card skill-progress-card">
+                        <div className="skill-header">
+                            <Star size={24} className={skillProgress?.clearedHardestLevel ? "star-active" : "star-inactive"} />
+                            <h3>Skill Achievement</h3>
+                        </div>
+                        <div className="skill-details">
+                            <div className="skill-item">
+                                <span className="label">Highest Level Passed:</span>
+                                <span className="value">{skillProgress?.highestLevelPassed || 'Not Started'}</span>
+                            </div>
+                            <div className="skill-item">
+                                <span className="label">Status:</span>
+                                <span className={`status-badge ${skillProgress?.clearedHardestLevel ? 'expert' : 'learning'}`}>
+                                    {skillProgress?.clearedHardestLevel ? 'Expert' : 'Learning'}
+                                </span>
+                            </div>
                         </div>
                     </div>
 

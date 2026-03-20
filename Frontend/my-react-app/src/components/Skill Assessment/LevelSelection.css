@@ -126,6 +126,35 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative; /* Added for lock overlay */
+    overflow: hidden;
+}
+
+.level-card.locked {
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+    opacity: 0.8;
+}
+
+.lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(2px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    color: var(--color-text-muted);
+}
+
+.level-card.locked:hover {
+    transform: none;
+    box-shadow: var(--shadow-md);
+    border-color: transparent;
 }
 
 .level-card:hover {
