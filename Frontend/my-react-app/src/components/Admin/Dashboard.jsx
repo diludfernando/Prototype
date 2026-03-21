@@ -8,13 +8,15 @@ import {
   Search,
   TrendingUp,
   Clock,
-  LogOut
+  LogOut,
+  Briefcase
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import QuestionManagement from './QuestionManagement';
 import CounsellingManagement from './CounsellingManagement';
 import ResourceManagement from './ResourceManagement';
 import UserManagement from './UserManagement';
+import JobManagement from './JobManagement';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -66,6 +68,13 @@ const Dashboard = () => {
           >
             <BookOpen size={20} /> <span>Resources</span>
           </button>
+
+          <button
+                className={`nav-item ${activeTab === 'jobManagement' ? 'active' : ''}`}
+                onClick={() => setActiveTab('jobManagement')}
+            >
+              <Briefcase size={20} /> <span>Job Management</span>
+            </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -176,6 +185,8 @@ const Dashboard = () => {
           {activeTab === 'resources' && <ResourceManagement />}
 
           {activeTab === 'users' && <UserManagement />}
+          
+          {activeTab === 'jobManagement' && <JobManagement />}
 
           {activeTab === 'settings' && (
             <div className="placeholder-section">

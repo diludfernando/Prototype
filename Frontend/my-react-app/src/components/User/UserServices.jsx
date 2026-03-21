@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { GraduationCap, Briefcase, BookOpen, ChevronRight, Target, Compass, LogOut, User } from 'lucide-react';
+import { GraduationCap, LineChart, BookOpen, ChevronRight, Target, Compass, LogOut, User } from 'lucide-react';
 import './UserServices.css';
 
 const UserServices = () => {
@@ -35,12 +35,12 @@ const UserServices = () => {
             label: 'Start Quiz'
         },
         {
-            id: 'jobs',
-            title: 'Available Jobs',
-            description: 'Find career opportunities tailored to your skills and preferences.',
-            icon: <Briefcase size={40} className="service-icon" />,
-            path: '/jobs',
-            label: 'Explore Jobs'
+            id: 'progress-dashboard',
+            title: 'Progress Dashboard',
+            description: 'View your readiness score, leaderboard rank, job recommendations, and skill gaps in one place.',
+            icon: <LineChart size={40} className="service-icon" />,
+            path: '/progress-dashboard',
+            label: 'View Dashboard'
         },
         {
             id: 'elearning',

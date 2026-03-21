@@ -39,7 +39,7 @@ const CounselorDashboard = () => {
           >
             <LayoutDashboard size={20} /> <span>Dashboard</span>
           </button>
-         
+
         </nav>
 
         <div className="c-sidebar-footer">
@@ -62,7 +62,7 @@ const CounselorDashboard = () => {
               <Bell size={20} />
             </button>
             <div className="c-user-profile">
-               <div className="c-avatar">AU</div>
+              <div className="c-avatar">AU</div>
             </div>
           </div>
         </header>
@@ -70,9 +70,9 @@ const CounselorDashboard = () => {
         {/* Dashboard Content */}
         <div className="c-content-body">
           {activeTab === 'resources' ? (
-             <div className="c-placeholder-view">
-               <h2>Resources view coming soon</h2>
-             </div>
+            <div className="c-placeholder-view">
+              <h2>Resources view coming soon</h2>
+            </div>
           ) : (
             <div className="c-placeholder-view">
               <h2>{activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} view coming soon</h2>

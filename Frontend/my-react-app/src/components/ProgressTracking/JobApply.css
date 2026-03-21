@@ -1,0 +1,150 @@
+.apply-page {
+    min-height: 100vh;
+    background: var(--color-background);
+    padding: 28px;
+}
+
+.apply-shell {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.apply-job-summary,
+.apply-form-card,
+.apply-loading {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: var(--shadow-lg);
+}
+
+.apply-job-summary {
+    margin-bottom: 20px;
+}
+
+.apply-eyebrow {
+    margin: 0 0 10px;
+    color: var(--color-accent);
+    font-weight: 800;
+    letter-spacing: 1.4px;
+    font-size: var(--text-sm);
+}
+
+.apply-job-summary h1 {
+    margin: 0;
+    font-size: var(--text-4xl);
+    color: var(--color-text-main);
+}
+
+.apply-job-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin: 16px 0;
+}
+
+.apply-job-meta span {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    padding: 10px 14px;
+    border-radius: 999px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    font-size: var(--text-sm);
+}
+
+.apply-description {
+    color: var(--color-text-muted);
+    font-size: var(--text-base);
+    line-height: 1.8;
+}
+
+.apply-form-card h2 {
+    margin-top: 0;
+    color: var(--color-text-main);
+    font-size: var(--text-2xl);
+}
+
+.apply-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+}
+
+.apply-field {
+    display: flex;
+    flex-direction: column;
+}
+
+.apply-field label {
+    margin-bottom: 8px;
+    color: var(--color-text-main);
+    font-weight: 700;
+    font-size: var(--text-sm);
+}
+
+.apply-field input,
+.apply-field textarea {
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 14px 16px;
+    font-size: var(--text-base);
+    outline: none;
+    background: var(--color-background);
+    font-family: var(--font-family);
+    color: var(--color-text-main);
+}
+
+.apply-field input:focus,
+.apply-field textarea:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+}
+
+.apply-full {
+    grid-column: 1 / -1;
+}
+
+.submit-application-btn {
+    margin-top: 20px;
+    border: none;
+    border-radius: 16px;
+    padding: 14px 22px;
+        background: linear-gradient(135deg, var(--color-accent), var(--color-accent-hover));
+    color: white;
+    font-weight: 700;
+    font-size: var(--text-base);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.apply-success {
+    background: #ecfdf5;
+    border: 1px solid #bbf7d0;
+    color: #059669;
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+    font-weight: 700;
+    font-size: var(--text-base);
+}
+
+@media (max-width: 768px) {
+    .apply-page {
+        padding: 16px;
+    }
+
+    .apply-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .apply-job-summary h1 {
+        font-size: var(--text-2xl);
+    }
+}

@@ -75,7 +75,7 @@ const CounselorCompleteProfile = () => {
             const data = await response.json();
             if (response.ok && data.success) {
                 setMessage('Profile completed and password reset successfully!');
-                setTimeout(() => navigate('/counselor/dashboard'), 2000); 
+                setTimeout(() => navigate('/counselor/dashboard'), 2000);
             } else {
                 setError(data.message || 'Failed to complete profile.');
                 // For demonstration purposes, if backend fails, still show success after a delay
