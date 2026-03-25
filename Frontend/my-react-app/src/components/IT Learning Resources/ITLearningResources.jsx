@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Book, ChevronDown, AlertCircle, Heart, GraduationCap, Loader2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Search, Book, ChevronDown, AlertCircle, Heart, GraduationCap, Loader2, Home, BookOpen, DollarSign, Tag, Sparkles } from 'lucide-react';
 import './ITLearningResources.css';
 import MyCourses from './MyCourses';
 import ResourceCard from './ResourceCard';
+import Recommended from './Recommended';
 
 const ITLearningResources = () => {
     const [activeSection, setActiveSection] = useState('All Resources');
@@ -11,25 +13,38 @@ const ITLearningResources = () => {
     const [difficulty, setDifficulty] = useState('All');
     const [cost, setCost] = useState('All');
     const [sortBy, setSortBy] = useState('Newest First');
-
-    // Data fetching state
     const [resources, setResources] = useState([]);
+    const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const userId = 1;
+
+    const fetchFavorites = async () => {
+        try {
+            const response = await fetch(`http://localhost:8084/api/favorites/user/${userId}`);
+            if (response.ok) {
+                const data = await response.json();
+                const enriched = await Promise.all(data.map(async (fav) => {
+                    try {
+                        const courseRes = await fetch(`http://localhost:8084/api/courses/${fav.courseId}`);
+                        if (!courseRes.ok) return null;
+                        return { ...fav, course: await courseRes.json() };
+                    } catch { return null; }
+                }));
+                setFavorites(enriched.filter(f => f !== null));
+            }
+        } catch (err) { console.error(err); }
+    };
 
     useEffect(() => {
         const fetchResources = async () => {
             try {
                 setLoading(true);
                 const response = await fetch('http://localhost:8084/api/courses');
-                if (!response.ok) {
-                    throw new Error('Failed to fetch courses');
-                }
-                const data = await response.json();
-                setResources(data);
+                if (!response.ok) throw new Error('Failed to fetch courses');
+                setResources(await response.json());
                 setError(null);
             } catch (err) {
-                console.error('Error fetching courses:', err);
                 setError('Failed to load courses. Please make sure the backend is running.');
             } finally {
                 setLoading(false);
@@ -37,210 +52,218 @@ const ITLearningResources = () => {
         };
 
         fetchResources();
-    }, []);
+        fetchFavorites();
+    }, [userId]);
 
-    // Filtering logic
-    const filteredResources = resources.filter(resource => {
-        const matchesSearch = resource.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            resource.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            resource.skillsCovered?.toLowerCase().includes(searchTerm.toLowerCase());
-
-        const matchesCategory = category === 'All' || resource.category === category;
-        const matchesDifficulty = difficulty === 'All' || resource.difficultyLevel === difficulty;
-        const matchesCost = cost === 'All' || (cost === 'Free' ? resource.cost === 0 : resource.cost > 0);
-
+    const filteredResources = resources.filter(r => {
+        const matchesSearch = r.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.provider.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            r.skillsCovered?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = category === 'All' || r.category === category;
+        const matchesDifficulty = difficulty === 'All' || r.difficultyLevel === difficulty;
+        const matchesCost = cost === 'All' || (cost === 'Free' ? r.price === 0 : r.price > 0);
         return matchesSearch && matchesCategory && matchesDifficulty && matchesCost;
     });
 
-    // Sorting logic
     const sortedResources = [...filteredResources].sort((a, b) => {
         if (sortBy === 'A-Z') return a.title.localeCompare(b.title);
         if (sortBy === 'Z-A') return b.title.localeCompare(a.title);
-        if (sortBy === 'Newest First') return b.id - a.id; // Assuming higher ID is newer
+        if (sortBy === 'Newest First') return b.id - a.id;
         if (sortBy === 'Oldest First') return a.id - b.id;
         return 0;
     });
 
+    const tabs = [
+        { key: 'All Resources', icon: <Book size={16} />, count: resources.length },
+        { key: 'My Favorites', icon: <Heart size={16} />, count: favorites.length },
+        { key: 'My Courses', icon: <GraduationCap size={16} />, count: null },
+        { key: 'Recommended', icon: <Sparkles size={16} />, count: null },
+    ];
+
     return (
         <div className="resources-page">
-            <div className="container">
-                {/* Header */}
-                <header className="resources-header">
-                    <h1 className="resources-title">
-                        {activeSection === 'All Resources' ? 'IT Learning Resources' : 'My Courses'}
-                    </h1>
-                    <p className="resources-subtitle">
-                        {activeSection === 'All Resources'
-                            ? `Explore ${resources.length}+ courses to advance your IT career`
-                            : 'Track your learning progress'
-                        }
-                    </p>
-                </header>
+            {/* Sticky inner navbar */}
+            <div className="resources-sticky-nav">
+                <div className="resources-sticky-nav-inner">
+                    <div className="sticky-nav-left">
+                        <Link to="/services" className="sticky-nav-home" title="Back to User Services">
+                            <Home size={16} />
+                        </Link>
+                        <span className="sticky-nav-divider" />
+                        <span className="sticky-nav-brand">Skill<span>Bridge</span></span>
+                    </div>
+                    <div className="sticky-nav-tabs">
+                        {tabs.map(tab => (
+                            <button
+                                key={tab.key}
+                                className={`sticky-nav-tab ${activeSection === tab.key ? 'active' : ''}`}
+                                onClick={() => {
+                                    setActiveSection(tab.key);
+                                    if (tab.key === 'My Favorites') fetchFavorites();
+                                }}
+                            >
+                                {tab.icon}
+                                <span>{tab.key}</span>
+                                {tab.count !== null && tab.count > 0 && (
+                                    <span className="sticky-nav-count">{tab.count}</span>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            </div>
 
-                {/* Sub-navigation Bar */}
-                <nav className="resources-subnav">
-                    <button
-                        className={`subnav-link ${activeSection === 'All Resources' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('All Resources')}
-                    >
-                        <Book size={18} />
-                        <span>All Resources</span>
-                    </button>
-                    <button
-                        className={`subnav-link ${activeSection === 'My Favorites' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('My Favorites')}
-                    >
-                        <Heart size={18} />
-                        <span>My Favorites</span>
-                    </button>
-                    <button
-                        className={`subnav-link ${activeSection === 'My Courses' ? 'active' : ''}`}
-                        onClick={() => setActiveSection('My Courses')}
-                    >
-                        <GraduationCap size={18} />
-                        <span>My Courses</span>
-                    </button>
-                </nav>
-
-                {activeSection === 'All Resources' ? (
+            <div className="resources-content">
+                {activeSection === 'All Resources' && (
                     <>
-                        {error && (
-                            <div className="error-alert">
-                                <AlertCircle size={20} />
-                                <span>{error}</span>
+                        <header className="resources-header">
+                            <h1 className="resources-title">
+                                IT Learning <span className="resources-title-accent">Resources</span>
+                            </h1>
+                            <p className="resources-subtitle">
+                                {resources.length}+ curated courses to advance your IT career
+                            </p>
+                        </header>
+
+                        {/* Summary cards */}
+                        {!loading && resources.length > 0 && (
+                            <div className="summary-cards">
+                                <div className="summary-card">
+                                    <div className="summary-icon" style={{ background: 'rgba(14,165,233,0.1)', color: 'var(--color-accent)' }}>
+                                        <BookOpen size={20} />
+                                    </div>
+                                    <div className="summary-info">
+                                        <span className="summary-value">{resources.length}</span>
+                                        <span className="summary-label">Total Courses</span>
+                                    </div>
+                                </div>
+                                <div className="summary-card">
+                                    <div className="summary-icon" style={{ background: 'rgba(16,185,129,0.1)', color: '#10b981' }}>
+                                        <DollarSign size={20} />
+                                    </div>
+                                    <div className="summary-info">
+                                        <span className="summary-value">{resources.filter(r => r.price === 0).length}</span>
+                                        <span className="summary-label">Free Courses</span>
+                                    </div>
+                                </div>
+                                <div className="summary-card">
+                                    <div className="summary-icon" style={{ background: 'rgba(245,158,11,0.1)', color: '#f59e0b' }}>
+                                        <Tag size={20} />
+                                    </div>
+                                    <div className="summary-info">
+                                        <span className="summary-value">{[...new Set(resources.map(r => r.category))].length}</span>
+                                        <span className="summary-label">Categories</span>
+                                    </div>
+                                </div>
+                                <div className="summary-card">
+                                    <div className="summary-icon" style={{ background: 'rgba(139,92,246,0.1)', color: '#8b5cf6' }}>
+                                        <GraduationCap size={20} />
+                                    </div>
+                                    <div className="summary-info">
+                                        <span className="summary-value">{favorites.length}</span>
+                                        <span className="summary-label">Saved</span>
+                                    </div>
+                                </div>
                             </div>
                         )}
 
-                        {/* Filter Section */}
+                        {error && (
+                            <div className="error-alert">
+                                <AlertCircle size={18} /><span>{error}</span>
+                            </div>
+                        )}
+
                         <div className="filter-section">
                             <div className="search-container">
-                                <Search className="search-icon" size={24} strokeWidth={1.5} />
+                                <Search className="search-icon" size={18} strokeWidth={2} />
                                 <input
                                     type="text"
                                     className="search-input"
-                                    placeholder="Search courses by title, provider, or description..."
+                                    placeholder="Search by title, provider, or skill..."
                                     value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onChange={e => setSearchTerm(e.target.value)}
                                 />
                             </div>
-
                             <div className="filters-grid">
-                                <div className="filter-group">
-                                    <label className="filter-label">Category</label>
-                                    <div className="filter-select-wrapper">
-                                        <select
-                                            className="filter-select"
-                                            value={category}
-                                            onChange={(e) => setCategory(e.target.value)}
-                                        >
-                                            <option value="All">All</option>
-                                            <option value="Programming">Programming</option>
-                                            <option value="Cybersecurity">Cybersecurity</option>
-                                            <option value="Cloud Computing">Cloud Computing</option>
-                                            <option value="Data Science">Data Science</option>
-                                            <option value="Design">Design</option>
-                                        </select>
-                                        <ChevronDown className="select-icon" size={20} />
+                                {[
+                                    { label: 'Category', value: category, setter: setCategory, options: ['All', 'Programming', 'Cybersecurity', 'Cloud Computing', 'Data Science', 'Design'] },
+                                    { label: 'Difficulty', value: difficulty, setter: setDifficulty, options: ['All', 'Beginner', 'Intermediate', 'Advanced'] },
+                                    { label: 'Cost', value: cost, setter: setCost, options: ['All', 'Free', 'Paid'] },
+                                    { label: 'Sort By', value: sortBy, setter: setSortBy, options: ['Newest First', 'Oldest First', 'A-Z', 'Z-A'] },
+                                ].map(f => (
+                                    <div key={f.label} className="filter-group">
+                                        <label className="filter-label">{f.label}</label>
+                                        <div className="filter-select-wrapper">
+                                            <select className="filter-select" value={f.value} onChange={e => f.setter(e.target.value)}>
+                                                {f.options.map(o => <option key={o} value={o}>{o}</option>)}
+                                            </select>
+                                            <ChevronDown className="select-icon" size={16} />
+                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="filter-group">
-                                    <label className="filter-label">Difficulty</label>
-                                    <div className="filter-select-wrapper">
-                                        <select
-                                            className="filter-select"
-                                            value={difficulty}
-                                            onChange={(e) => setDifficulty(e.target.value)}
-                                        >
-                                            <option value="All">All</option>
-                                            <option value="Beginner">Beginner</option>
-                                            <option value="Intermediate">Intermediate</option>
-                                            <option value="Advanced">Advanced</option>
-                                        </select>
-                                        <ChevronDown className="select-icon" size={20} />
-                                    </div>
-                                </div>
-
-                                <div className="filter-group">
-                                    <label className="filter-label">Cost</label>
-                                    <div className="filter-select-wrapper">
-                                        <select
-                                            className="filter-select"
-                                            value={cost}
-                                            onChange={(e) => setCost(e.target.value)}
-                                        >
-                                            <option value="All">All</option>
-                                            <option value="Free">Free</option>
-                                            <option value="Paid">Paid</option>
-                                        </select>
-                                        <ChevronDown className="select-icon" size={20} />
-                                    </div>
-                                </div>
-
-                                <div className="filter-group">
-                                    <label className="filter-label">Sort By</label>
-                                    <div className="filter-select-wrapper">
-                                        <select
-                                            className="filter-select"
-                                            value={sortBy}
-                                            onChange={(e) => setSortBy(e.target.value)}
-                                        >
-                                            <option value="Newest First">Newest First</option>
-                                            <option value="Oldest First">Oldest First</option>
-                                            <option value="A-Z">A-Z</option>
-                                            <option value="Z-A">Z-A</option>
-                                        </select>
-                                        <ChevronDown className="select-icon" size={20} />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Loading State */}
-                        {loading && (
-                            <div className="loading-state">
-                                <Loader2 className="animate-spin text-accent" size={48} />
-                                <p>Fetching amazing resources for you...</p>
-                            </div>
-                        )}
-
-                        {/* Count Info */}
-                        {!loading && !error && (
-                            <div className="results-info">
-                                Showing {sortedResources.length} of {resources.length} resources
-                            </div>
-                        )}
-
-                        {/* Resources Grid */}
-                        {!loading && !error && sortedResources.length > 0 ? (
-                            <div className="resources-grid">
-                                {sortedResources.map(resource => (
-                                    <ResourceCard key={resource.id} resource={resource} />
                                 ))}
                             </div>
-                        ) : !loading && !error && (
-                            <div className="empty-state">
-                                <div className="empty-icon-wrapper">
-                                    <Book size={64} strokeWidth={1} />
-                                </div>
-                                <h2 className="empty-title">No resources found</h2>
-                                <p className="empty-description">
-                                    Try adjusting your filters or search terms
-                                </p>
+                        </div>
+
+                        {loading ? (
+                            <div className="loading-state">
+                                <Loader2 className="animate-spin" size={40} color="var(--color-accent)" />
+                                <p>Loading courses...</p>
                             </div>
+                        ) : (
+                            <>
+                                {!error && (
+                                    <div className="results-info">
+                                        Showing {sortedResources.length} of {resources.length} courses
+                                    </div>
+                                )}
+                                {sortedResources.length > 0 ? (
+                                    <div className="resources-grid">
+                                        {sortedResources.map(resource => (
+                                            <ResourceCard key={resource.id} resource={resource} />
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="empty-state">
+                                        <div className="empty-icon-wrapper"><Book size={40} strokeWidth={1} /></div>
+                                        <h2 className="empty-title">No courses found</h2>
+                                        <p className="empty-description">Try adjusting your filters or search terms</p>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </>
-                ) : activeSection === 'My Courses' ? (
-                    <MyCourses />
-                ) : (
-                    <div className="empty-state">
-                        <div className="empty-icon-wrapper">
-                            <AlertCircle size={64} strokeWidth={1} />
-                        </div>
-                        <h2 className="empty-title">{activeSection} is coming soon</h2>
-                        <p className="empty-description">
-                            We are working hard to bring this feature to you!
-                        </p>
+                )}
+
+                {activeSection === 'My Courses' && <MyCourses />}
+
+                {activeSection === 'Recommended' && (
+                    <Recommended allCourses={resources} />
+                )}
+
+                {activeSection === 'My Favorites' && (
+                    <div className="favorites-section">
+                        <header className="resources-header">
+                            <h1 className="resources-title">My <span className="resources-title-accent">Favorites</span></h1>
+                            <p className="resources-subtitle">Courses you've saved for later</p>
+                        </header>
+                        {loading ? (
+                            <div className="loading-state">
+                                <Loader2 className="animate-spin" size={40} color="var(--color-accent)" />
+                            </div>
+                        ) : favorites.length > 0 ? (
+                            <>
+                                <div className="results-info">{favorites.length} saved course{favorites.length !== 1 ? 's' : ''}</div>
+                                <div className="resources-grid">
+                                    {favorites.map(fav => <ResourceCard key={fav.favoriteId} resource={fav.course} />)}
+                                </div>
+                            </>
+                        ) : (
+                            <div className="empty-state">
+                                <div className="empty-icon-wrapper"><Heart size={40} strokeWidth={1} /></div>
+                                <h2 className="empty-title">No favorites yet</h2>
+                                <p className="empty-description">Click the heart icon on any course to save it here</p>
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

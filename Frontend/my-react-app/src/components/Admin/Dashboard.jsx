@@ -17,6 +17,7 @@ import CounsellingManagement from './CounsellingManagement';
 import ResourceManagement from './ResourceManagement';
 import UserManagement from './UserManagement';
 import JobManagement from './JobManagement';
+import PurchaseVerification from './PurchaseVerification';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -106,15 +107,15 @@ const Dashboard = () => {
         {/* Dashboard Body */}
         <div className="content-inner text-fade-in">
           {activeTab === 'dashboard' && (
-            <>
+            <div style={{padding: '2rem'}}>
               <div className="welcome-section">
                 <h1>Welcome back, Admin</h1>
                 <p>Here’s what’s happening with your platform today.</p>
               </div>
 
               {/* Stats Grid */}
-              <div className="stats-grid">
-                <div className="stat-card">
+              <div className="dashboard-stats-grid">
+                <div className="dashboard-stat-card">
                   <div className="stat-header">
                     <span className="stat-label">Total Learners</span>
                     <Users className="text-accent" size={20} />
@@ -123,7 +124,7 @@ const Dashboard = () => {
                   <div className="stat-footer positive">+12% from last month</div>
                 </div>
 
-                <div className="stat-card">
+                <div className="dashboard-stat-card">
                   <div className="stat-header">
                     <span className="stat-label">Active Courses</span>
                     <BookOpen className="text-accent" size={20} />
@@ -132,7 +133,7 @@ const Dashboard = () => {
                   <div className="stat-footer">8 new this week</div>
                 </div>
 
-                <div className="stat-card">
+                <div className="dashboard-stat-card">
                   <div className="stat-header">
                     <span className="stat-label">Revenue</span>
                     <TrendingUp className="text-accent" size={20} />
@@ -175,7 +176,7 @@ const Dashboard = () => {
                   </table>
                 </div>
               </div>
-            </>
+            </div>
           )}
 
           {activeTab === 'questions' && <QuestionManagement />}

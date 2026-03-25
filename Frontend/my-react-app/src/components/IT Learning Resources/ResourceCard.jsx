@@ -1,61 +1,132 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Star, Clock, Globe, ExternalLink, Award } from 'lucide-react';
+import { Star, ExternalLink, Heart, Award, BookOpen, ChevronRight } from 'lucide-react';
 import './ResourceCard.css';
+import { getCourseImage } from '../../utils/courseImage';
+
+const PROVIDER_INITIALS = (name) => name?.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
 const ResourceCard = ({ resource }) => {
-    // Generate a placeholder image based on category if no image is available
-    const getPlaceholderImage = (category) => {
-        const categories = {
-            'Programming': 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&q=80',
-            'Design': 'https://images.unsplash.com/photo-1561070791-2526d30994b5?w=500&q=80',
-            'Cybersecurity': 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=500&q=80',
-            'Data Science': 'https://images.unsplash.com/photo-1551288049-bbda38a5f85f?w=500&q=80',
-            'Cloud Computing': 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=500&q=80'
-        };
-        return categories[category] || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500&q=80';
+    const [isFav, setIsFav] = useState(false);
+    const [favId, setFavId] = useState(null);
+    const [enrollment, setEnrollment] = useState(null);
+    const userId = 1;
+
+    useEffect(() => {
+        // Check favorite
+        fetch(`http://localhost:8084/api/favorites/user/${userId}`)
+            .then(r => r.ok ? r.json() : [])
+            .then(data => {
+                const f = data.find(f => f.courseId === resource.id);
+                if (f) { setIsFav(true); setFavId(f.favoriteId); }
+            }).catch(() => {});
+
+        // Check enrollment for progress
+        fetch(`http://localhost:8084/api/enrollments/user/${userId}`)
+            .then(r => r.ok ? r.json() : [])
+            .then(data => {
+                const e = data.find(e => e.courseId === resource.id);
+                if (e) setEnrollment(e);
+            }).catch(() => {});
+    }, [resource.id]);
+
+    const toggleFav = async (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        try {
+            if (isFav) {
+                await fetch(`http://localhost:8084/api/favorites/${favId}`, { method: 'DELETE' });
+                setIsFav(false); setFavId(null);
+            } else {
+                const res = await fetch('http://localhost:8084/api/favorites', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ courseId: resource.id, userId })
+                });
+                if (res.ok) { const f = await res.json(); setIsFav(true); setFavId(f.favoriteId); }
+            }
+        } catch {}
     };
 
+    const progress = enrollment?.progress ?? null;
+    const isCompleted = enrollment?.completed === 1 || progress === 100;
+    const skills = resource.skillsCovered?.split(',').map(s => s.trim()).filter(Boolean) || [];
+
     return (
-        <div className="resource-card shadow-sm hover-up">
-            <Link to={`/learning-resources/${resource.id}`} className="card-link-wrapper">
-                <div className="card-image-wrapper">
-                    <img src={getPlaceholderImage(resource.category)} alt={resource.title} className="card-image" />
-                    <div className="card-badge">{resource.category}</div>
-                    {resource.cost === 0 && <div className="free-badge">FREE</div>}
+        <div className="rc-card">
+            {/* Image */}
+            <Link to={`/learning-resources/${resource.id}`} className="rc-image-wrap">
+                <img src={getCourseImage(resource.category, resource.id)} alt={resource.title} className="rc-image" />
+
+                {/* Overlay badges */}
+                <div className="rc-badges-top">
+                    <span className="rc-category-badge">{resource.category}</span>
+                    {resource.price === 0
+                        ? <span className="rc-price-badge free">FREE</span>
+                        : <span className="rc-price-badge paid">PAID</span>
+                    }
                 </div>
 
-                <div className="card-content">
-                    <div className="card-provider">{resource.provider}</div>
-                    <h3 className="card-title">{resource.title}</h3>
+                {/* Favorite button */}
+                <button className={`rc-fav-btn ${isFav ? 'active' : ''}`} onClick={toggleFav} title={isFav ? 'Remove from favorites' : 'Add to favorites'}>
+                    <Heart size={15} fill={isFav ? '#ef4444' : 'none'} color={isFav ? '#ef4444' : 'white'} />
+                </button>
 
-                    <div className="card-meta">
-                        <div className="meta-item">
-                            <Star className="meta-icon text-yellow" size={16} fill="currentColor" />
-                            <span>{resource.rating || 'N/A'}</span>
-                        </div>
-                        <div className="meta-item">
-                            <Award className="meta-icon" size={16} />
-                            <span className={`difficulty-badge ${resource.difficultyLevel?.toLowerCase()}`}>
-                                {resource.difficultyLevel}
-                            </span>
-                        </div>
+                {/* Progress bar on image bottom if enrolled */}
+                {progress !== null && (
+                    <div className="rc-progress-strip">
+                        <div className="rc-progress-fill" style={{ width: `${progress}%` }} />
                     </div>
-
-                    <div className="card-skills">
-                        {resource.skillsCovered?.split(',').slice(0, 3).map((skill, index) => (
-                            <span key={index} className="skill-tag">{skill.trim()}</span>
-                        ))}
-                    </div>
-                </div>
+                )}
             </Link>
 
-            <div className="card-footer">
-                <div className="price-info">
-                    {resource.cost > 0 ? `$${resource.cost}` : 'Free'}
+            {/* Body */}
+            <div className="rc-body">
+                {/* Provider row */}
+                <div className="rc-provider-row">
+                    <span className="rc-provider-avatar">{PROVIDER_INITIALS(resource.provider)}</span>
+                    <span className="rc-provider-name">{resource.provider}</span>
+                    <span className={`rc-level-badge ${resource.difficultyLevel?.toLowerCase()}`}>
+                        <Award size={11} />{resource.difficultyLevel}
+                    </span>
                 </div>
-                <Link to={`/learning-resources/${resource.id}`} className="btn-view">
-                    View Course <ExternalLink size={14} />
+
+                {/* Title */}
+                <Link to={`/learning-resources/${resource.id}`} className="rc-title-link">
+                    <h3 className="rc-title">{resource.title}</h3>
+                </Link>
+
+                {/* Skills */}
+                <div className="rc-skills">
+                    {skills.slice(0, 3).map((s, i) => (
+                        <span key={i} className="rc-skill-tag">{s}</span>
+                    ))}
+                    {skills.length > 3 && <span className="rc-skill-more">+{skills.length - 3}</span>}
+                </div>
+
+                {/* Icon row: rating */}
+                <div className="rc-meta-row">
+                    <span className="rc-meta-item">
+                        <Star size={13} fill="#f59e0b" color="#f59e0b" />
+                        {resource.rating ?? 'N/A'}
+                    </span>
+                    {progress !== null && (
+                        <span className="rc-meta-item rc-progress-label">
+                            <BookOpen size={13} />
+                            {isCompleted ? 'Completed' : `${progress}% done`}
+                        </span>
+                    )}
+                </div>
+            </div>
+
+            {/* Footer */}
+            <div className="rc-footer">
+                <span className="rc-price">
+                    {resource.price > 0 ? `Rs. ${resource.price.toLocaleString()}` : 'Free'}
+                </span>
+                <Link to={`/learning-resources/${resource.id}`} className="rc-cta">
+                    {enrollment ? 'Continue' : 'View Course'}
+                    <ChevronRight size={15} />
                 </Link>
             </div>
         </div>

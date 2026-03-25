@@ -8,4 +8,5 @@ import java.util.List;
 @Repository
 public interface CourseEnrollmentRepository extends JpaRepository<CourseEnrollment, Long> {
     List<CourseEnrollment> findByUserId(Long userId);
+    List<CourseEnrollment> findByVerificationStatus(String verificationStatus);
 }

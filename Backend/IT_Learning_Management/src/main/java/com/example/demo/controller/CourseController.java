@@ -30,6 +30,12 @@ public class CourseController {
         return courseRepository.save(course);
     }
 
+    @PutMapping("/{id}")
+    public Course updateCourse(@PathVariable Long id, @RequestBody Course course) {
+        course.setId(id);
+        return courseRepository.save(course);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteCourse(@PathVariable Long id) {
         courseRepository.deleteById(id);

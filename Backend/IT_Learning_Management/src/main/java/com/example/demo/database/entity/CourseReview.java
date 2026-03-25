@@ -1,15 +1,9 @@
 package com.example.demo.database.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 @Entity
 @Table(name = "course_reviews")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class CourseReview {
 
     @Id
@@ -22,4 +16,31 @@ public class CourseReview {
 
     @Column(columnDefinition = "TEXT")
     private String reviewText;
+
+    // Constructors
+    public CourseReview() {}
+
+    public CourseReview(Long reviewId, Long courseId, Long userId, Integer rating, String reviewText) {
+        this.reviewId = reviewId;
+        this.courseId = courseId;
+        this.userId = userId;
+        this.rating = rating;
+        this.reviewText = reviewText;
+    }
+
+    // Getters and Setters
+    public Long getReviewId() { return reviewId; }
+    public void setReviewId(Long reviewId) { this.reviewId = reviewId; }
+
+    public Long getCourseId() { return courseId; }
+    public void setCourseId(Long courseId) { this.courseId = courseId; }
+
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+
+    public Integer getRating() { return rating; }
+    public void setRating(Integer rating) { this.rating = rating; }
+
+    public String getReviewText() { return reviewText; }
+    public void setReviewText(String reviewText) { this.reviewText = reviewText; }
 }
