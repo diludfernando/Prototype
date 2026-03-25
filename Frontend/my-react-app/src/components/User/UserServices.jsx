@@ -78,12 +78,12 @@ const UserServices = () => {
                 <header className="services-header">
                     <div className="header-top-actions">
                         <div className="new-profile-menu-wrapper" ref={dropdownRef}>
-                            <div 
+                            <div
                                 className="profile-trigger-container"
                                 onClick={() => setShowDropdown(!showDropdown)}
                             >
                                 <span className="profile-greeting">Hi, {formattedName}</span>
-                                <button 
+                                <button
                                     className={`new-profile-avatar-btn ${showDropdown ? 'active' : ''}`}
                                     aria-label="Profile Menu"
                                 >
@@ -97,14 +97,14 @@ const UserServices = () => {
                                         <p>My Account</p>
                                     </div>
                                     <div className="new-dropdown-body">
-                                        <button 
+                                        <button
                                             className="new-dropdown-btn"
                                             onClick={() => navigate('/view-profile')}
                                         >
                                             <User size={18} />
                                             <span>View Profile</span>
                                         </button>
-                                        <button 
+                                        <button
                                             className="new-dropdown-btn logout"
                                             onClick={handleLogout}
                                         >

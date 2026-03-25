@@ -16,10 +16,7 @@ public class StudentEligibilityController {
     @GetMapping("/{studentId}")
     public StudentEligibility getEligibility(@PathVariable Long studentId) {
         // Simple search logic, simplified for the prototype
-        return repository.findAll().stream()
-                .filter(e -> e.getStudentId().equals(studentId))
-                .findFirst()
-                .orElse(null);
+        return repository.findByStudentId(studentId).orElse(null);
     }
 
     @PostMapping
