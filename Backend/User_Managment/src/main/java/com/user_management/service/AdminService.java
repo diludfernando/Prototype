@@ -4,16 +4,20 @@ import com.user_management.dto.request.CreateCounselorRequest;
 import com.user_management.dto.request.UpdateUserRequest;
 import com.user_management.dto.response.UserResponse;
 import com.user_management.entity.CounselorProfile;
+import com.user_management.entity.StudentProfile;
 import com.user_management.entity.User;
 import com.user_management.enums.Role;
 import com.user_management.repository.CounselorProfileRepository;
+import com.user_management.repository.StudentProfileRepository;
 import com.user_management.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,6 +26,7 @@ public class AdminService {
 
     private final UserRepository userRepository;
     private final CounselorProfileRepository counselorProfileRepository;
+    private final StudentProfileRepository studentProfileRepository;
     private final PasswordEncoder passwordEncoder;
 
     public List<UserResponse> getAllUsers() {
@@ -30,10 +35,11 @@ public class AdminService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
     public UserResponse getUserById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
-        return mapToUserResponse(user);
+        return mapToDetailedUserResponse(user);
     }
 
     @Transactional
@@ -96,6 +102,12 @@ public class AdminService {
             throw new RuntimeException("Cannot delete admin accounts");
         }
 
+        if (user.getEnabled()) {
+            throw new RuntimeException("Only disabled users can be deleted");
+        }
+
+        studentProfileRepository.deleteByUserId(userId);
+        counselorProfileRepository.deleteByUserId(userId);
         userRepository.delete(user);
     }
 
@@ -131,5 +143,49 @@ public class AdminService {
                 .enabled(user.getEnabled())
                 .createdAt(user.getCreatedAt())
                 .build();
+    }
+
+    private UserResponse mapToDetailedUserResponse(User user) {
+        UserResponse response = mapToUserResponse(user);
+        response.setDetails(extractUserDetails(user));
+        return response;
+    }
+
+    private Map<String, Object> extractUserDetails(User user) {
+        Map<String, Object> details = new LinkedHashMap<>();
+
+        if (user.getRole() == Role.STUDENT) {
+            StudentProfile profile = user.getStudentProfile();
+            if (profile != null) {
+                details.put("fullName", profile.getFullName());
+                details.put("phone", profile.getPhone());
+                details.put("university", profile.getUniversity());
+                details.put("degreeProgram", profile.getDegreeProgram());
+                details.put("yearLevel", profile.getYearLevel());
+                details.put("selectedCareerPath", profile.getSelectedCareerPath());
+                details.put("careerGoals", profile.getCareerGoals());
+                details.put("skills", profile.getSkills());
+                details.put("interests", profile.getInterests());
+                details.put("about", profile.getAbout());
+                details.put("gpa", profile.getGpa());
+                details.put("linkedinUrl", profile.getLinkedinUrl());
+                details.put("githubUrl", profile.getGithubUrl());
+            }
+        }
+
+        if (user.getRole() == Role.COUNSELOR) {
+            CounselorProfile profile = user.getCounselorProfile();
+            if (profile != null) {
+                details.put("fullName", profile.getFullName());
+                details.put("phoneNumber", profile.getPhoneNumber());
+                details.put("qualification", profile.getQualification());
+                details.put("specialization", profile.getSpecialization());
+                details.put("yearsOfExperience", profile.getYearsOfExperience());
+                details.put("shortBio", profile.getShortBio());
+                details.put("linkedinUrl", profile.getLinkedinUrl());
+            }
+        }
+
+        return details;
     }
 }

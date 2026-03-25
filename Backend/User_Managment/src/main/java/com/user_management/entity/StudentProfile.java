@@ -65,7 +65,8 @@ public class StudentProfile {
     @Column(length = 200)
     private String githubUrl;
 
-    @Column(length = 300)
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String profileImageUrl;
 
     @CreationTimestamp

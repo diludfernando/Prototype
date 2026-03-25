@@ -2,6 +2,7 @@ package com.user_management.dto.request;
 
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,6 +19,7 @@ public class CounselorProfileUpdateRequest {
     private String fullName;
 
     @Size(max = 20, message = "Phone number cannot exceed 20 characters")
+    @Pattern(regexp = "^$|^\\+?[0-9]{10,15}$", message = "Phone number must be 10-15 digits and can start with +")
     private String phoneNumber;
 
     @Size(max = 200, message = "Qualification cannot exceed 200 characters")
@@ -34,8 +36,8 @@ public class CounselorProfileUpdateRequest {
     private String shortBio;
 
     @Size(max = 200, message = "LinkedIn URL cannot exceed 200 characters")
+    @Pattern(regexp = "^$|^(https?://)?(www\\.)?linkedin\\.com/.*$", message = "LinkedIn URL must be a valid linkedin.com link")
     private String linkedinUrl;
 
-    @Size(max = 300, message = "Profile image URL cannot exceed 300 characters")
     private String profileImageUrl;
 }

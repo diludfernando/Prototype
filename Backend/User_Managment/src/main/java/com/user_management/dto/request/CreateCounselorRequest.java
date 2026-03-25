@@ -2,6 +2,7 @@ package com.user_management.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,6 +21,7 @@ public class CreateCounselorRequest {
 
     @NotBlank(message = "Full name is required")
     @Size(max = 100, message = "Full name cannot exceed 100 characters")
+    @Pattern(regexp = "^(?!.*\\d).+$", message = "Full name cannot contain numbers")
     private String fullName;
 
     @NotBlank(message = "Temporary password is required")

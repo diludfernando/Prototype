@@ -23,13 +23,13 @@ const Navbar = () => {
   const isSkillGapAnalysisPage = location.pathname.startsWith('/skill-gap-analysis');
   const isCounselorCompleteProfilePage = location.pathname.startsWith('/counselor/complete-profile');
   const isCounselorDashboardPage = location.pathname.startsWith('/counselor/dashboard');
+  const isCounselorEditProfilePage = location.pathname.startsWith('/counselor/edit-profile');
+  const isCounselorProfilePage = location.pathname.startsWith('/counselor/profile');
   const isProgressDashboardPage = location.pathname.startsWith('/progress-dashboard');
   const isJobsPage = location.pathname.startsWith('/jobs');
   const isJobApplyPage = location.pathname.startsWith('/jobs/apply');
   const isMyApplicationsPage = location.pathname.startsWith('/applications');
   const isAddJobPage = location.pathname.startsWith('/admin/add-job');
-  
-  
 
 
 
@@ -50,7 +50,7 @@ const Navbar = () => {
 
   if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage || isCompleteProfilePage 
     || isViewProfilePage || isEditProfilePage || isUserManagementPage || isCreateCounselorPage || isLearningResourcesPage || isSkillGapAnalysisPage || isCounselorCompleteProfilePage || isCounselorDashboardPage
-  || isProgressDashboardPage || isJobsPage || isJobApplyPage || isMyApplicationsPage || isAddJobPage) {
+  || isProgressDashboardPage || isJobsPage || isJobApplyPage || isMyApplicationsPage || isAddJobPage || isCounselorEditProfilePage || isCounselorProfilePage) {
     return null;
   }
   // Navbar is visible on all pages except login and register

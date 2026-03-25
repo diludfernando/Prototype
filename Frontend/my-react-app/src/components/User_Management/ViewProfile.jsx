@@ -122,6 +122,20 @@ const ViewProfile = () => {
                 </header>
 
                 <div className="profile-content-grid">
+                    <div className="profile-card picture-card">
+                        <div className="profile-picture-circle">
+                            {profile?.profileImageUrl ? (
+                                <img src={profile.profileImageUrl} alt="Profile" className="profile-picture-image" />
+                            ) : (
+                                <User size={40} />
+                            )}
+                        </div>
+                        <div className="picture-info">
+                            <h3>Profile Photo</h3>
+                            <p>{profile?.profileImageUrl ? 'Profile photo added.' : 'No profile photo added yet.'}</p>
+                        </div>
+                    </div>
+
                     {/* Completion Status Card */}
                     <div className="profile-card completion-card">
                         <div className="completion-info">
@@ -137,17 +151,6 @@ const ViewProfile = () => {
                         <p className="completion-stats">
                             {completion.completedCount} of {completion.total} fields completed
                         </p>
-                    </div>
-
-                    {/* Profile Picture Box */}
-                    <div className="profile-card picture-card">
-                        <div className="profile-picture-circle">
-                            <User size={40} />
-                        </div>
-                        <div className="picture-info">
-                            <h3>Profile Picture</h3>
-                            <p>No profile picture set. Click "Edit Profile" to add one.</p>
-                        </div>
                     </div>
 
                     {/* Skill Progress Card */}
@@ -253,10 +256,6 @@ const ViewProfile = () => {
                                 <label>GitHub</label>
                                 <p className="info-value">{renderValue(profile?.githubUrl)}</p>
                             </div>
-                        </div>
-                        <div className="info-group full-width mt-4">
-                            <label>Profile Image URL</label>
-                            <p className="info-value">{renderValue(profile?.profileImageUrl)}</p>
                         </div>
                     </section>
 

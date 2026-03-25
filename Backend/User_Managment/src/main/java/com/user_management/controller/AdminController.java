@@ -47,7 +47,7 @@ public class AdminController {
     @PutMapping("/users/{id}")
     public ResponseEntity<ApiResponse<UserResponse>> updateUser(
             @PathVariable Long id,
-            @RequestBody UpdateUserRequest request) {
+            @Valid @RequestBody UpdateUserRequest request) {
         try {
             UserResponse user = adminService.updateUser(id, request);
             return ResponseEntity.ok(ApiResponse.success("User updated successfully", user));

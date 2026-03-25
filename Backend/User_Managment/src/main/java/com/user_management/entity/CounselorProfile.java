@@ -47,7 +47,8 @@ public class CounselorProfile {
     @Column(length = 200)
     private String linkedinUrl;
 
-    @Column(length = 300)
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String profileImageUrl;
 
     @CreationTimestamp

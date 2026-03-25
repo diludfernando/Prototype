@@ -29,6 +29,7 @@ import UserManagement from './components/Admin/UserManagement';
 
 // Counselor Components
 import CounselorDashboard from './components/Counselor/CounselorDashboard';
+import CounselorEditProfile from './components/Counselor/CounselorEditProfile';
 
 // User Components
 import UserServices from './components/User/UserServices';
@@ -81,6 +82,8 @@ function App() {
           {/* Counselor */}
           <Route path="/counselor/complete-profile" element={<CounselorCompleteProfile />} />
           <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
+           <Route path="/counselor/profile" element={<CounselorDashboard />} />
+          <Route path="/counselor/edit-profile" element={<CounselorEditProfile />} />
 
           {/* Admin */}
           <Route path="/admin" element={<Dashboard />} />

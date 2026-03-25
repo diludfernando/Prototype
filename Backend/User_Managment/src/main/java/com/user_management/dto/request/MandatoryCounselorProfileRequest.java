@@ -18,6 +18,7 @@ public class MandatoryCounselorProfileRequest {
 
     @NotBlank(message = "Phone number is required")
     @Size(max = 20, message = "Phone number cannot exceed 20 characters")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be 10-15 digits and can start with +")
     private String phoneNumber;
 
     @NotBlank(message = "Qualification is required")
@@ -43,4 +44,12 @@ public class MandatoryCounselorProfileRequest {
 
     @NotBlank(message = "Password confirmation is required")
     private String confirmPassword;
+
+    @AssertTrue(message = "Passwords do not match")
+    public boolean isPasswordMatching() {
+        if (newPassword == null || confirmPassword == null) {
+            return true;
+        }
+        return newPassword.equals(confirmPassword);
+    }
 }

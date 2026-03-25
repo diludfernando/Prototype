@@ -39,5 +39,6 @@ public class MandatoryProfileRequest {
 
     @NotBlank(message = "Phone number is required")
     @Size(max = 20, message = "Phone number cannot exceed 20 characters")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Phone number must be 10-15 digits and can start with +")
     private String phone;
 }

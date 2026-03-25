@@ -45,6 +45,7 @@ const EditProfile = () => {
                 const data = await response.json();
                 if (response.ok && data.success) {
                     const clean = (val) => (val === 'Not Specified' ? '' : (val || ''));
+                    const profile = data.data;
                     setFormData({
                         fullName: clean(profile.fullName),
                         phone: clean(profile.phone),
@@ -98,11 +99,71 @@ const EditProfile = () => {
         setFormData({ ...formData, [id]: value });
     };
 
+    const handleImageUpload = (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) {
+            return;
+        }
+
+        if (!file.type.startsWith('image/')) {
+            setError('Please select a valid image file.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setFormData((prev) => ({
+                ...prev,
+                profileImageUrl: reader.result || ''
+            }));
+        };
+        reader.readAsDataURL(file);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
         setMessage('');
         setError('');
+
+        const phoneRegex = /^\+?[0-9]{10,15}$/;
+        const linkedinRegex = /^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i;
+        const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/.*$/i;
+        const trimmedPhone = formData.phone.trim();
+        const trimmedLinkedinUrl = formData.linkedinUrl.trim();
+        const trimmedGithubUrl = formData.githubUrl.trim();
+        const yearLevelValue = formData.yearLevel ? parseInt(formData.yearLevel, 10) : null;
+        const gpaValue = formData.gpa ? parseFloat(formData.gpa) : null;
+
+        if (trimmedPhone && !phoneRegex.test(trimmedPhone)) {
+            setError('Phone number must be 10-15 digits and can start with +');
+            setSaving(false);
+            return;
+        }
+
+        if (yearLevelValue !== null && (yearLevelValue < 1 || yearLevelValue > 7)) {
+            setError('Year level must be between 1 and 7');
+            setSaving(false);
+            return;
+        }
+
+        if (gpaValue !== null && (Number.isNaN(gpaValue) || gpaValue < 0 || gpaValue > 4)) {
+            setError('GPA must be between 0.0 and 4.0');
+            setSaving(false);
+            return;
+        }
+
+        if (trimmedLinkedinUrl && !linkedinRegex.test(trimmedLinkedinUrl)) {
+            setError('LinkedIn URL must be a valid linkedin.com link');
+            setSaving(false);
+            return;
+        }
+
+        if (trimmedGithubUrl && !githubRegex.test(trimmedGithubUrl)) {
+            setError('GitHub URL must be a valid github.com link');
+            setSaving(false);
+            return;
+        }
 
         try {
             const token = localStorage.getItem('token');
@@ -114,8 +175,11 @@ const EditProfile = () => {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    yearLevel: formData.yearLevel ? parseInt(formData.yearLevel) : null,
-                    gpa: formData.gpa ? parseFloat(formData.gpa) : null
+                    phone: trimmedPhone,
+                    linkedinUrl: trimmedLinkedinUrl,
+                    githubUrl: trimmedGithubUrl,
+                    yearLevel: yearLevelValue,
+                    gpa: gpaValue
                 }),
             });
 
@@ -163,11 +227,15 @@ const EditProfile = () => {
 
                 <div className="edit-card profile-pic-section">
                     <div className="pic-circle">
-                        <User size={32} />
+                        {formData.profileImageUrl ? (
+                            <img src={formData.profileImageUrl} alt="Profile" className="profile-preview-image" />
+                        ) : (
+                            <User size={32} />
+                        )}
                     </div>
                     <div className="pic-text">
-                        <h3>Profile Picture</h3>
-                        <p>No profile picture set. Click "Edit Profile" to add one.</p>
+                        <h3>Profile Photo</h3>
+                        <p>Upload a profile photo from your device.</p>
                     </div>
                 </div>
 
@@ -320,13 +388,12 @@ const EditProfile = () => {
                     </div>
 
                     <div className="input-group full">
-                        <label htmlFor="profileImageUrl">Profile Image URL (Optional)</label>
+                        <label htmlFor="profileImage">Profile Photo</label>
                         <input
-                            type="text"
-                            id="profileImageUrl"
-                            value={formData.profileImageUrl}
-                            onChange={handleChange}
-                            placeholder="https://example.com/image.jpg"
+                            type="file"
+                            id="profileImage"
+                            accept="image/*"
+                            onChange={handleImageUpload}
                         />
                     </div>
 

@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface CounselorProfileRepository extends JpaRepository<CounselorProfile, Long> {
     Optional<CounselorProfile> findByUserId(Long userId);
+
+    void deleteByUserId(Long userId);
 }

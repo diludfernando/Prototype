@@ -2,3 +2,9 @@
 MODIFY COLUMN university VARCHAR(150) NULL,
 MODIFY COLUMN degree_program VARCHAR(100) NULL,
 MODIFY COLUMN year_level INT NULL;
+
+ALTER TABLE student_profiles
+ADD COLUMN profile_image_url LONGTEXT NULL;
+
+ALTER TABLE counselor_profiles
+ADD COLUMN profile_image_url LONGTEXT NULL;

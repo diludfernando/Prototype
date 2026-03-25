@@ -34,13 +34,14 @@ const UserManagement = () => {
     tempPassword: ''
   });
   const [creatingCounselor, setCreatingCounselor] = useState(false);
-
-  // Edit user state
+  const [showCreateCounselorModal, setShowCreateCounselorModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [editFormData, setEditFormData] = useState({
     email: '',
     role: ''
   });
+  const [viewingUserDetails, setViewingUserDetails] = useState(null);
+  const [detailsLoadingId, setDetailsLoadingId] = useState(null);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -88,8 +89,13 @@ const UserManagement = () => {
     }
   };
 
-  const handleDeleteUser = async (userId) => {
-    if (!window.confirm('Are you sure you want to delete this user?')) return;
+  const handleDeleteUser = async (userId, isEnabled) => {
+    if (isEnabled) {
+      alert('Only disabled users can be deleted');
+      return;
+    }
+
+    if (!window.confirm('Are you sure you want to delete this disabled user?')) return;
     try {
       const token = localStorage.getItem('token');
       const response = await fetch(`http://localhost:8081/api/admin/users/${userId}`, {
@@ -100,7 +106,7 @@ const UserManagement = () => {
       });
       const data = await response.json();
       if (data.success) {
-        setUsers(users.filter(u => u.id !== userId));
+        setUsers(users.filter((u) => u.id !== userId));
       } else {
         alert(data.message);
       }
@@ -111,6 +117,12 @@ const UserManagement = () => {
 
   const handleCreateCounselor = async (e) => {
     e.preventDefault();
+
+    if (/\d/.test(counselorForm.fullName)) {
+      alert('Full name cannot contain numbers');
+      return;
+    }
+
     setCreatingCounselor(true);
     try {
       const token = localStorage.getItem('token');
@@ -126,6 +138,7 @@ const UserManagement = () => {
       if (data.success) {
         setUsers([...users, data.data]);
         setCounselorForm({ email: '', fullName: '', tempPassword: '' });
+        setShowCreateCounselorModal(false);
         alert('Counselor created successfully');
       } else {
         alert(data.message);
@@ -151,7 +164,7 @@ const UserManagement = () => {
       });
       const data = await response.json();
       if (data.success) {
-        setUsers(users.map(u => u.id === editingUser.id ? data.data : u));
+        setUsers(users.map((u) => u.id === editingUser.id ? data.data : u));
         setEditingUser(null);
         alert('User updated successfully');
       } else {
@@ -168,6 +181,41 @@ const UserManagement = () => {
       email: user.email,
       role: user.role
     });
+  };
+
+  const toReadableLabel = (key) => {
+    return key
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, (char) => char.toUpperCase())
+      .trim();
+  };
+
+  const handleViewUserDetails = async (userId) => {
+    setDetailsLoadingId(userId);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await fetch(`http://localhost:8081/api/admin/users/${userId}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      const data = await response.json();
+      if (data.success) {
+        setViewingUserDetails(data.data);
+      } else {
+        alert(data.message || 'Failed to load user details');
+      }
+    } catch (err) {
+      alert('Failed to load user details');
+    } finally {
+      setDetailsLoadingId(null);
+    }
+  };
+
+  const handleEditFromDetails = () => {
+    if (!viewingUserDetails) return;
+    setViewingUserDetails(null);
+    startEditing(viewingUserDetails);
   };
 
   const filteredUsers = users.filter((u) => {
@@ -234,6 +282,14 @@ const UserManagement = () => {
               <h2>User Management</h2>
             </div>
             <div className="card-actions">
+              <button
+                type="button"
+                className="create-counselor-btn"
+                onClick={() => setShowCreateCounselorModal(true)}
+              >
+                <UserPlus2 size={16} />
+                <span>Create Counselor</span>
+              </button>
               <p className="card-subtitle">View and manage all system users</p>
             </div>
           </div>
@@ -288,7 +344,7 @@ const UserManagement = () => {
                         </span>
                       </td>
                       <td>
-                        <div className="status-badge">
+                        <div className={`status-badge ${user.enabled ? 'active' : 'inactive'}`}>
                           <span className={`status-dot ${user.enabled ? 'active' : 'inactive'}`}></span>
                           {user.enabled ? 'Enabled' : 'Disabled'}
                         </div>
@@ -297,11 +353,12 @@ const UserManagement = () => {
                       <td>
                         <div className="action-buttons">
                           <button
-                            className="action-btn edit"
-                            title="Edit User"
-                            onClick={() => startEditing(user)}
+                            className="action-btn view"
+                            title="View Details"
+                            onClick={() => handleViewUserDetails(user.id)}
+                            disabled={detailsLoadingId === user.id}
                           >
-                            <UserPlus size={16} />
+                            {detailsLoadingId === user.id ? <Loader2 className="animate-spin" size={16} /> : <Eye size={16} />}
                           </button>
                           <button
                             className={`action-btn ${user.enabled ? 'inactive' : 'active'}`}
@@ -311,11 +368,11 @@ const UserManagement = () => {
                           >
                             {user.enabled ? <XCircle size={16} /> : <CheckCircle2 size={16} />}
                           </button>
-                          {user.role !== 'ADMIN' && (
+                          {user.role !== 'ADMIN' && !user.enabled && (
                             <button
                               className="action-btn delete"
-                              title="Delete User"
-                              onClick={() => handleDeleteUser(user.id)}
+                              title="Delete Disabled User"
+                              onClick={() => handleDeleteUser(user.id, user.enabled)}
                             >
                               <Trash2 size={16} />
                             </button>
@@ -335,61 +392,62 @@ const UserManagement = () => {
             </table>
           </div>
         </div>
-
-        <div className="side-card">
-          <div className="card-header" style={{ padding: '0 0 1.5rem 0', borderBottom: 'none' }}>
-            <div className="card-title-group">
-              <UserPlus2 className="card-icon" size={24} />
-              <h2>Create Counselor</h2>
-            </div>
-          </div>
-          <p className="card-subtitle" style={{ marginBottom: '1.5rem' }}>Add a new counselor to the system</p>
-
-          <form className="create-counselor-form" onSubmit={handleCreateCounselor}>
-            <div className="form-group">
-              <label>Email Address</label>
-              <input
-                type="email"
-                placeholder="counselor@example.com"
-                required
-                value={counselorForm.email}
-                onChange={(e) => setCounselorForm({ ...counselorForm, email: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>Full Name</label>
-              <input
-                type="text"
-                placeholder="John Doe"
-                required
-                value={counselorForm.fullName}
-                onChange={(e) => setCounselorForm({ ...counselorForm, fullName: e.target.value })}
-              />
-            </div>
-            <div className="form-group">
-              <label>Temporary Password</label>
-              <input
-                type="password"
-                placeholder="Min. 6 characters"
-                required
-                value={counselorForm.tempPassword}
-                onChange={(e) => setCounselorForm({ ...counselorForm, tempPassword: e.target.value })}
-              />
-            </div>
-
-            <button type="submit" className="submit-btn" disabled={creatingCounselor}>
-              {creatingCounselor ? <Loader2 className="animate-spin" size={18} /> : <UserPlus size={18} />}
-              {creatingCounselor ? 'Creating...' : 'Create Counselor'}
-            </button>
-          </form>
-
-          <div className="form-note">
-            The counselor will receive these credentials and should change their password on first login.
-          </div>
-        </div>
       </div>
 
-      {/* Edit User Modal */}
+      {showCreateCounselorModal && (
+        <div className="modal-overlay">
+          <div className="modal-card">
+            <div className="modal-header">
+              <h3>Create Counselor</h3>
+              <button onClick={() => setShowCreateCounselorModal(false)} className="close-btn"><XCircle size={20} /></button>
+            </div>
+
+            <form className="create-counselor-form" onSubmit={handleCreateCounselor}>
+              <div className="form-group">
+                <label>Email Address</label>
+                <input
+                  type="email"
+                  placeholder="counselor@example.com"
+                  required
+                  value={counselorForm.email}
+                  onChange={(e) => setCounselorForm({ ...counselorForm, email: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Full Name</label>
+                <input
+                  type="text"
+                  placeholder="John Doe"
+                  required
+                  value={counselorForm.fullName}
+                  pattern="^(?!.*\d).+$"
+                  title="Full name cannot contain numbers"
+                  onChange={(e) => setCounselorForm({ ...counselorForm, fullName: e.target.value })}
+                />
+              </div>
+              <div className="form-group">
+                <label>Temporary Password</label>
+                <input
+                  type="password"
+                  placeholder="Min. 6 characters"
+                  required
+                  value={counselorForm.tempPassword}
+                  onChange={(e) => setCounselorForm({ ...counselorForm, tempPassword: e.target.value })}
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button type="button" onClick={() => setShowCreateCounselorModal(false)} className="btn-secondary">Cancel</button>
+                <button type="submit" className="btn-primary" disabled={creatingCounselor}>
+                  {creatingCounselor ? <Loader2 className="animate-spin" size={18} /> : <UserPlus size={18} />}
+                  {creatingCounselor ? 'Creating...' : 'Create Counselor'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {editingUser && (
         <div className="modal-overlay">
           <div className="modal-card">
@@ -424,6 +482,59 @@ const UserManagement = () => {
                 <button type="submit" className="btn-primary">Save Changes</button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {viewingUserDetails && (
+        <div className="modal-overlay">
+          <div className="modal-card details-modal-card">
+            <div className="modal-header">
+              <h3>User Details</h3>
+              <button onClick={() => setViewingUserDetails(null)} className="close-btn"><XCircle size={20} /></button>
+            </div>
+
+            <div className="details-modal-body">
+              <div className="detail-row">
+                <span className="detail-label">User ID</span>
+                <span className="detail-value">#{viewingUserDetails.id}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Email</span>
+                <span className="detail-value">{viewingUserDetails.email}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Role</span>
+                <span className="detail-value">{viewingUserDetails.role}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Status</span>
+                <span className="detail-value">{viewingUserDetails.enabled ? 'Enabled' : 'Disabled'}</span>
+              </div>
+              <div className="detail-row">
+                <span className="detail-label">Created</span>
+                <span className="detail-value">{new Date(viewingUserDetails.createdAt).toLocaleString()}</span>
+              </div>
+
+              {viewingUserDetails.details && Object.keys(viewingUserDetails.details).length > 0 ? (
+                <>
+                  <div className="details-section-title">Profile Details</div>
+                  {Object.entries(viewingUserDetails.details).map(([key, value]) => (
+                    <div className="detail-row" key={key}>
+                      <span className="detail-label">{toReadableLabel(key)}</span>
+                      <span className="detail-value">{value !== null && value !== '' ? String(value) : 'N/A'}</span>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="no-details-note">No profile details available for this user.</div>
+              )}
+
+              <div className="modal-actions details-actions">
+                <button type="button" onClick={() => setViewingUserDetails(null)} className="btn-secondary">Close</button>
+                <button type="button" onClick={handleEditFromDetails} className="btn-primary">Edit User</button>
+              </div>
+            </div>
           </div>
         </div>
       )}

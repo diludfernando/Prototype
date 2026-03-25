@@ -1,15 +1,16 @@
 import React from 'react';
 import { Facebook, Twitter, Instagram, Linkedin, Heart } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import './Footer.css';
-
 const Footer = () => {
+    const location = useLocation();
 
-const isdashboard = window.location.pathname === '/dashboard';
-const isadmin = window.location.pathname === '/admin';
-const iscounsellor = window.location.pathname === '/counsellor';
-const isstudent = window.location.pathname === '/student';
+    const isdashboard = location.pathname.startsWith('/dashboard');
+    const isadmin = location.pathname.startsWith('/admin');
+    const iscounsellor = location.pathname.startsWith('/counselor') || location.pathname.startsWith('/counsellor');
+    const isstudent = location.pathname.startsWith('/student');
 
-if(isdashboard || isadmin || iscounsellor || isstudent){
+    if(isdashboard || isadmin || iscounsellor || isstudent){
     return null;
 }
 
