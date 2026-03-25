@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { Edit2, Trash2, Plus, X, BookOpen, ChevronLeft, Search, ShieldCheck } from 'lucide-react';
+=======
+import { Edit2, Trash2, Plus, X, BookOpen, ChevronLeft, Search } from 'lucide-react';
+>>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
 import './ResourceManagement.css';
 import PurchaseVerification from './PurchaseVerification';
 
@@ -25,8 +29,33 @@ function getInitialsBg(title) {
     return colors[Math.abs(hash) % colors.length];
 }
 
+const emptyForm = {
+    title: '', provider: '', category: 'Programming',
+    difficultyLevel: 'Beginner', cost: 0, rating: 0,
+    skillsCovered: '', courseLink: ''
+};
+
+const emptyLesson = { title: '', description: '', videoUrl: '', durationMinutes: 0 };
+
+const CATEGORIES = ['All', 'Programming', 'Data Science', 'Cloud Computing', 'Cybersecurity', 'Design', 'Business'];
+const DIFFICULTIES = ['All', 'Beginner', 'Intermediate', 'Advanced'];
+
+function getInitials(title) {
+    return title?.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase() || '??';
+}
+
+function getInitialsBg(title) {
+    const colors = ['#3b82f6','#8b5cf6','#ec4899','#f59e0b','#10b981','#06b6d4','#ef4444'];
+    let hash = 0;
+    for (let c of (title || '')) hash = c.charCodeAt(0) + ((hash << 5) - hash);
+    return colors[Math.abs(hash) % colors.length];
+}
+
 const ResourceManagement = () => {
+<<<<<<< HEAD
     const [activeTab, setActiveTab] = useState('courses');
+=======
+>>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
     const [courses, setCourses] = useState([]);
     const [showForm, setShowForm] = useState(false);
     const [editingId, setEditingId] = useState(null);
@@ -282,6 +311,7 @@ const ResourceManagement = () => {
     // ── Main Course List View ──
     return (
         <div className="rm-page">
+<<<<<<< HEAD
             {/* Tab switcher */}
             <div className="rm-tabs">
                 <button
@@ -314,6 +344,21 @@ const ResourceManagement = () => {
                 )}
             </div>
 
+=======
+            {/* Header */}
+            <div className="rm-header">
+                <div>
+                    <h2 className="rm-title">Manage Courses</h2>
+                    <p className="rm-subtitle">Add, edit, or remove courses from the catalog</p>
+                </div>
+                {!showForm && (
+                    <button className="btn-add-new" onClick={() => setShowForm(true)}>
+                        <Plus size={18} /> Add New Course
+                    </button>
+                )}
+            </div>
+
+>>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
             {/* Stats Cards */}
             {!showForm && (
                 <div className="stats-row">
@@ -485,7 +530,10 @@ const ResourceManagement = () => {
                     )}
                 </div>
             )}
+<<<<<<< HEAD
             </>)}
+=======
+>>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
         </div>
     );
 };

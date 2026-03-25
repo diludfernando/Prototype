@@ -3,8 +3,6 @@ package com.example.jobtrack.Controller;
 import com.example.jobtrack.Dto.ReadinessResponseDto;
 import com.example.jobtrack.service.ReadinessService;
 import org.springframework.web.bind.annotation.*;
-import com.example.jobtrack.model.UserAssessment;
-import com.example.jobtrack.repository.UserAssessmentRepository;
 
 @RestController
 @RequestMapping("/api/readiness")

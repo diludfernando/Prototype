@@ -236,10 +236,14 @@ const MyCourses = () => {
                                                 </a>
                                             )}
                                             {e.enrollmentType === 'Purchased Externally' && (
+<<<<<<< HEAD
                                                 <span className="ec-purchased-badge">
                                                     {e.verificationStatus === 'PENDING' ? '⏳ Pending Approval' :
                                                      e.verificationStatus === 'REJECTED' ? '❌ Rejected' : '💳 Purchased'}
                                                 </span>
+=======
+                                                <span className="ec-purchased-badge">💳 Purchased</span>
+>>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
                                             )}
                                         </div>
                                     </div>

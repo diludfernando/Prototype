@@ -18,6 +18,7 @@ const ITLearningResources = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const userId = 1;
+<<<<<<< HEAD
 
     const fetchFavorites = async () => {
         try {
@@ -35,6 +36,8 @@ const ITLearningResources = () => {
             }
         } catch (err) { console.error(err); }
     };
+=======
+>>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
 
     useEffect(() => {
         const fetchResources = async () => {
@@ -49,6 +52,23 @@ const ITLearningResources = () => {
             } finally {
                 setLoading(false);
             }
+        };
+
+        const fetchFavorites = async () => {
+            try {
+                const response = await fetch(`http://localhost:8084/api/favorites/user/${userId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const enriched = await Promise.all(data.map(async (fav) => {
+                        try {
+                            const courseRes = await fetch(`http://localhost:8084/api/courses/${fav.courseId}`);
+                            if (!courseRes.ok) return null;
+                            return { ...fav, course: await courseRes.json() };
+                        } catch { return null; }
+                    }));
+                    setFavorites(enriched.filter(f => f !== null));
+                }
+            } catch (err) { console.error(err); }
         };
 
         fetchResources();
@@ -97,10 +117,14 @@ const ITLearningResources = () => {
                             <button
                                 key={tab.key}
                                 className={`sticky-nav-tab ${activeSection === tab.key ? 'active' : ''}`}
+<<<<<<< HEAD
                                 onClick={() => {
                                     setActiveSection(tab.key);
                                     if (tab.key === 'My Favorites') fetchFavorites();
                                 }}
+=======
+                                onClick={() => setActiveSection(tab.key)}
+>>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
                             >
                                 {tab.icon}
                                 <span>{tab.key}</span>
