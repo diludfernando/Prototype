@@ -30,12 +30,8 @@ public class CourseEnrollment {
     // Optional order/reference ID from the platform
     private String orderId;
 
-<<<<<<< HEAD
     // Admin verification: PENDING, APPROVED, REJECTED
     private String verificationStatus;
-
-=======
->>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
     // Constructors
     public CourseEnrollment() {}
 
@@ -69,10 +65,7 @@ public class CourseEnrollment {
 
     public String getOrderId() { return orderId; }
     public void setOrderId(String orderId) { this.orderId = orderId; }
-<<<<<<< HEAD
 
     public String getVerificationStatus() { return verificationStatus; }
     public void setVerificationStatus(String verificationStatus) { this.verificationStatus = verificationStatus; }
-=======
->>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
 }

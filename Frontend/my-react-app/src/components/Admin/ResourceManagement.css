@@ -486,7 +486,6 @@
     .rm-page .form-grid { grid-template-columns: 1fr; }
     .rm-page .form-group.full-width { grid-column: span 1; }
 }
-<<<<<<< HEAD
 
 .rm-tabs {
     display: flex;
@@ -519,5 +518,3 @@
     border-bottom-color: #0ea5e9;
     font-weight: 600;
 }
-=======
->>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec

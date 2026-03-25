@@ -114,7 +114,6 @@ const Recommended = ({ allCourses }) => {
     };
 
     const applyText = (text, name = '') => {
-<<<<<<< HEAD
         const trimmed = text.trim();
         if (name && trimmed.length < 20) {
             setParseError('Could not extract enough text from this file. Try pasting your skills below.');
@@ -123,18 +122,12 @@ const Recommended = ({ allCourses }) => {
         }
         const skills = extractSkills(trimmed);
         if (name) setFileName(name);
-=======
-        const skills = extractSkills(text);
-        if (name) setFileName(name); // only set filename for actual file uploads
->>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
         setExtractedSkills(skills);
         setRawText(text);
     };
 
     const handleFile = (file) => {
         if (!file) return;
-<<<<<<< HEAD
-
         // Validate MIME type
         const allowed = ['application/pdf', 'text/plain'];
         if (!allowed.includes(file.type)) {
@@ -149,8 +142,6 @@ const Recommended = ({ allCourses }) => {
         }
 
         setParseError('');
-=======
->>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
         if (file.type === 'application/pdf') { parsePDF(file); return; }
         const reader = new FileReader();
         reader.onload = e => applyText(e.target.result, file.name);
@@ -185,11 +176,7 @@ const Recommended = ({ allCourses }) => {
     const toggleInterest = (cat) =>
         setInterests(prev => prev.includes(cat) ? prev.filter(c => c !== cat) : [...prev, cat]);
 
-<<<<<<< HEAD
     const canAnalyse = extractedSkills.length > 0 || interests.length > 0 || rawText.trim().length >= 3;
-=======
-    const canAnalyse = extractedSkills.length > 0 || interests.length > 0 || rawText.trim().length > 0;
->>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
 
     return (
         <div className="rec-page">
@@ -234,11 +221,7 @@ const Recommended = ({ allCourses }) => {
                             <>
                                 <div className="rec-drop-icon"><Upload size={24} /></div>
                                 <p className="rec-drop-title">Drop your CV / skill report</p>
-<<<<<<< HEAD
                                 <p className="rec-drop-sub">PDF or TXT · max 5MB · click to browse</p>
-=======
-                                <p className="rec-drop-sub">PDF or TXT · click to browse</p>
->>>>>>> 7c6a26328449520cc6c2dec12723b27a760eebec
                             </>
                         )}
                         <input id="rec-file-input" type="file" accept=".pdf,.txt"
