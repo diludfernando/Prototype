@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import QuestionManagement from './QuestionManagement';
-import CounsellingManagement from './CounsellingManagement';
+
 import ResourceManagement from './ResourceManagement';
 import UserManagement from './UserManagement';
 import JobManagement from './JobManagement';
@@ -47,12 +47,7 @@ const Dashboard = () => {
             <BookOpen size={20} /> <span>Questions</span>
           </button>
 
-          <button
-            className={`nav-item ${activeTab === 'counselling' ? 'active' : ''}`}
-            onClick={() => setActiveTab('counselling')}
-          >
-            <Clock size={20} /> <span>Counselling</span>
-          </button>
+
           <button
             className={`nav-item ${activeTab === 'resources' ? 'active' : ''}`}
             onClick={() => setActiveTab('resources')}
@@ -61,11 +56,11 @@ const Dashboard = () => {
           </button>
 
           <button
-                className={`nav-item ${activeTab === 'jobManagement' ? 'active' : ''}`}
-                onClick={() => setActiveTab('jobManagement')}
-            >
-              <Briefcase size={20} /> <span>Job Management</span>
-            </button>
+            className={`nav-item ${activeTab === 'jobManagement' ? 'active' : ''}`}
+            onClick={() => setActiveTab('jobManagement')}
+          >
+            <Briefcase size={20} /> <span>Job Management</span>
+          </button>
         </nav>
 
         <div className="sidebar-footer">
@@ -81,12 +76,11 @@ const Dashboard = () => {
         <div className="content-inner text-fade-in">
           {activeTab === 'questions' && <QuestionManagement />}
 
-          {activeTab === 'counselling' && <CounsellingManagement />}
 
           {activeTab === 'resources' && <ResourceManagement />}
 
           {activeTab === 'users' && <UserManagement />}
-          
+
           {activeTab === 'jobManagement' && <JobManagement />}
 
           {activeTab === 'settings' && (

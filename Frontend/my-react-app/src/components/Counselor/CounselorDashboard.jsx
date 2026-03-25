@@ -10,8 +10,10 @@ import {
   GraduationCap,
   Briefcase,
   BadgeCheck,
-  Link as LinkIcon
+  Link as LinkIcon,
+  Clock
 } from 'lucide-react';
+import CounsellingManagement from './CounsellingManagement';
 import './CounselorDashboard.css';
 
 const CounselorDashboard = () => {
@@ -20,6 +22,7 @@ const CounselorDashboard = () => {
   const [profile, setProfile] = useState(null);
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileError, setProfileError] = useState('');
+  const [activeTab, setActiveTab] = useState('profile');
 
   const displayValue = (value) => {
     if (value === null || value === undefined || value === '') {
@@ -91,10 +94,16 @@ const CounselorDashboard = () => {
 
         <nav className="c-sidebar-nav">
           <button
-            className="c-nav-item active"
-            onClick={() => navigate('/counselor/profile')}
+            className={`c-nav-item ${activeTab === 'profile' ? 'active' : ''}`}
+            onClick={() => setActiveTab('profile')}
           >
             <User size={20} /> <span>Profile</span>
+          </button>
+          <button
+            className={`c-nav-item ${activeTab === 'counselling' ? 'active' : ''}`}
+            onClick={() => setActiveTab('counselling')}
+          >
+            <Clock size={20} /> <span>Counselling</span>
           </button>
 
         </nav>
@@ -112,6 +121,7 @@ const CounselorDashboard = () => {
 
         {/* Dashboard Content */}
         <div className="c-content-body">
+          {activeTab === 'profile' && (
             <div className="c-profile-page">
               <div className="c-page-header">
                 <h1>Counselor Profile</h1>
@@ -220,6 +230,9 @@ const CounselorDashboard = () => {
                 <p className="c-inline-state">No profile data available.</p>
               )}
             </div>
+          )}
+
+          {activeTab === 'counselling' && <CounsellingManagement />}
         </div>
       </main>
     </div>

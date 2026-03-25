@@ -5,11 +5,24 @@ import './NewBooking.css';
 
 const NewBooking = () => {
     const navigate = useNavigate();
+    const [counsellors, setCounsellors] = useState([]);
     const [eligibility, setEligibility] = useState({
         firstTime: true,
         fiveCourses: false,
         passedHardTest: false
     });
+
+    useEffect(() => {
+        fetch('http://localhost:8083/api/counselling/counsellors')
+            .then(res => res.json())
+            .then(data => {
+                setCounsellors(data);
+                if (data.length > 0) {
+                    setFormData(prev => ({ ...prev, counsellorId: data[0].id }));
+                }
+            })
+            .catch(err => console.error("Error fetching counsellors:", err));
+    }, []);
 
     const isEligible = eligibility.firstTime || eligibility.fiveCourses || eligibility.passedHardTest;
 
@@ -30,6 +43,12 @@ const NewBooking = () => {
         timeSlot: '09:00 AM'
     });
 
+    // Calculate tomorrow's date for 'min' attribute
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    const minDate = tomorrow.toISOString().split('T')[0];
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -39,7 +58,7 @@ const NewBooking = () => {
         e.preventDefault();
         const payload = {
             ...formData,
-            studentId: 1, // Simulated current user ID
+            studentId: parseInt(localStorage.getItem('userId')) || 1,
             isFree: isEligible,
             status: 'BOOKED'
         };
@@ -59,7 +78,16 @@ const NewBooking = () => {
                     navigate('/counselling/payment', { state: { sessionId: session.id } });
                 }
             } else {
-                alert("Failed to book session. Please try again.");
+                let errorMessage = "Failed to book session. Please try again.";
+                try {
+                    const errorData = await response.json();
+                    if (errorData && typeof errorData === 'object' && Object.keys(errorData).length > 0) {
+                        errorMessage = Object.values(errorData).join('\n');
+                    }
+                } catch (parseError) {
+                    console.error("Failed to parse error response:", parseError);
+                }
+                alert(errorMessage);
             }
         } catch (error) {
             console.error("Booking error:", error);
@@ -130,9 +158,10 @@ const NewBooking = () => {
                             <label>Select Counsellor</label>
                             <div className="select-wrapper">
                                 <select name="counsellorId" value={formData.counsellorId} onChange={handleChange}>
-                                    <option value="1">Dr. kapila jinadasha- AI Specialist</option>
-                                    <option value="2">jayaindu vithana - Logic Specialist</option>
-                                    <option value="3">chathushi gunawardhna - Systems Specialist</option>
+                                    {counsellors.map(c => (
+                                        <option key={c.id} value={c.id}>{c.name} - {c.specialization}</option>
+                                    ))}
+                                    {counsellors.length === 0 && <option value="">Loading counsellors...</option>}
                                 </select>
                             </div>
                         </div>
@@ -140,7 +169,7 @@ const NewBooking = () => {
                         <div className="form-group">
                             <label>Select Date</label>
                             <div className="input-wrapper">
-                                <input type="date" name="sessionDate" value={formData.sessionDate} onChange={handleChange} required />
+                                <input type="date" name="sessionDate" value={formData.sessionDate} min={minDate} onChange={handleChange} required />
                             </div>
                         </div>
 

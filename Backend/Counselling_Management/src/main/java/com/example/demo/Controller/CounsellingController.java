@@ -3,9 +3,11 @@ package com.example.demo.Controller;
 import com.example.demo.dto.PaymentRequest;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
+import com.example.demo.service.CounsellingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -23,15 +25,18 @@ public class CounsellingController {
     private final CounsellingSessionRepository sessionRepository;
     private final PaymentRepository paymentRepository;
     private final SessionNoteRepository sessionNoteRepository;
+    private final CounsellingService counsellingService;
 
     public CounsellingController(CounsellorRepository counsellorRepository,
             CounsellingSessionRepository sessionRepository,
             PaymentRepository paymentRepository,
-            SessionNoteRepository sessionNoteRepository) {
+            SessionNoteRepository sessionNoteRepository,
+            CounsellingService counsellingService) {
         this.counsellorRepository = counsellorRepository;
         this.sessionRepository = sessionRepository;
         this.paymentRepository = paymentRepository;
         this.sessionNoteRepository = sessionNoteRepository;
+        this.counsellingService = counsellingService;
     }
 
     @GetMapping("/")
@@ -41,22 +46,13 @@ public class CounsellingController {
     }
 
     @PostMapping("/book")
-    public ResponseEntity<CounsellingSession> bookSession(@RequestBody CounsellingSession session) {
-        if (session.getIsFree() != null && session.getIsFree()) {
-            session.setPaymentStatus(PaymentStatus.FREE);
-        } else {
-            session.setPaymentStatus(PaymentStatus.PENDING);
-        }
-        if (session.getStatus() == null) {
-            session.setStatus(SessionStatus.BOOKED);
-        }
-        CounsellingSession savedSession = sessionRepository.save(session);
-        return ResponseEntity.ok(savedSession);
+    public ResponseEntity<CounsellingSession> bookSession(@Valid @RequestBody CounsellingSession session) {
+        return ResponseEntity.ok(counsellingService.bookSession(session));
     }
 
     @PostMapping("/pay/{sessionId}")
     public ResponseEntity<?> simulatePayment(@PathVariable Long sessionId,
-            @RequestBody PaymentRequest paymentRequest) {
+            @Valid @RequestBody PaymentRequest paymentRequest) {
 
         // Validations
         Map<String, String> errors = new HashMap<>();
@@ -70,9 +66,6 @@ public class CounsellingController {
         if (paymentRequest.getExpiry() == null
                 || !Pattern.matches("(0[1-9]|1[0-2])/\\d{2}", paymentRequest.getExpiry())) {
             errors.put("expiry", "Expiry must be in MM/YY format.");
-        }
-        if (paymentRequest.getCardHolder() == null || paymentRequest.getCardHolder().trim().isEmpty()) {
-            errors.put("cardHolder", "Card holder name is required.");
         }
 
         if (!errors.isEmpty()) {
@@ -135,5 +128,15 @@ public class CounsellingController {
         session.setStatus(status);
         CounsellingSession updatedSession = sessionRepository.save(session);
         return ResponseEntity.ok(updatedSession);
+    }
+
+    @GetMapping("/counsellors")
+    public ResponseEntity<List<Counsellor>> getAllCounsellors() {
+        return ResponseEntity.ok(counsellorRepository.findAll());
+    }
+
+    @GetMapping("/student/{studentId}")
+    public ResponseEntity<List<CounsellingSession>> getSessionsByStudent(@PathVariable Long studentId) {
+        return ResponseEntity.ok(sessionRepository.findByStudentId(studentId));
     }
 }

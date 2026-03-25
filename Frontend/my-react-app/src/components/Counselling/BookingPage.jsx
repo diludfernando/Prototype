@@ -9,7 +9,12 @@ const BookingPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('http://localhost:8083/api/counselling/all')
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            setLoading(false);
+            return;
+        }
+        fetch(`http://localhost:8083/api/counselling/student/${userId}`)
             .then(res => res.json())
             .then(data => {
                 setSessions(data);
@@ -21,14 +26,7 @@ const BookingPage = () => {
             });
     }, []);
 
-    const getCounsellorName = (id) => {
-        const names = {
-            1: 'Dr. Alan Turing',
-            2: 'Ada Lovelace',
-            3: 'Grace Hopper'
-        };
-        return names[id] || `Counsellor #${id}`;
-    };
+
     return (
         <div className="booking-page animate-fade-in">
             <div className="container">
@@ -59,7 +57,7 @@ const BookingPage = () => {
                                             <User size={24} />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-bold">{getCounsellorName(session.counsellorId)}</h3>
+                                            <h3 className="text-xl font-bold">{session.counsellorName || `Counsellor #${session.counsellorId}`}</h3>
                                             <p className="session-type">IT Career Counselling</p>
                                         </div>
                                     </div>
