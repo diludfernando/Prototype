@@ -4,7 +4,14 @@ import './Footer.css';
 
 const Footer = () => {
 
+const isdashboard = window.location.pathname === '/dashboard';
+const isadmin = window.location.pathname === '/admin';
+const iscounsellor = window.location.pathname === '/counsellor';
+const isstudent = window.location.pathname === '/student';
 
+if(isdashboard || isadmin || iscounsellor || isstudent){
+    return null;
+}
 
 
     return (

@@ -17,6 +17,9 @@ const QuestionManagement = () => {
         level: 'Easy'
     });
     const [searchTerm, setSearchTerm] = useState('');
+    const [filterCategory, setFilterCategory] = useState('All');
+    const [filterLevel, setFilterLevel] = useState('All');
+
 
     const API_URL = 'http://localhost:8082/api/questions';
 
@@ -105,68 +108,140 @@ const QuestionManagement = () => {
         }
     };
 
-    const filteredQuestions = questions.filter(q =>
-        q.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        q.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredQuestions = questions.filter(q => {
+        const matchesSearch = q.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            q.category.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = filterCategory === 'All' || q.category === filterCategory;
+        const matchesLevel = filterLevel === 'All' || q.level === filterLevel;
+
+        return matchesSearch && matchesCategory && matchesLevel;
+    });
+
+
+    // Stats
+    const totalQuestions = questions.length;
+    const easyCount = questions.filter(q => q.level === 'Easy').length;
+    const mediumCount = questions.filter(q => q.level === 'Medium').length;
+    const hardCount = questions.filter(q => q.level === 'Hard').length;
+
 
     return (
-        <div className="question-management">
-            <div className="section-header">
+        <div className="rm-page">
+            <div className="rm-header">
                 <div>
-                    <h2>Question Bank</h2>
-                    <p className="text-muted">Manage your skill assessment questions here.</p>
+                    <h2 className="rm-title">Manage Questions</h2>
+                    <p className="rm-subtitle">Add, edit, or remove questions from the assessment bank</p>
                 </div>
-                <button className="btn btn-primary" onClick={() => { resetForm(); setIsModalOpen(true); }}>
-                    <Plus size={18} /> Add Question
-                </button>
+                {!isModalOpen && (
+                    <button className="btn-add-new" onClick={() => { resetForm(); setIsModalOpen(true); }}>
+                        <Plus size={18} /> Add New Question
+                    </button>
+                )}
             </div>
 
-            <div className="management-controls">
-                <div className="search-box">
-                    <Search size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search questions or categories..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+            {!isModalOpen && (
+                <div className="stats-row">
+                    <div className="stat-card">
+                        <span className="stat-value">{totalQuestions}</span>
+                        <span className="stat-label">Total Questions</span>
+                    </div>
+                    <div className="stat-card stat-free">
+                        <span className="stat-value">{easyCount}</span>
+                        <span className="stat-label">Easy Level</span>
+                    </div>
+                    <div className="stat-card stat-paid">
+                        <span className="stat-value">{mediumCount}</span>
+                        <span className="stat-label">Medium Level</span>
+                    </div>
+                    <div className="stat-card stat-rating">
+                        <span className="stat-value">{hardCount}</span>
+                        <span className="stat-label">Hard Level</span>
+                    </div>
                 </div>
-            </div>
+            )}
 
-            <div className="table-container shadow-md">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Question</th>
-                            <th>Category</th>
-                            <th>Level</th>
-                            <th>Correct Answer</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredQuestions.map((q) => (
-                            <tr key={q.id}>
-                                <td className="question-text-cell">{q.content}</td>
-                                <td><span className="badge category-badge">{q.category}</span></td>
-                                <td><span className={`badge level-badge ${q.level.toLowerCase()}`}>{q.level}</span></td>
-                                <td className="text-accent font-bold">{q.correctAnswer}</td>
-                                <td>
-                                    <div className="action-buttons">
-                                        <button className="icon-btn edit-btn" onClick={() => handleEdit(q)}>
-                                            <Pencil size={18} />
-                                        </button>
-                                        <button className="icon-btn delete-btn" onClick={() => handleDelete(q.id)}>
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </div>
-                                </td>
+            <div className="rm-card table-card">
+                <div className="filter-row">
+                    <div className="search-box">
+                        <Search size={16} className="search-icon" />
+                        <input
+                            type="text"
+                            placeholder="Search questions or categories..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                    </div>
+                    <select value={filterCategory} onChange={(e) => setFilterCategory(e.target.value)}>
+                        <option value="All">All Categories</option>
+                        <option value="Java">Java</option>
+                        <option value="HTML">HTML</option>
+                        <option value="CSS">CSS</option>
+                        <option value="JavaScript">JavaScript</option>
+                        <option value="React">React</option>
+                        <option value="Python">Python</option>
+                        <option value="SQL">SQL</option>
+                        <option value="Spring Boot">Spring Boot</option>
+                        <option value="Node.js">Node.js</option>
+                        <option value="AWS">AWS</option>
+                        <option value="Git">Git</option>
+                        <option value="Docker">Docker</option>
+                        <option value="Kubernetes">Kubernetes</option>
+                        <option value="C#">C#</option>
+                        <option value="C++">C++</option>
+                    </select>
+                    <select value={filterLevel} onChange={(e) => setFilterLevel(e.target.value)}>
+                        <option value="All">All Levels</option>
+                        <option value="Easy">Easy</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Hard">Hard</option>
+                    </select>
+                </div>
+
+                <div className="table-card-header">
+                    <span className="table-count">{filteredQuestions.length} of {totalQuestions} questions</span>
+                </div>
+
+                <div className="rm-table-wrap">
+                    <table className="rm-table">
+                        <thead>
+                            <tr>
+                                <th>Question</th>
+                                <th>Category</th>
+                                <th>Level</th>
+                                <th>Correct Answer</th>
+                                <th>Actions</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {filteredQuestions.map((q) => (
+                                <tr key={q.id}>
+                                    <td className="td-title" style={{ maxWidth: '400px', whiteSpace: 'normal' }}>
+                                        {q.content}
+                                    </td>
+                                    <td><span className="badge badge-category">{q.category}</span></td>
+                                    <td>
+                                        <span className={`badge badge-${q.level.toLowerCase()}`}>
+                                            {q.level}
+                                        </span>
+                                    </td>
+                                    <td className="td-price" style={{ color: '#0ea5e9' }}>{q.correctAnswer}</td>
+                                    <td>
+                                        <div className="action-btns">
+                                            <button className="act-btn act-edit" onClick={() => handleEdit(q)} title="Edit">
+                                                <Pencil size={14} />
+                                            </button>
+                                            <button className="act-btn act-delete" onClick={() => handleDelete(q.id)} title="Delete">
+                                                <Trash2 size={14} />
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
             </div>
+
 
             {isModalOpen && (
                 <div className="modal-overlay">
