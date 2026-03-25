@@ -135,7 +135,6 @@ const Checkout = () => {
                                     autoComplete="cc-number"
                                     required
                                 />
-                                <CreditCard size={18} className="input-icon" />
                             </div>
                             {fieldErrors.cardNumber && <p className="field-error">{fieldErrors.cardNumber}</p>}
                         </div>
@@ -169,7 +168,6 @@ const Checkout = () => {
                                         autoComplete="cc-csc"
                                         required
                                     />
-                                    <Lock size={18} className="input-icon" />
                                 </div>
                                 {fieldErrors.cvv && <p className="field-error">{fieldErrors.cvv}</p>}
                             </div>

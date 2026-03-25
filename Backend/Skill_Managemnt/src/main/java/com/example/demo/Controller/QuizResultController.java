@@ -16,6 +16,15 @@ public class QuizResultController {
     @Autowired
     private QuizResultService service;
 
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getResults(@PathVariable String username) {
+        try {
+            return ResponseEntity.ok(service.getResultsByUsername(username));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error fetching results: " + e.getMessage());
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> saveResult(@RequestBody QuizResult result) {
         try {

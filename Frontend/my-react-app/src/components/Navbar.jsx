@@ -30,6 +30,8 @@ const Navbar = () => {
   const isJobApplyPage = location.pathname.startsWith('/jobs/apply');
   const isMyApplicationsPage = location.pathname.startsWith('/applications');
   const isAddJobPage = location.pathname.startsWith('/admin/add-job');
+  const isSkillComparisonPage = location.pathname.startsWith('/skill-comparison');
+  const isSkillGapAnalysisresult= location.pathname.startsWith('/gap-results');
 
 
 
@@ -50,7 +52,8 @@ const Navbar = () => {
 
   if (isLoginPage || isRegisterPage || isAdminPage || isAssessmentPage || isServicesPage || isCounsellingPage || isCompleteProfilePage 
     || isViewProfilePage || isEditProfilePage || isUserManagementPage || isCreateCounselorPage || isLearningResourcesPage || isSkillGapAnalysisPage || isCounselorCompleteProfilePage || isCounselorDashboardPage
-  || isProgressDashboardPage || isJobsPage || isJobApplyPage || isMyApplicationsPage || isAddJobPage || isCounselorEditProfilePage || isCounselorProfilePage) {
+  || isProgressDashboardPage || isJobsPage || isJobApplyPage || isMyApplicationsPage || isAddJobPage || isCounselorEditProfilePage || isCounselorProfilePage
+  || isSkillComparisonPage || isSkillGapAnalysisresult) {
     return null;
   }
   // Navbar is visible on all pages except login and register

@@ -93,7 +93,7 @@
 
 .input-wrapper input {
     width: 100%;
-    padding: 1rem 1rem 1rem 3rem;
+    padding: 1rem 1rem 1rem 3.5rem;
     border: 1px solid var(--color-border);
     border-radius: 8px;
     font-size: 1rem;
@@ -101,10 +101,23 @@
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.input-wrapper input:focus {
+.input-wrapper input:focus, .role-select:focus {
     outline: none;
     border-color: var(--color-accent);
     box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.role-select {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--color-text-main);
+    background-color: white;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .btn-primary {
@@ -330,10 +343,82 @@
         opacity: 1;
     }
 }
-
 @keyframes slideUp {
     to {
         opacity: 1;
         transform: translateY(0);
     }
+}
+
+/* Your Skills Card styles */
+.your-skills-section {
+    margin-top: 2rem;
+}
+
+.your-skills-card {
+    background-color: var(--color-surface);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.your-skills-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+}
+
+.skill-icon-box {
+    width: 48px;
+    height: 48px;
+    background-color: #ECFDF5; /* Light green as in image */
+    color: #10B981; /* Success green */
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.skills-content {
+    flex-grow: 1;
+}
+
+.skills-content h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.skills-list-minimal {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skill-badge-premium {
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    padding: 0.35rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    border: 1px solid var(--color-border);
+    transition: all 0.2s ease;
+}
+
+.skill-badge-premium:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background-color: white;
+}
+
+.no-skills-text {
+    font-size: 0.875rem;
+    color: var(--color-text-muted);
+    font-style: italic;
 }

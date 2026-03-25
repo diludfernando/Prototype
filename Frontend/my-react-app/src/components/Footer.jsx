@@ -10,8 +10,9 @@ const Footer = () => {
     const iscounsellor = location.pathname.startsWith('/counselor') || location.pathname.startsWith('/counsellor');
     const isstudent = location.pathname.startsWith('/student');
     const isassessment = location.pathname.startsWith('/assessment');
+    const isSkillComparisonPage = location.pathname.startsWith('/skill-comparison');
 
-    if(isdashboard || isadmin || iscounsellor || isstudent || isassessment){
+    if(isdashboard || isadmin || iscounsellor || isstudent || isassessment || isSkillComparisonPage){
     return null;
 }
 

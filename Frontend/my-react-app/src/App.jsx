@@ -14,6 +14,8 @@ import BeginnerQuiz from './components/Skill Assessment/BeginnerQuiz';
 import IntermediateQuiz from './components/Skill Assessment/IntermediateQuiz';
 import AdvancedQuiz from './components/Skill Assessment/AdvancedQuiz';
 import SkillGapAnalysis from './components/Skill Assessment/SkillGapAnalysis';
+import SkillComparison from './components/Skill Assessment/SkillComparison';
+import GapAnalysisResults from './components/Skill Assessment/GapAnalysisResults';
 
 // User Management Components
 import Login from './components/User_Management/Login';
@@ -71,6 +73,8 @@ function App() {
           <Route path='/assessment/intermediate' element={<IntermediateQuiz />} />
           <Route path="/assessment/advanced" element={<AdvancedQuiz />} />
           <Route path="/skill-gap-analysis" element={<SkillGapAnalysis />} />
+          <Route path="/skill-comparison" element={<SkillComparison />} />
+          <Route path="/gap-results" element={<GapAnalysisResults />} />
 
           {/* User Management */}
           <Route path="/login" element={<Login />} />
@@ -82,7 +86,7 @@ function App() {
           {/* Counselor */}
           <Route path="/counselor/complete-profile" element={<CounselorCompleteProfile />} />
           <Route path="/counselor/dashboard" element={<CounselorDashboard />} />
-           <Route path="/counselor/profile" element={<CounselorDashboard />} />
+          <Route path="/counselor/profile" element={<CounselorDashboard />} />
           <Route path="/counselor/edit-profile" element={<CounselorEditProfile />} />
 
           {/* Admin */}
@@ -103,12 +107,12 @@ function App() {
 
 
 
-             <Route path="/progress-dashboard" element={<ProgressDashboard />} />
-            <Route path="/jobs" element={<JobsPortal />} />
-            <Route path="/jobs/apply/:id" element={<JobApply />} />
-            <Route path="/applications" element={<MyApplications />} />
+          <Route path="/progress-dashboard" element={<ProgressDashboard />} />
+          <Route path="/jobs" element={<JobsPortal />} />
+          <Route path="/jobs/apply/:id" element={<JobApply />} />
+          <Route path="/applications" element={<MyApplications />} />
 
-            <Route path="/admin/add-job" element={<AddJob />} />
+          <Route path="/admin/add-job" element={<AddJob />} />
         </Routes>
       </main>
       <Footer />
