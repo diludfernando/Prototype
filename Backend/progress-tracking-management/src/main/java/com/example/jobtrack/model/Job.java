@@ -1,6 +1,8 @@
 package com.example.jobtrack.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "jobs")
@@ -33,6 +35,10 @@ public class Job {
 
     @Column(name = "source_url")
     private String sourceUrl;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "job_id")
+    private List<JobRequirement> requirements = new ArrayList<>();
 
     public Job() {}
 
@@ -70,4 +76,7 @@ public class Job {
 
     public String getSourceUrl() { return sourceUrl; }
     public void setSourceUrl(String sourceUrl) { this.sourceUrl = sourceUrl; }
+
+    public List<JobRequirement> getRequirements() { return requirements; }
+    public void setRequirements(List<JobRequirement> requirements) { this.requirements = requirements; }
 }

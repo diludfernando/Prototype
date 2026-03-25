@@ -8,8 +8,18 @@ import {
     PlusCircle,
     Save,
     XCircle,
+    Plus,
+    Minus,
 } from "lucide-react";
 import "./JobManagement.css";
+
+const IT_LANGUAGES = [
+    "Java", "Python", "JavaScript", "React", "Node.js", "C#", "C++", "PHP", 
+    "Ruby", "Swift", "Go", "Kotlin", "TypeScript", "SQL", "AWS", "Azure", 
+    "Docker", "Kubernetes", "HTML/CSS", "Flutter", "React Native", "Angular", "Vue.js"
+];
+
+const JOB_LEVELS = ["1", "2", "3", "4", "5"];
 
 export default function JobManagement() {
     const role = localStorage.getItem("role");
@@ -31,6 +41,7 @@ export default function JobManagement() {
         salaryMin: "",
         salaryMax: "",
         sourceUrl: "",
+        requirements: [{ language: "", level: "" }],
     };
 
     const [form, setForm] = useState(emptyForm);
@@ -67,6 +78,25 @@ export default function JobManagement() {
         setError("");
     };
 
+    const handleRequirementChange = (index, field, value) => {
+        const newReqs = [...form.requirements];
+        newReqs[index][field] = value;
+        setForm((prev) => ({ ...prev, requirements: newReqs }));
+    };
+
+    const addRequirement = () => {
+        setForm((prev) => ({
+            ...prev,
+            requirements: [...prev.requirements, { language: "", level: "" }],
+        }));
+    };
+
+    const removeRequirement = (index) => {
+        if (form.requirements.length <= 1) return;
+        const newReqs = form.requirements.filter((_, i) => i !== index);
+        setForm((prev) => ({ ...prev, requirements: newReqs }));
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSuccess("");
@@ -77,6 +107,7 @@ export default function JobManagement() {
                 ...form,
                 salaryMin: form.salaryMin ? Number(form.salaryMin) : null,
                 salaryMax: form.salaryMax ? Number(form.salaryMax) : null,
+                requirements: form.requirements
             };
 
             const url = editingId
@@ -121,6 +152,9 @@ export default function JobManagement() {
             salaryMin: job.salaryMin || "",
             salaryMax: job.salaryMax || "",
             sourceUrl: job.sourceUrl || "",
+            requirements: job.requirements && job.requirements.length > 0
+                ? job.requirements
+                : [{ language: "", level: "" }],
         });
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
@@ -181,19 +215,56 @@ export default function JobManagement() {
                             <input name="location" value={form.location} onChange={handleChange} required />
                         </div>
 
-                        <div className="jobman-field">
-                            <label>Category</label>
-                            <input name="category" value={form.category} onChange={handleChange} required />
+                        <div className="jobman-field jobman-full">
+                            <div className="jobman-req-header">
+                                <label>Language Requirements</label>
+                                <button type="button" onClick={addRequirement} className="jobman-add-req">
+                                    <Plus size={16} /> Add Language
+                                </button>
+                            </div>
+                            <div className="jobman-req-list">
+                                {form.requirements.map((req, index) => (
+                                    <div key={index} className="jobman-req-row">
+                                        <div className="jobman-field">
+                                            <select
+                                                value={req.language}
+                                                onChange={(e) => handleRequirementChange(index, "language", e.target.value)}
+                                                required
+                                            >
+                                                <option value="">Select Language</option>
+                                                {IT_LANGUAGES.map((lang) => (
+                                                    <option key={lang} value={lang}>{lang}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="jobman-field">
+                                            <select
+                                                value={req.level}
+                                                onChange={(e) => handleRequirementChange(index, "level", e.target.value)}
+                                                required
+                                            >
+                                                <option value="">Select Level</option>
+                                                {JOB_LEVELS.map((lvl) => (
+                                                    <option key={lvl} value={lvl}>{lvl}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            className="jobman-remove-req"
+                                            onClick={() => removeRequirement(index)}
+                                            disabled={form.requirements.length <= 1}
+                                        >
+                                            <Minus size={16} />
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
 
                         <div className="jobman-field">
                             <label>Job Type</label>
                             <input name="jobType" value={form.jobType} onChange={handleChange} required />
-                        </div>
-
-                        <div className="jobman-field">
-                            <label>Level</label>
-                            <input name="level" value={form.level} onChange={handleChange} required />
                         </div>
 
                         <div className="jobman-field">
@@ -268,8 +339,18 @@ export default function JobManagement() {
                                     </div>
 
                                     <div className="jobman-badges">
-                                        <span>{job.category || "General"}</span>
-                                        <span>{job.level || "Open"}</span>
+                                        {job.requirements && job.requirements.length > 0 ? (
+                                            job.requirements.map((req, idx) => (
+                                                <span key={idx}>
+                                                    {req.language}: {req.level}
+                                                </span>
+                                            ))
+                                        ) : (
+                                            <>
+                                                <span>{job.category || "General"}</span>
+                                                <span>{job.level || "Open"}</span>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
 

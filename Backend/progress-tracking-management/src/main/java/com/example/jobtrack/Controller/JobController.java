@@ -64,6 +64,13 @@ public class JobController {
         job.setSalaryMax(updatedJob.getSalaryMax());
         job.setSourceUrl(updatedJob.getSourceUrl());
 
+        // Sync requirements
+        job.getRequirements().clear();
+        if (updatedJob.getRequirements() != null) {
+            updatedJob.getRequirements().forEach(req -> req.setId(null)); // Ensure new IDs if they were sent with IDs
+            job.getRequirements().addAll(updatedJob.getRequirements());
+        }
+
         return jobRepository.save(job);
     }
 
