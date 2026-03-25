@@ -45,7 +45,7 @@ public class ProgressService {
 
         for (QuizResult res : results) {
             double percentage = (double) res.getScore() / res.getTotalQuestions() * 100;
-            if (percentage >= 80) { // Clearing threshold
+            if (percentage >= 50) { // Lowering clearing threshold to 50% as per user requirement
                 String level = res.getLevel();
                 if ("Beginner".equalsIgnoreCase(level)) beginnerPassed = true;
                 if ("Intermediate".equalsIgnoreCase(level)) intermediatePassed = true;
@@ -76,5 +76,32 @@ public class ProgressService {
     public Optional<UserProgress> getProgress(String username) {
         syncProgress(username);
         return userProgressRepository.findByStudentUsername(username);
+    }
+
+    public String getHighestLevelPassedByCategory(String username, String category) {
+        List<QuizResult> results = quizResultRepository.findByStudentUsername(username);
+        
+        boolean beginnerPassed = false;
+        boolean intermediatePassed = false;
+        boolean advancedPassed = false;
+
+        for (QuizResult res : results) {
+            String dbCategory = res.getCategory() != null ? res.getCategory().trim() : "";
+            if (category.trim().equalsIgnoreCase(dbCategory)) {
+                double percentage = (double) res.getScore() / res.getTotalQuestions() * 100;
+                System.out.println("Match found! Category: " + category + ", Level: " + res.getLevel() + ", Score: " + res.getScore() + "/" + res.getTotalQuestions() + " (" + percentage + "%)");
+                if (percentage >= 50) {
+                    String level = res.getLevel();
+                    if ("Beginner".equalsIgnoreCase(level)) beginnerPassed = true;
+                    if ("Intermediate".equalsIgnoreCase(level)) intermediatePassed = true;
+                    if ("Advanced".equalsIgnoreCase(level)) advancedPassed = true;
+                }
+            }
+        }
+
+        if (advancedPassed) return "Advanced";
+        if (intermediatePassed) return "Intermediate";
+        if (beginnerPassed) return "Beginner";
+        return "None";
     }
 }

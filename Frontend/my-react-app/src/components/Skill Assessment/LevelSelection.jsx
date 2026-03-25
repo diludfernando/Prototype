@@ -8,33 +8,44 @@ const LevelSelection = () => {
     const [selectedCategory, setSelectedCategory] = React.useState('Java');
     const [skillProgress, setSkillProgress] = useState(null);
 
-    useEffect(() => {
-        const fetchSkillProgress = async () => {
-            const username = localStorage.getItem('username');
-            if (!username) return;
+    const fetchSkillProgress = async (category) => {
+        const username = localStorage.getItem('username');
+        if (!username || !category) return;
 
-            try {
-                const response = await fetch(`http://localhost:8082/api/progress/${username}`);
-                if (response.ok) {
-                    const data = await response.json();
-                    setSkillProgress(data);
-                }
-            } catch (error) {
-                console.error('Error fetching skill progress:', error);
+        try {
+            const response = await fetch(`http://localhost:8082/api/progress/${username}/category/${encodeURIComponent(category)}`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log(`Fetched progress for ${category}:`, data);
+                setSkillProgress(data);
             }
-        };
+        } catch (error) {
+            console.error('Error fetching skill progress:', error);
+        }
+    };
 
-        fetchSkillProgress();
-    }, []);
+    useEffect(() => {
+        fetchSkillProgress(selectedCategory);
+    }, [selectedCategory]);
 
     const isLevelLocked = (levelId) => {
-        if (!skillProgress) return levelId !== 'easy'; // Only beginner open by default
+        if (!skillProgress) return levelId !== 'easy'; 
         
         const highest = skillProgress.highestLevelPassed?.toLowerCase() || 'none';
+        console.log(`Checking lock for ${levelId}, Highest Passed: ${highest}`);
         
-        if (levelId === 'easy') return false;
-        if (levelId === 'medium') return highest === 'none'; // Needs beginner
-        if (levelId === 'hard') return highest === 'none' || highest === 'beginner'; // Needs intermediate
+        if (levelId === 'easy') return false; // Beginner is always open
+        
+        // Intermediate (medium) unlocks if Beginner (easy) or higher is passed
+        if (levelId === 'medium') {
+            return !['beginner', 'intermediate', 'advanced'].includes(highest);
+        }
+        
+        // Advanced (hard) unlocks if Intermediate (medium) or higher is passed
+        if (levelId === 'hard') {
+            return !['intermediate', 'advanced'].includes(highest);
+        }
+        
         return false;
     };
 

@@ -9,8 +9,9 @@ const Footer = () => {
     const isadmin = location.pathname.startsWith('/admin');
     const iscounsellor = location.pathname.startsWith('/counselor') || location.pathname.startsWith('/counsellor');
     const isstudent = location.pathname.startsWith('/student');
+    const isassessment = location.pathname.startsWith('/assessment');
 
-    if(isdashboard || isadmin || iscounsellor || isstudent){
+    if(isdashboard || isadmin || iscounsellor || isstudent || isassessment){
     return null;
 }
 

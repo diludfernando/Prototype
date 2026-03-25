@@ -206,27 +206,28 @@ const AdvancedQuiz = () => {
 
                         <div className="results-main-content">
                             <div className="score-ring-wrapper">
-                                <svg className="progress-ring" width="160" height="160">
+                                <svg className="progress-ring" viewBox="0 0 180 180" width="180" height="180">
                                     <circle
                                         className="progress-ring__circle-bg"
                                         stroke="#f1f5f9"
                                         strokeWidth="12"
                                         fill="transparent"
-                                        r="70"
-                                        cx="80"
-                                        cy="80"
+                                        r="75"
+                                        cx="90"
+                                        cy="90"
                                     />
                                     <circle
                                         className="progress-ring__circle"
                                         stroke="url(#advancedScoreGradient)"
                                         strokeWidth="12"
-                                        strokeDasharray={`${2 * Math.PI * 70}`}
-                                        strokeDashoffset={`${2 * Math.PI * 70 * (1 - score / questions.length)}`}
+                                        strokeDasharray="471.2"
+                                        strokeDashoffset={471.2 * (1 - score / questions.length)}
                                         strokeLinecap="round"
                                         fill="transparent"
-                                        r="70"
-                                        cx="80"
-                                        cy="80"
+                                        r="75"
+                                        cx="90"
+                                        cy="90"
+                                        transform="rotate(-90 90 90)"
                                     />
                                     <defs>
                                         <linearGradient id="advancedScoreGradient" x1="0%" y1="0%" x2="100%" y2="0%">

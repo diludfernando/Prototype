@@ -27,6 +27,16 @@ public class ProgressController {
         }
     }
 
+    @GetMapping("/{username}/category/{category}")
+    public ResponseEntity<?> getProgressByCategory(@PathVariable String username, @PathVariable String category) {
+        try {
+            String highestLevel = progressService.getHighestLevelPassedByCategory(username, category);
+            return ResponseEntity.ok(java.util.Map.of("highestLevelPassed", highestLevel));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
     @PostMapping("/{username}/sync")
     public ResponseEntity<Void> syncProgress(@PathVariable String username) {
         progressService.syncProgress(username);
