@@ -128,6 +128,7 @@ const Recommended = ({ allCourses }) => {
 
     const handleFile = (file) => {
         if (!file) return;
+
         // Validate MIME type
         const allowed = ['application/pdf', 'text/plain'];
         if (!allowed.includes(file.type)) {

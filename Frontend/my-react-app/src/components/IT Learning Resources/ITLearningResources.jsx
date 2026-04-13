@@ -51,7 +51,6 @@ const ITLearningResources = () => {
             }
         };
 
-
         fetchResources();
         fetchFavorites();
     }, [userId]);

@@ -32,6 +32,7 @@ public class CourseEnrollment {
 
     // Admin verification: PENDING, APPROVED, REJECTED
     private String verificationStatus;
+
     // Constructors
     public CourseEnrollment() {}
 
