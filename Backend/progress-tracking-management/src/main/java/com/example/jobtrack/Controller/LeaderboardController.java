@@ -24,7 +24,7 @@ public class LeaderboardController {
     // Example: /api/leaderboard/career/1?top=10
     @GetMapping("/career/{careerId}")
     public List<Map<String, Object>> leaderboard(@PathVariable Long careerId,
-                                                 @RequestParam(defaultValue = "10") int top) {
+            @RequestParam(defaultValue = "10") int top) {
 
         List<User> users = userRepository.findAll();
         List<Map<String, Object>> results = new ArrayList<>();
@@ -42,10 +42,10 @@ public class LeaderboardController {
 
         results.sort((a, b) -> Double.compare(
                 (double) b.get("careerReadinessScore"),
-                (double) a.get("careerReadinessScore")
-        ));
+                (double) a.get("careerReadinessScore")));
 
-        if (top < results.size()) return results.subList(0, top);
+        if (top < results.size())
+            return results.subList(0, top);
         return results;
     }
 }

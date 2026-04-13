@@ -17,7 +17,7 @@ public class ReadinessService {
     private final UserSkillRepository userSkillRepository;
 
     public ReadinessService(CareerSkillRepository careerSkillRepository,
-                            UserSkillRepository userSkillRepository) {
+            UserSkillRepository userSkillRepository) {
         this.careerSkillRepository = careerSkillRepository;
         this.userSkillRepository = userSkillRepository;
     }
@@ -45,7 +45,8 @@ public class ReadinessService {
             int userLevel = userMap.getOrDefault(req.getSkillId(), 0);
 
             double ratio = (reqLevel == 0) ? 0.0 : ((double) userLevel / reqLevel);
-            if (ratio > 1) ratio = 1;
+            if (ratio > 1)
+                ratio = 1;
 
             double matchPercent = Math.round(ratio * 10000.0) / 100.0; // 2 decimals
 
@@ -53,8 +54,7 @@ public class ReadinessService {
                     req.getSkillId(),
                     reqLevel,
                     userLevel,
-                    matchPercent
-            ));
+                    matchPercent));
 
             totalRatio += ratio;
         }

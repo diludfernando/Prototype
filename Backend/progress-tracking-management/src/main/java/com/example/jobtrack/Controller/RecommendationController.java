@@ -8,7 +8,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/recommendations")
-@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:3001"})
+@CrossOrigin(origins = { "http://localhost:3000", "http://localhost:3001" })
 public class RecommendationController {
 
     private final JobRecommendationService service;
@@ -19,7 +19,7 @@ public class RecommendationController {
 
     @GetMapping("/jobs/{userId}")
     public List<JobRecommendationDto> recommendJobs(@PathVariable Long userId,
-                                                    @RequestParam(defaultValue = "6") int top) {
+            @RequestParam(defaultValue = "6") int top) {
         return service.recommendJobs(userId, top);
     }
 }
