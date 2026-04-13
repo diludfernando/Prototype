@@ -6,4 +6,5 @@ import lombok.Data;
 public class JobRequirementDto {
     private String language;
     private String level;
+    private Integer rating;
 }

@@ -35,12 +35,10 @@ public class SkillGapService {
         // 1. Fetch user skill ratings from the new table
         List<SkillRating> skillRatings = skillRatingRepository.findByStudentUsername(username);
 
-        // Map highest rating (across easy, moderate, hard) for each category
-        Map<String, Integer> userSkillMap = new HashMap<>();
+        // Map skill ratings by category in lowercase for case-insensitive lookup
+        Map<String, SkillRating> userSkillMap = new HashMap<>();
         for (SkillRating sr : skillRatings) {
-            int maxRating = Math.max(sr.getEasyRating(), 
-                            Math.max(sr.getModerateRating(), sr.getHardRating()));
-            userSkillMap.put(sr.getCategory(), maxRating);
+            userSkillMap.put(sr.getCategory().toLowerCase(), sr);
         }
 
         // 2. Fetch Job Details from progress-tracking-management
@@ -68,11 +66,24 @@ public class SkillGapService {
 
         for (JobRequirementDto req : targetJob.getRequirements()) {
             String language = req.getLanguage();
-            String requiredLevelStr = req.getLevel();
-            int requiredLevel = mapLevelToInt(requiredLevelStr);
+            String requiredLevelStr = req.getLevel() != null ? req.getLevel() : "Beginner";
+            int requiredRating = req.getRating() != null ? req.getRating() : 1; 
 
-            int userRating = userSkillMap.getOrDefault(language, 0);
-            boolean isMatched = userRating >= requiredLevel;
+            SkillRating userSr = userSkillMap.get(language.toLowerCase());
+            int userRating = 0;
+            
+            if (userSr != null) {
+                String reqLower = requiredLevelStr.toLowerCase();
+                if (reqLower.contains("hard") || reqLower.contains("advanced") || reqLower.contains("high")) {
+                    userRating = userSr.getHardRating();
+                } else if (reqLower.contains("moderate") || reqLower.contains("intermediate") || reqLower.contains("medium")) {
+                    userRating = userSr.getModerateRating();
+                } else {
+                    userRating = userSr.getEasyRating();
+                }
+            }
+
+            boolean isMatched = userRating >= requiredRating;
 
             if (isMatched) {
                 matchedCount++;
@@ -80,14 +91,14 @@ public class SkillGapService {
 
             SkillGapAnalysisResultDto resultDto = new SkillGapAnalysisResultDto();
             resultDto.setLanguage(language);
-            resultDto.setRequiredLevel(requiredLevelStr);
+            resultDto.setRequiredLevel(requiredLevelStr + " (" + requiredRating + ")");
             resultDto.setUserRating(userRating);
             resultDto.setMatched(isMatched);
 
-            if (userRating == 0) {
-                resultDto.setMessage("You need to learn " + language);
-            } else if (userRating < requiredLevel) {
-                resultDto.setMessage("you need to improve");
+            if (userSr == null || userRating == 0) {
+                resultDto.setMessage("You need to learn " + language + " at " + requiredLevelStr + " level");
+            } else if (userRating < requiredRating) {
+                resultDto.setMessage("You need to improve to reach rating " + requiredRating + " on " + requiredLevelStr + " level");
             } else {
                 resultDto.setMessage("Skill matched!");
             }
@@ -105,10 +116,14 @@ public class SkillGapService {
         
         // Add "Your Skills" mapping for frontend
         List<Map<String, Object>> userSkillsList = new ArrayList<>();
-        for (Map.Entry<String, Integer> entry : userSkillMap.entrySet()) {
+        for (Map.Entry<String, SkillRating> entry : userSkillMap.entrySet()) {
             Map<String, Object> skillInfo = new HashMap<>();
-            skillInfo.put("name", entry.getKey());
-            skillInfo.put("level", "Rating: " + entry.getValue());
+            skillInfo.put("name", entry.getValue().getCategory());
+            String ratingsStr = String.format("Beginner: %d | Intermediate: %d | Advanced: %d", 
+                            entry.getValue().getEasyRating(),
+                            entry.getValue().getModerateRating(),
+                            entry.getValue().getHardRating());
+            skillInfo.put("level", ratingsStr);
             boolean isJobReq = targetJob.getRequirements().stream()
                     .anyMatch(r -> r.getLanguage().equalsIgnoreCase(entry.getKey()));
             skillInfo.put("status", isJobReq ? "matched" : "extra");

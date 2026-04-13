@@ -16,7 +16,7 @@ import "./JobManagement.css";
 const IT_LANGUAGES = [
     "Java", "Python", "JavaScript", "React", "Node.js", "C#", "C++", "PHP", 
     "Ruby", "Swift", "Go", "Kotlin", "TypeScript", "SQL", "AWS", "Azure", 
-    "Docker", "Kubernetes", "HTML/CSS", "Flutter", "React Native", "Angular", "Vue.js"
+    "Docker", "Kubernetes", "HTML","CSS", "Flutter", "React Native", "Angular", "Vue.js"
 ];
 
 const JOB_LEVELS = ["Easy", "Intermediate", "Hard"];
