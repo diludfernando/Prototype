@@ -60,6 +60,7 @@ export default function ProgressDashboard() {
 
   const [profile, setProfile] = useState(null);
   const [readiness, setReadiness] = useState(null);
+  const [userProgress, setUserProgress] = useState(null); // Real progress from Skill_Managemnt
   const [leaderboard, setLeaderboard] = useState([]);
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -98,10 +99,11 @@ export default function ProgressDashboard() {
       setLoading(true);
       setError("");
 
-      const [r1, r2, r3] = await Promise.all([
+      const [r1, r2, r3, r4] = await Promise.all([
         fetch(`http://localhost:8085/api/readiness/${userId}/${careerId}`),
         fetch(`http://localhost:8085/api/leaderboard/career/${careerId}?top=5`),
         fetch(`http://localhost:8085/api/recommendations/jobs/${userId}?top=5`),
+        fetch(`http://localhost:8082/api/progress/${email}`),
       ]);
 
       if (!r1.ok || !r2.ok || !r3.ok) {
@@ -111,10 +113,12 @@ export default function ProgressDashboard() {
       const readinessData = await r1.json();
       const leaderboardData = await r2.json();
       const jobsData = await r3.json();
+      const progressData = r4.ok ? await r4.json() : null;
 
       setReadiness(readinessData);
       setLeaderboard(Array.isArray(leaderboardData) ? leaderboardData : []);
       setJobs(Array.isArray(jobsData) ? jobsData : []);
+      setUserProgress(progressData);
     } catch (err) {
       console.error(err);
       setError("Failed to fetch dashboard data");
@@ -154,8 +158,17 @@ export default function ProgressDashboard() {
   }, [profile, fullName]);
 
   const skillBars = useMemo(() => {
+    // Map backend level to percentage
+    let assessmentProgress = 10;
+    if (userProgress) {
+        const level = userProgress.highestLevelPassed;
+        if (level === "Advanced") assessmentProgress = 100;
+        else if (level === "Intermediate") assessmentProgress = 66;
+        else if (level === "Beginner") assessmentProgress = 33;
+    }
+
     return [
-      { name: "Assessment Progress", value: Math.min(100, score + 8) },
+      { name: "Assessment Progress", value: assessmentProgress },
       { name: "Skill Matching", value: Math.max(20, score - 5) },
       {
         name: "Leaderboard Strength",
@@ -170,7 +183,7 @@ export default function ProgressDashboard() {
             : Math.max(20, score - 10),
       },
     ];
-  }, [score, leaderboard, jobs]);
+  }, [score, leaderboard, jobs, userProgress]);
 
   const doughnutData = {
     labels: ["Completed", "Remaining"],

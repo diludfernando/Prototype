@@ -3,9 +3,11 @@ package com.example.demo.Service;
 import com.example.demo.Model.QuizResult;
 import com.example.demo.Model.Student;
 import com.example.demo.Model.UserProgress;
+import com.example.demo.Model.SkillRating;
 import com.example.demo.Repository.QuizResultRepository;
 import com.example.demo.Repository.StudentRepository;
 import com.example.demo.Repository.UserProgressRepository;
+import com.example.demo.Repository.SkillRatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +18,16 @@ import java.util.Optional;
 public class ProgressService {
 
     @Autowired
-    private UserProgressRepository userProgressRepository;
-
-    @Autowired
     private StudentRepository studentRepository;
 
     @Autowired
     private QuizResultRepository quizResultRepository;
+
+    @Autowired
+    private UserProgressRepository userProgressRepository;
+
+    @Autowired
+    private SkillRatingRepository skillRatingRepository;
 
     public void syncProgress(String username) {
         // Ensure student exists
@@ -33,24 +38,20 @@ public class ProgressService {
                     return studentRepository.save(newStudent);
                 });
 
-        // Fetch all results for this username from QuizResult table
-        List<QuizResult> results = quizResultRepository.findByStudentUsername(username);
+        // Fetch all consolidated ratings for this username
+        List<SkillRating> ratings = skillRatingRepository.findByStudentUsername(username);
 
-        // Calculate highest level passed and expert status
-        // Levels: Beginner -> Intermediate -> Advanced
+        // Calculate highest level passed and expert status based on ratings
+        // A level is "passed" if ANY category for that level has a rating of 3 or more
         String highestLevel = "None";
         boolean beginnerPassed = false;
         boolean intermediatePassed = false;
         boolean advancedPassed = false;
 
-        for (QuizResult res : results) {
-            double percentage = (double) res.getScore() / res.getTotalQuestions() * 100;
-            if (percentage >= 50) { // Lowering clearing threshold to 50% as per user requirement
-                String level = res.getLevel();
-                if ("Beginner".equalsIgnoreCase(level)) beginnerPassed = true;
-                if ("Intermediate".equalsIgnoreCase(level)) intermediatePassed = true;
-                if ("Advanced".equalsIgnoreCase(level)) advancedPassed = true;
-            }
+        for (SkillRating sr : ratings) {
+            if (sr.getEasyRating() >= 3) beginnerPassed = true;
+            if (sr.getModerateRating() >= 3) intermediatePassed = true;
+            if (sr.getHardRating() >= 3) advancedPassed = true;
         }
 
         if (advancedPassed) highestLevel = "Advanced";
@@ -58,7 +59,7 @@ public class ProgressService {
         else if (beginnerPassed) highestLevel = "Beginner";
 
         System.out.println("Syncing progress for user: " + username);
-        System.out.println("Results found: " + results.size());
+        System.out.println("Skill ratings found: " + ratings.size());
         System.out.println("Beginner: " + beginnerPassed + ", Intermediate: " + intermediatePassed + ", Advanced: " + advancedPassed);
         System.out.println("Highest Level: " + highestLevel + ", Is Expert: " + advancedPassed);
 

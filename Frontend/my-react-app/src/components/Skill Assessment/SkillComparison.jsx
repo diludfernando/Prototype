@@ -54,7 +54,8 @@ const SkillComparison = () => {
                         targetRole: data.targetRole,
                         matchPercentage: data.matchPercentage,
                         userSkills: data.userSkills,
-                        jobRequirements
+                        jobRequirements,
+                        highestLevelPassed: data.highestLevelPassed
                     });
                 }
             } catch (err) {
@@ -110,7 +111,14 @@ const SkillComparison = () => {
                         <div className="title-section">
                             <span className="badge">Role Comparison</span>
                             <h1>{data.targetRole}</h1>
-                            <p className="subtitle">Detailed skill gap analysis between you and the industry requirements.</p>
+                            <div className="flex items-center gap-3 mt-1">
+                                <p className="subtitle">Detailed skill gap analysis between you and the industry requirements.</p>
+                                {data.highestLevelPassed && data.highestLevelPassed !== 'None' && (
+                                    <span className="px-3 py-1 bg-sky-100 text-sky-700 text-xs font-bold rounded-full border border-sky-200 uppercase tracking-wider">
+                                        LEVEL: {data.highestLevelPassed}
+                                    </span>
+                                )}
+                            </div>
                         </div>
 
                         <div className="score-card">

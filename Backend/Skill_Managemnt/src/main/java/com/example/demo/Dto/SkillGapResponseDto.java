@@ -10,4 +10,6 @@ public class SkillGapResponseDto {
     private int matchPercentage;
     private List<SkillGapAnalysisResultDto> analysis;
     private List<Map<String, Object>> userSkills;
+    private String highestLevelPassed;
+    private boolean clearedHardestLevel;
 }

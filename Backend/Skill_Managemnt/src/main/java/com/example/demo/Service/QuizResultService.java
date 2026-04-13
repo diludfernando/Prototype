@@ -2,8 +2,10 @@ package com.example.demo.Service;
 
 import com.example.demo.Model.QuizResult;
 import com.example.demo.Model.Student;
+import com.example.demo.Model.SkillRating;
 import com.example.demo.Repository.QuizResultRepository;
 import com.example.demo.Repository.StudentRepository;
+import com.example.demo.Repository.SkillRatingRepository;
 import com.example.demo.Service.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +25,9 @@ public class QuizResultService {
 
     @Autowired
     private ProgressService progressService;
+
+    @Autowired
+    private SkillRatingRepository skillRatingRepository;
 
     public Map<String, Object> saveResult(QuizResult result) {
         String username = result.getUsername();
@@ -66,8 +71,6 @@ public class QuizResultService {
             rating = 2;
         }
         
-        result.setRating(rating);
-
         String title;
         String message;
 
@@ -88,6 +91,9 @@ public class QuizResultService {
         // Save the result to the database
         QuizResult savedResult = quizResultRepository.save(result);
 
+        // Update Separate Level Ratings in SkillRating table
+        updateSkillRating(username, result.getCategory(), result.getLevel(), rating, student);
+
         // Trigger Progress Sync
         progressService.syncProgress(username);
 
@@ -104,5 +110,40 @@ public class QuizResultService {
 
     public List<QuizResult> getResultsByUsername(String username) {
         return quizResultRepository.findByStudentUsername(username);
+    }
+
+    private void updateSkillRating(String username, String category, String level, int newRating, Student student) {
+        SkillRating skillRating = skillRatingRepository.findByStudentUsernameAndCategory(username, category)
+                .orElseGet(() -> {
+                    SkillRating newSkillRating = new SkillRating();
+                    newSkillRating.setStudent(student);
+                    newSkillRating.setCategory(category);
+                    newSkillRating.setEasyRating(0);
+                    newSkillRating.setModerateRating(0);
+                    newSkillRating.setHardRating(0);
+                    return newSkillRating;
+                });
+
+        boolean updated = false;
+        if ("Beginner".equalsIgnoreCase(level) || "Easy".equalsIgnoreCase(level)) {
+            if (newRating > skillRating.getEasyRating()) {
+                skillRating.setEasyRating(newRating);
+                updated = true;
+            }
+        } else if ("Intermediate".equalsIgnoreCase(level) || "Moderate".equalsIgnoreCase(level) || "Medium".equalsIgnoreCase(level)) {
+            if (newRating > skillRating.getModerateRating()) {
+                skillRating.setModerateRating(newRating);
+                updated = true;
+            }
+        } else if ("Advanced".equalsIgnoreCase(level) || "Hard".equalsIgnoreCase(level)) {
+            if (newRating > skillRating.getHardRating()) {
+                skillRating.setHardRating(newRating);
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            skillRatingRepository.save(skillRating);
+        }
     }
 }

@@ -1,10 +1,13 @@
 package com.example.demo.Service;
 
 import com.example.demo.Model.QuizResult;
+import com.example.demo.Model.SkillRating;
+import com.example.demo.Model.UserProgress;
 import com.example.demo.Dto.JobDto;
 import com.example.demo.Dto.JobRequirementDto;
 import com.example.demo.Dto.SkillGapAnalysisResultDto;
 import com.example.demo.Dto.SkillGapResponseDto;
+import com.example.demo.Repository.SkillRatingRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -20,20 +23,24 @@ public class SkillGapService {
     @Autowired
     private QuizResultService quizResultService;
 
+    @Autowired
+    private SkillRatingRepository skillRatingRepository;
+
+    @Autowired
+    private ProgressService progressService;
+
     private final RestTemplate restTemplate = new RestTemplate();
 
     public SkillGapResponseDto analyzeSkillGap(String username, String jobTitle) {
-        // 1. Fetch user quiz results
-        List<QuizResult> userResults = quizResultService.getResultsByUsername(username);
+        // 1. Fetch user skill ratings from the new table
+        List<SkillRating> skillRatings = skillRatingRepository.findByStudentUsername(username);
 
-        // Map highest rating for each category
+        // Map highest rating (across easy, moderate, hard) for each category
         Map<String, Integer> userSkillMap = new HashMap<>();
-        for (QuizResult result : userResults) {
-            String category = result.getCategory();
-            int rating = result.getRating();
-            if (!userSkillMap.containsKey(category) || rating > userSkillMap.get(category)) {
-                userSkillMap.put(category, rating);
-            }
+        for (SkillRating sr : skillRatings) {
+            int maxRating = Math.max(sr.getEasyRating(), 
+                            Math.max(sr.getModerateRating(), sr.getHardRating()));
+            userSkillMap.put(sr.getCategory(), maxRating);
         }
 
         // 2. Fetch Job Details from progress-tracking-management
@@ -108,6 +115,12 @@ public class SkillGapService {
             userSkillsList.add(skillInfo);
         }
         responseDto.setUserSkills(userSkillsList);
+        
+        // Add User Progress Info
+        progressService.getProgress(username).ifPresent(progress -> {
+            responseDto.setHighestLevelPassed(progress.getHighestLevelPassed());
+            responseDto.setClearedHardestLevel(progress.isClearedHardestLevel());
+        });
 
         return responseDto;
     }
