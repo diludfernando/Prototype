@@ -32,7 +32,24 @@ public class DatabaseSyncRunner implements CommandLineRunner {
                 "WHERE u.role = 'COUNSELOR';";
                 
             jdbcTemplate.execute(createViewSql);
-            System.out.println(">>> DATABASE VIEW CREATED SUCCESSFULLY <<<");
+
+            String createHardTestView = 
+                "CREATE OR REPLACE VIEW Counselling_Management_db.user_hard_test_status AS " +
+                "SELECT u.id AS student_id, up.cleared_hardest_level " +
+                "FROM User_Management_db.users u " +
+                "JOIN Skill_Managment_db.students s ON u.email = s.username " +
+                "JOIN Skill_Managment_db.user_progress up ON s.id = up.student_id;";
+            jdbcTemplate.execute(createHardTestView);
+
+            String createCourseCountView = 
+                "CREATE OR REPLACE VIEW Counselling_Management_db.user_course_count AS " +
+                "SELECT user_id AS student_id, COUNT(*) AS completed_courses " +
+                "FROM IT_Learning_Management_db.course_enrollments " +
+                "WHERE completed = 1 " +
+                "GROUP BY user_id;";
+            jdbcTemplate.execute(createCourseCountView);
+
+            System.out.println(">>> DATABASE VIEWS CREATED SUCCESSFULLY <<<");
         } catch (Exception e) {
             System.err.println(">>> FAILED TO CREATE VIEW: " + e.getMessage());
             e.printStackTrace();

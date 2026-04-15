@@ -1,24 +1,30 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.EligibilityResponse;
 import com.example.demo.model.CounsellingSession;
 import com.example.demo.model.PaymentStatus;
 import com.example.demo.model.SessionStatus;
 import com.example.demo.repository.CounsellingSessionRepository;
 import com.example.demo.repository.CounsellorRepository;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class CounsellingService {
 
     private final CounsellingSessionRepository sessionRepository;
     private final CounsellorRepository counsellorRepository;
+    private final JdbcTemplate jdbcTemplate;
 
     public CounsellingService(CounsellingSessionRepository sessionRepository,
-            CounsellorRepository counsellorRepository) {
+            CounsellorRepository counsellorRepository,
+            JdbcTemplate jdbcTemplate) {
         this.sessionRepository = sessionRepository;
         this.counsellorRepository = counsellorRepository;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public CounsellingSession bookSession(CounsellingSession session) {
@@ -58,6 +64,42 @@ public class CounsellingService {
 
     public boolean isFirstTimeUser(Long studentId) {
         return !sessionRepository.existsByStudentId(studentId);
+    }
+
+    public EligibilityResponse getEligibility(Long studentId) {
+        boolean isFirstTime = isFirstTimeUser(studentId);
+        
+        // Check Hard Test Status
+        Boolean passedHardTest = false;
+        try {
+            passedHardTest = jdbcTemplate.queryForObject(
+                "SELECT cleared_hardest_level FROM user_hard_test_status WHERE student_id = ?",
+                Boolean.class,
+                studentId
+            );
+        } catch (Exception e) {
+            // If user not in table, default to false
+            passedHardTest = false;
+        }
+
+        // Check Course Count
+        Integer courseCount = 0;
+        try {
+            courseCount = jdbcTemplate.queryForObject(
+                "SELECT completed_courses FROM user_course_count WHERE student_id = ?",
+                Integer.class,
+                studentId
+            );
+        } catch (Exception e) {
+            // If user not in table, default to 0
+            courseCount = 0;
+        }
+
+        return new EligibilityResponse(
+            isFirstTime,
+            Boolean.TRUE.equals(passedHardTest),
+            courseCount != null && courseCount >= 5
+        );
     }
 
     private void validateRequiredFields(CounsellingSession session) {

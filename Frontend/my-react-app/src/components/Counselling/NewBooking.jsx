@@ -11,21 +11,32 @@ const NewBooking = () => {
         fiveCourses: false,
         passedHardTest: false
     });
-    const [canTickFirstTime, setCanTickFirstTime] = useState(false);
+    const [canTick, setCanTick] = useState({
+        firstTime: false,
+        fiveCourses: false,
+        passedHardTest: false
+    });
 
     useEffect(() => {
         const userId = localStorage.getItem('userId') || 1;
-        // Check if user is first time user
-        fetch(`http://localhost:8083/api/counselling/is-first-time/${userId}`)
+        // Fetch all eligibility criteria
+        fetch(`http://localhost:8083/api/counselling/eligibility/${userId}`)
             .then(res => res.json())
-            .then(isFirstTime => {
-                setCanTickFirstTime(isFirstTime);
-                setEligibility(prev => ({
-                    ...prev,
-                    firstTime: isFirstTime
-                }));
+            .then(data => {
+                setCanTick({
+                    firstTime: data.firstTime,
+                    fiveCourses: data.hasFiveCourses,
+                    passedHardTest: data.passedHardTest
+                });
+                
+                // Auto-select the first eligible option if any
+                setEligibility({
+                    firstTime: data.firstTime,
+                    fiveCourses: !data.firstTime && data.hasFiveCourses,
+                    passedHardTest: !data.firstTime && !data.hasFiveCourses && data.passedHardTest
+                });
             })
-            .catch(err => console.error("Error checking first time status:", err));
+            .catch(err => console.error("Error checking eligibility status:", err));
 
         fetch('http://localhost:8083/api/counselling/counsellors')
             .then(res => res.json())
@@ -41,7 +52,7 @@ const NewBooking = () => {
     const isEligible = eligibility.firstTime || eligibility.fiveCourses || eligibility.passedHardTest;
 
     const handleCheckboxChange = (key) => {
-        if (key === 'firstTime' && !canTickFirstTime) return;
+        if (!canTick[key]) return;
 
         setEligibility(prev => {
             const isCurrentlyChecked = prev[key];
@@ -127,34 +138,36 @@ const NewBooking = () => {
                     <section className="eligibility-section">
                         <h3>Free Session Eligibility Status (Simulation)</h3>
                         <div className="eligibility-grid">
-                            <label className={`checkbox-item ${!canTickFirstTime ? 'disabled' : ''}`}>
+                            <label className={`checkbox-item ${!canTick.firstTime ? 'disabled' : ''}`}>
                                 <input
                                     type="checkbox"
                                     checked={eligibility.firstTime}
                                     onChange={() => handleCheckboxChange('firstTime')}
-                                    disabled={!canTickFirstTime}
+                                    disabled={!canTick.firstTime}
                                 />
                                 <span className="checkbox-custom">
                                     {eligibility.firstTime && <Check size={14} />}
                                 </span>
                                 <span>1st Time User</span>
                             </label>
-                            <label className="checkbox-item">
+                            <label className={`checkbox-item ${!canTick.fiveCourses ? 'disabled' : ''}`}>
                                 <input
                                     type="checkbox"
                                     checked={eligibility.fiveCourses}
                                     onChange={() => handleCheckboxChange('fiveCourses')}
+                                    disabled={!canTick.fiveCourses}
                                 />
                                 <span className="checkbox-custom">
                                     {eligibility.fiveCourses && <Check size={14} />}
                                 </span>
                                 <span>5+ Courses</span>
                             </label>
-                            <label className="checkbox-item">
+                            <label className={`checkbox-item ${!canTick.passedHardTest ? 'disabled' : ''}`}>
                                 <input
                                     type="checkbox"
                                     checked={eligibility.passedHardTest}
                                     onChange={() => handleCheckboxChange('passedHardTest')}
+                                    disabled={!canTick.passedHardTest}
                                 />
                                 <span className="checkbox-custom">
                                     {eligibility.passedHardTest && <Check size={14} />}

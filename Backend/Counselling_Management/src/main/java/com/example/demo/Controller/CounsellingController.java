@@ -1,5 +1,6 @@
 package com.example.demo.Controller;
 
+import com.example.demo.dto.EligibilityResponse;
 import com.example.demo.dto.PaymentRequest;
 import com.example.demo.model.*;
 import com.example.demo.repository.*;
@@ -157,5 +158,10 @@ public class CounsellingController {
     @GetMapping("/is-first-time/{studentId}")
     public ResponseEntity<Boolean> isFirstTimeUser(@PathVariable Long studentId) {
         return ResponseEntity.ok(counsellingService.isFirstTimeUser(studentId));
+    }
+
+    @GetMapping("/eligibility/{studentId}")
+    public ResponseEntity<EligibilityResponse> getEligibility(@PathVariable Long studentId) {
+        return ResponseEntity.ok(counsellingService.getEligibility(studentId));
     }
 }
