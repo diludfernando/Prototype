@@ -115,6 +115,20 @@
     color: white;
 }
 
+.checkbox-item.disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.checkbox-item.disabled .checkbox-custom {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+}
+
+.checkbox-item input:disabled+.checkbox-custom {
+    cursor: not-allowed;
+}
+
 .status-display {
     display: flex;
     align-items: center;

@@ -13,4 +13,6 @@ public interface CounsellingSessionRepository extends JpaRepository<CounsellingS
     boolean existsByStudentIdAndSessionDateAndTimeSlot(Long studentId, LocalDate sessionDate, String timeSlot);
 
     List<CounsellingSession> findByStudentId(Long studentId);
+
+    boolean existsByStudentId(Long studentId);
 }

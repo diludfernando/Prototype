@@ -56,6 +56,10 @@ public class CounsellingService {
         return sessionRepository.save(session);
     }
 
+    public boolean isFirstTimeUser(Long studentId) {
+        return !sessionRepository.existsByStudentId(studentId);
+    }
+
     private void validateRequiredFields(CounsellingSession session) {
         if (session == null) {
             throw new IllegalArgumentException("Request body is required.");

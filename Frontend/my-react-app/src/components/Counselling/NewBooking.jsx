@@ -7,12 +7,26 @@ const NewBooking = () => {
     const navigate = useNavigate();
     const [counsellors, setCounsellors] = useState([]);
     const [eligibility, setEligibility] = useState({
-        firstTime: true,
+        firstTime: false,
         fiveCourses: false,
         passedHardTest: false
     });
+    const [canTickFirstTime, setCanTickFirstTime] = useState(false);
 
     useEffect(() => {
+        const userId = localStorage.getItem('userId') || 1;
+        // Check if user is first time user
+        fetch(`http://localhost:8083/api/counselling/is-first-time/${userId}`)
+            .then(res => res.json())
+            .then(isFirstTime => {
+                setCanTickFirstTime(isFirstTime);
+                setEligibility(prev => ({
+                    ...prev,
+                    firstTime: isFirstTime
+                }));
+            })
+            .catch(err => console.error("Error checking first time status:", err));
+
         fetch('http://localhost:8083/api/counselling/counsellors')
             .then(res => res.json())
             .then(data => {
@@ -27,6 +41,8 @@ const NewBooking = () => {
     const isEligible = eligibility.firstTime || eligibility.fiveCourses || eligibility.passedHardTest;
 
     const handleCheckboxChange = (key) => {
+        if (key === 'firstTime' && !canTickFirstTime) return;
+
         setEligibility(prev => {
             const isCurrentlyChecked = prev[key];
             return {
@@ -111,11 +127,12 @@ const NewBooking = () => {
                     <section className="eligibility-section">
                         <h3>Free Session Eligibility Status (Simulation)</h3>
                         <div className="eligibility-grid">
-                            <label className="checkbox-item">
+                            <label className={`checkbox-item ${!canTickFirstTime ? 'disabled' : ''}`}>
                                 <input
                                     type="checkbox"
                                     checked={eligibility.firstTime}
                                     onChange={() => handleCheckboxChange('firstTime')}
+                                    disabled={!canTickFirstTime}
                                 />
                                 <span className="checkbox-custom">
                                     {eligibility.firstTime && <Check size={14} />}

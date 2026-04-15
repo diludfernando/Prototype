@@ -153,4 +153,9 @@ public class CounsellingController {
     public ResponseEntity<List<CounsellingSession>> getSessionsByStudent(@PathVariable Long studentId) {
         return ResponseEntity.ok(sessionRepository.findByStudentId(studentId));
     }
+
+    @GetMapping("/is-first-time/{studentId}")
+    public ResponseEntity<Boolean> isFirstTimeUser(@PathVariable Long studentId) {
+        return ResponseEntity.ok(counsellingService.isFirstTimeUser(studentId));
+    }
 }
