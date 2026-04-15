@@ -11,8 +11,29 @@ const Footer = () => {
     const isstudent = location.pathname.startsWith('/student');
     const isassessment = location.pathname.startsWith('/assessment');
     const isSkillComparisonPage = location.pathname.startsWith('/skill-comparison');
+    const isITlearningResourcePage = location.pathname.startsWith('/learning-resources');
+    const isUserServerPage = location.pathname.startsWith('/services');
+    const isViewProfilePage = location.pathname.startsWith('/view-profile');
+    const isEditProfilePage = location.pathname.startsWith('/edit-profile');
+    const isCompleteProfilePage = location.pathname.startsWith('/complete-profile');
+    const isCounselorCompleteProfilePage = location.pathname.startsWith('/counselor/complete-profile');
+    const isCounselorDashboardPage = location.pathname.startsWith('/counselor/dashboard');
+    const isCounselorEditProfilePage = location.pathname.startsWith('/counselor/edit-profile');
+    const isCounselorProfilePage = location.pathname.startsWith('/counselor/profile');
+    const isCounselorBookingPage = location.pathname.startsWith('/counselling');
+    const isCounselorNewBookingPage = location.pathname.startsWith('/counselling/newbooking');
+    const isCounselorPaymentPage = location.pathname.startsWith('/counselling/payment');
+    const isCounselorSessionDetailsPage = location.pathname.startsWith('/counselling/session/:id');
+    const isCounselorProgressDashboardPage = location.pathname.startsWith('/progress-dashboard');
+    const isCounselorJobsPortalPage = location.pathname.startsWith('/jobs');
+    const isCounselorJobApplyPage = location.pathname.startsWith('/jobs/apply/:id');
+    const isCounselorMyApplicationsPage = location.pathname.startsWith('/applications');
+    const isCounselorAddJobPage = location.pathname.startsWith('/admin/add-job');
 
-    if(isdashboard || isadmin || iscounsellor || isstudent || isassessment || isSkillComparisonPage){
+    if(isdashboard || isadmin || iscounsellor || isstudent || isassessment || isSkillComparisonPage || isITlearningResourcePage 
+        || isUserServerPage || isViewProfilePage || isEditProfilePage || isCompleteProfilePage || isCounselorCompleteProfilePage || isCounselorDashboardPage 
+        || isCounselorEditProfilePage || isCounselorProfilePage || isCounselorBookingPage || isCounselorNewBookingPage || isCounselorPaymentPage 
+        || isCounselorSessionDetailsPage || isCounselorProgressDashboardPage || isCounselorJobsPortalPage || isCounselorJobApplyPage || isCounselorMyApplicationsPage || isCounselorAddJobPage){
     return null;
 }
 

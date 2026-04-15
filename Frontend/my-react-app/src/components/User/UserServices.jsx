@@ -7,7 +7,32 @@ const UserServices = () => {
     const navigate = useNavigate();
 
     const [showDropdown, setShowDropdown] = useState(false);
+    const [profileImageUrl, setProfileImageUrl] = useState(null);
     const dropdownRef = useRef(null);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) return;
+
+                const response = await fetch('http://localhost:8081/api/student/profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.success && data.data.profileImageUrl) {
+                        setProfileImageUrl(data.data.profileImageUrl);
+                    }
+                }
+            } catch (err) {
+                console.error('Error fetching profile for avatar:', err);
+            }
+        };
+
+        fetchProfile();
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -87,7 +112,11 @@ const UserServices = () => {
                                     className={`new-profile-avatar-btn ${showDropdown ? 'active' : ''}`}
                                     aria-label="Profile Menu"
                                 >
-                                    <User size={24} />
+                                    {profileImageUrl ? (
+                                        <img src={profileImageUrl} alt="Profile" className="user-avatar-img" />
+                                    ) : (
+                                        <User size={24} />
+                                    )}
                                 </button>
                             </div>
 
