@@ -10,7 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 @Service
 public class CounsellingService {
@@ -32,7 +32,16 @@ public class CounsellingService {
 
         counsellorRepository.findById(session.getCounsellorId()).ifPresent(c -> {
             session.setCounsellorName(c.getName());
+            session.setCounsellorProfileImage(c.getProfileImageUrl());
         });
+
+        // Server-side validation: One-time free session restriction
+        if (Boolean.TRUE.equals(session.getIsFree())) {
+            boolean alreadyUsedFree = sessionRepository.existsByStudentIdAndIsFree(session.getStudentId(), true);
+            if (alreadyUsedFree) {
+                throw new IllegalArgumentException("You have already used your one-time free counselling session benefit.");
+            }
+        }
 
         // Edge case: prevent booking past dates.
         if (session.getSessionDate().isBefore(LocalDate.now())) {
@@ -67,6 +76,12 @@ public class CounsellingService {
     }
 
     public EligibilityResponse getEligibility(Long studentId) {
+        // One-time check: If they have EVER had a free session, they are no longer eligible for any new free sessions.
+        boolean hasUsedFreeSession = sessionRepository.existsByStudentIdAndIsFree(studentId, true);
+        if (hasUsedFreeSession) {
+            return new EligibilityResponse(false, false, false);
+        }
+
         boolean isFirstTime = isFirstTimeUser(studentId);
         
         // Check Hard Test Status

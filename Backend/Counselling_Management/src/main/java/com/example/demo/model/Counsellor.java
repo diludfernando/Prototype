@@ -21,6 +21,10 @@ public class Counsellor {
     private String email;
 
     private String specialization;
-
+    
     private Integer experienceYears;
+
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String profileImageUrl;
 }

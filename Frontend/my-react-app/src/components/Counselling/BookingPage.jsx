@@ -71,8 +71,14 @@ const BookingPage = () => {
                             <div key={session.id} className="booking-card clickable" onClick={() => navigate(`/counselling/session/${session.id}`)}>
                                 <div className="card-top">
                                     <div className="counsellor-info">
-                                        <div className="avatar-placeholder">
-                                            <User size={24} />
+                                        <div className="avatar-container">
+                                            {session.counsellorProfileImage ? (
+                                                <img src={session.counsellorProfileImage} alt={session.counsellorName} className="counsellor-avatar-img" />
+                                            ) : (
+                                                <div className="avatar-placeholder">
+                                                    <User size={24} />
+                                                </div>
+                                            )}
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-bold">{session.counsellorName || `Counsellor #${session.counsellorId}`}</h3>

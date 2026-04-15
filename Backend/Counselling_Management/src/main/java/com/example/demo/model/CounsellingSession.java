@@ -29,6 +29,10 @@ public class CounsellingSession {
     private Long counsellorId;
 
     private String counsellorName;
+    
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String counsellorProfileImage;
 
     @NotNull(message = "sessionDate is required.")
     @Future(message = "sessionDate must be a future date.")

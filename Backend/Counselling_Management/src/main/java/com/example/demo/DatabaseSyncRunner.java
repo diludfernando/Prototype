@@ -26,7 +26,8 @@ public class DatabaseSyncRunner implements CommandLineRunner {
                 "    cp.full_name AS name, " +
                 "    u.email AS email, " +
                 "    cp.specialization AS specialization, " +
-                "    cp.years_of_experience AS experience_years " +
+                "    cp.years_of_experience AS experience_years, " +
+                "    cp.profile_image_url AS profile_image_url " +
                 "FROM User_Management_db.users u " +
                 "JOIN User_Management_db.counselor_profiles cp ON u.id = cp.user_id " +
                 "WHERE u.role = 'COUNSELOR';";
@@ -48,8 +49,23 @@ public class DatabaseSyncRunner implements CommandLineRunner {
                 "WHERE completed = 1 " +
                 "GROUP BY user_id;";
             jdbcTemplate.execute(createCourseCountView);
+            
+            // Fix column types for profile images (in case Hibernate created them as VARCHAR)
+            try {
+                jdbcTemplate.execute("ALTER TABLE Counselling_Management_db.counselling_sessions MODIFY counsellor_profile_image LONGTEXT;");
+            } catch (Exception e) {
+                System.out.println("Column type already updated or table empty.");
+            }
 
-            System.out.println(">>> DATABASE VIEWS CREATED SUCCESSFULLY <<<");
+            // Backfill profile images for existing sessions
+            String backfillSql = 
+                "UPDATE Counselling_Management_db.counselling_sessions cs " +
+                "JOIN Counselling_Management_db.counsellors c ON cs.counsellor_id = c.id " +
+                "SET cs.counsellor_profile_image = c.profile_image_url " +
+                "WHERE cs.counsellor_profile_image IS NULL OR cs.counsellor_profile_image = '';";
+            jdbcTemplate.execute(backfillSql);
+
+            System.out.println(">>> DATABASE VIEWS AND BACKFILL COMPLETED SUCCESSFULLY <<<");
         } catch (Exception e) {
             System.err.println(">>> FAILED TO CREATE VIEW: " + e.getMessage());
             e.printStackTrace();

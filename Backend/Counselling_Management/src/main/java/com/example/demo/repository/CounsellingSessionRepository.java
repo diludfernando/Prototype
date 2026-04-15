@@ -15,4 +15,6 @@ public interface CounsellingSessionRepository extends JpaRepository<CounsellingS
     List<CounsellingSession> findByStudentId(Long studentId);
 
     boolean existsByStudentId(Long studentId);
+
+    boolean existsByStudentIdAndIsFree(Long studentId, boolean isFree);
 }
