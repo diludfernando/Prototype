@@ -27,6 +27,24 @@ const BookingPage = () => {
     }, []);
 
 
+    const handleCancel = async (e, sessionId) => {
+        e.stopPropagation(); // Prevent card click
+        if (!window.confirm("Are you sure you want to cancel this session?")) return;
+
+        try {
+            const res = await fetch(`http://localhost:8083/api/counselling/update-status/${sessionId}?status=CANCELLED`, {
+                method: 'PUT'
+            });
+            if (res.ok) {
+                setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, status: 'CANCELLED' } : s));
+            } else {
+                alert("Failed to cancel session.");
+            }
+        } catch (err) {
+            console.error("Error cancelling session:", err);
+        }
+    };
+
     return (
         <div className="booking-page animate-fade-in">
             <div className="container">
@@ -50,7 +68,7 @@ const BookingPage = () => {
                         <p className="text-center w-full">No sessions booked yet.</p>
                     ) : (
                         sessions.map((session) => (
-                            <div key={session.id} className="booking-card">
+                            <div key={session.id} className="booking-card clickable" onClick={() => navigate(`/counselling/session/${session.id}`)}>
                                 <div className="card-top">
                                     <div className="counsellor-info">
                                         <div className="avatar-placeholder">
@@ -60,6 +78,17 @@ const BookingPage = () => {
                                             <h3 className="text-xl font-bold">{session.counsellorName || `Counsellor #${session.counsellorId}`}</h3>
                                             <p className="session-type">IT Career Counselling</p>
                                         </div>
+                                    </div>
+                                    <div className="card-actions">
+                                        {session.status === 'BOOKED' && (
+                                            <button
+                                                className="btn-cancel-session"
+                                                onClick={(e) => handleCancel(e, session.id)}
+                                                title="Cancel Appointment"
+                                            >
+                                                Cancel
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
 
@@ -84,6 +113,9 @@ const BookingPage = () => {
                                             {session.paymentStatus || (session.isFree ? 'FREE' : 'PENDING')}
                                         </span>
                                     </div>
+                                    <button className="view-details-link">
+                                        View Details
+                                    </button>
                                 </div>
                             </div>
                         ))

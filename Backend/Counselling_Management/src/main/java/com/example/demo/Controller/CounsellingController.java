@@ -135,6 +135,20 @@ public class CounsellingController {
         return ResponseEntity.ok(counsellorRepository.findAll());
     }
 
+    @GetMapping("/session/{id}")
+    public ResponseEntity<CounsellingSession> getSessionById(@PathVariable Long id) {
+        return sessionRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/counsellor/{id}")
+    public ResponseEntity<Counsellor> getCounsellorById(@PathVariable Long id) {
+        return counsellorRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping("/student/{studentId}")
     public ResponseEntity<List<CounsellingSession>> getSessionsByStudent(@PathVariable Long studentId) {
         return ResponseEntity.ok(sessionRepository.findByStudentId(studentId));

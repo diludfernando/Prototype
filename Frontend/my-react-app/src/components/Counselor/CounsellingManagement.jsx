@@ -112,15 +112,31 @@ const CounsellingManagement = () => {
                                         </div>
                                     </td>
                                     <td>
-                                        <select
-                                            className="status-select"
-                                            value={session.status}
-                                            onChange={(e) => updateStatus(session.id, e.target.value)}
-                                        >
-                                            <option value="BOOKED">BOOKED</option>
-                                            <option value="COMPLETED">COMPLETED</option>
-                                            <option value="CANCELLED">CANCELLED</option>
-                                        </select>
+                                        <div className="status-container">
+                                            <span className={`badge-status ${session.status.toLowerCase()}`}>
+                                                {session.status}
+                                            </span>
+                                            {session.status === 'BOOKED' && (
+                                                <div className="status-actions">
+                                                    <button 
+                                                        className="action-btn-status complete" 
+                                                        onClick={() => updateStatus(session.id, 'COMPLETED')}
+                                                        title="Mark as Completed"
+                                                    >
+                                                        <CheckCircle size={14} />
+                                                        <span>Complete</span>
+                                                    </button>
+                                                    <button 
+                                                        className="action-btn-status cancel" 
+                                                        onClick={() => updateStatus(session.id, 'CANCELLED')}
+                                                        title="Cancel Session"
+                                                    >
+                                                        <XCircle size={14} />
+                                                        <span>Cancel</span>
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
                                     </td>
                                     <td>
                                         <span className={`badge-payment ${(session.paymentStatus || (session.isFree ? 'FREE' : 'PENDING')).toLowerCase()}`}>
@@ -135,7 +151,7 @@ const CounsellingManagement = () => {
                                                 value={notes[session.id] || ''}
                                                 onChange={(e) => handleNoteChange(session.id, e.target.value)}
                                             />
-                                            <button className="add-note-btn" onClick={() => addNote(session.id)}>
+                                            <button className="add-note-sm-btn" onClick={() => addNote(session.id)}>
                                                 <Plus size={16} />
                                             </button>
                                         </div>

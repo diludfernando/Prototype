@@ -1,0 +1,247 @@
+.session-details-container {
+    min-height: 100vh;
+    padding: 2rem;
+    background: radial-gradient(circle at top right, rgba(99, 102, 241, 0.1), transparent),
+        radial-gradient(circle at bottom left, rgba(168, 85, 247, 0.1), transparent);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}
+
+.details-glass-wrapper {
+    width: 100%;
+    max-width: 1000px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 2rem;
+    padding: 3rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
+}
+
+.back-nav-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #64748b;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 2rem;
+}
+
+.back-nav-btn:hover {
+    color: #4f46e5;
+    transform: translateX(-4px);
+}
+
+.details-header {
+    margin-bottom: 3rem;
+}
+
+.session-id-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: #4f46e5;
+    color: white;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.subtitle {
+    color: #64748b;
+    font-size: 1.125rem;
+    margin-top: 0.5rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.details-card {
+    background: white;
+    padding: 2.5rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    border: 1px solid #f1f5f9;
+    position: relative;
+    overflow: hidden;
+}
+
+.card-top-icon {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    color: rgba(79, 70, 229, 0.05);
+}
+
+.info-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px fated #f1f5f9;
+}
+
+.detail-row label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.detail-row .value {
+    font-weight: 600;
+    color: #1e293b;
+}
+
+.status-pill,
+.payment-pill {
+    padding: 0.25rem 1rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-pill.booked {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.status-pill.cancelled {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-pill.completed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.payment-pill.pending {
+    background: #fef3c7;
+    color: #b45309;
+}
+
+.payment-pill.free {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.payment-pill.paid {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.counsellor-profile-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.profile-avatar {
+    width: 3.5rem;
+    height: 3.5rem;
+    background: #f8fafc;
+    border-radius: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #4f46e5;
+}
+
+.profile-name-group h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+}
+
+.specialization-badge {
+    color: #4f46e5;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.counsellor-bio {
+    padding-top: 1rem;
+}
+
+.counsellor-bio label {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #64748b;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.counsellor-bio p {
+    color: #64748b;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+}
+
+.details-footer {
+    margin-top: 3rem;
+    text-align: center;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.details-loading,
+.details-error {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #4f46e5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .details-glass-wrapper {
+        padding: 1.5rem;
+    }
+}

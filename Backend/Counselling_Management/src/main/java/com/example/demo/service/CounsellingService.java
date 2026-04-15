@@ -15,7 +15,8 @@ public class CounsellingService {
     private final CounsellingSessionRepository sessionRepository;
     private final CounsellorRepository counsellorRepository;
 
-    public CounsellingService(CounsellingSessionRepository sessionRepository, CounsellorRepository counsellorRepository) {
+    public CounsellingService(CounsellingSessionRepository sessionRepository,
+            CounsellorRepository counsellorRepository) {
         this.sessionRepository = sessionRepository;
         this.counsellorRepository = counsellorRepository;
     }
@@ -36,8 +37,7 @@ public class CounsellingService {
         boolean duplicateExists = sessionRepository.existsByStudentIdAndSessionDateAndTimeSlot(
                 session.getStudentId(),
                 session.getSessionDate(),
-                session.getTimeSlot()
-        );
+                session.getTimeSlot());
         if (duplicateExists) {
             throw new IllegalArgumentException("Duplicate booking is not allowed for the selected student and time.");
         }
@@ -80,4 +80,3 @@ public class CounsellingService {
         session.setTimeSlot(session.getTimeSlot().trim());
     }
 }
-

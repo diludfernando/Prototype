@@ -61,14 +61,71 @@
     vertical-align: middle;
 }
 
-.status-select {
-    padding: 6px 12px;
+.status-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.badge-status {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-status.booked {
+    background: #e0e7ff;
+    color: #4338ca;
+}
+
+.badge-status.completed {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.badge-status.cancelled {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+.status-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn-status {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
     border-radius: 6px;
     border: 1px solid #e2e8f0;
     background: white;
-    font-size: 0.875rem;
-    color: #334155;
     cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.action-btn-status.complete {
+    color: #10b981;
+}
+
+.action-btn-status.complete:hover {
+    background: #ecfdf5;
+    border-color: #10b981;
+}
+
+.action-btn-status.cancel {
+    color: #ef4444;
+}
+
+.action-btn-status.cancel:hover {
+    background: #fef2f2;
+    border-color: #ef4444;
 }
 
 .badge-payment {

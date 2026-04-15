@@ -40,6 +40,7 @@ import UserServices from './components/User/UserServices';
 import BookingPage from './components/Counselling/BookingPage';
 import NewBooking from './components/Counselling/NewBooking';
 import Payment from './components/Counselling/Payment';
+import SessionDetailsPage from './components/Counselling/SessionDetailsPage';
 
 // IT Learning Resources Components
 import ITLearningResources from './components/IT Learning Resources/ITLearningResources';
@@ -100,6 +101,7 @@ function App() {
           <Route path="/counselling" element={<BookingPage />} />
           <Route path="/counselling/newbooking" element={<NewBooking />} />
           <Route path="/counselling/payment" element={<Payment />} />
+          <Route path="/counselling/session/:id" element={<SessionDetailsPage />} />
 
           {/* IT Learning Resources */}
           <Route path="/learning-resources" element={<ITLearningResources />} />
