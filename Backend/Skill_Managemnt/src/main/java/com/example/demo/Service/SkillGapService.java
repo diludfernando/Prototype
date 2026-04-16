@@ -1,8 +1,6 @@
 package com.example.demo.Service;
 
-import com.example.demo.Model.QuizResult;
 import com.example.demo.Model.SkillRating;
-import com.example.demo.Model.UserProgress;
 import com.example.demo.Dto.JobDto;
 import com.example.demo.Dto.JobRequirementDto;
 import com.example.demo.Dto.SkillGapAnalysisResultDto;
@@ -20,8 +18,6 @@ import java.util.*;
 @Service
 public class SkillGapService {
 
-    @Autowired
-    private QuizResultService quizResultService;
 
     @Autowired
     private SkillRatingRepository skillRatingRepository;
@@ -138,14 +134,5 @@ public class SkillGapService {
         });
 
         return responseDto;
-    }
-
-    private int mapLevelToInt(String level) {
-        if (level == null) return 1;
-        String lower = level.toLowerCase();
-        if (lower.contains("advanced") || lower.contains("high")) return 4;
-        if (lower.contains("intermediate") || lower.contains("medium")) return 3;
-        if (lower.contains("beginner") || lower.contains("low")) return 2;
-        return 2; // Default
     }
 }

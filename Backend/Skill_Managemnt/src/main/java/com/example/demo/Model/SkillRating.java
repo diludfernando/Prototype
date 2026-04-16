@@ -25,4 +25,6 @@ public class SkillRating {
     private int easyRating;     // 1-5 (Beginner)
     private int moderateRating; // 1-5 (Intermediate)
     private int hardRating;     // 1-5 (Advanced)
+    
+    private double average;
 }

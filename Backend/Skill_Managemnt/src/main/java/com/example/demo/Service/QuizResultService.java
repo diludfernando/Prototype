@@ -143,6 +143,10 @@ public class QuizResultService {
         }
 
         if (updated) {
+            double avg = ((skillRating.getEasyRating() * 20.0) + 
+                          (skillRating.getModerateRating() * 20.0) + 
+                          (skillRating.getHardRating() * 20.0)) / 3.0;
+            skillRating.setAverage(avg);
             skillRatingRepository.save(skillRating);
         }
     }
