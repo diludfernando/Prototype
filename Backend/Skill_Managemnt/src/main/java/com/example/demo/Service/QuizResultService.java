@@ -60,39 +60,25 @@ public class QuizResultService {
         // Calculate performance feedback
         double percentage = (double) result.getScore() / result.getTotalQuestions() * 100;
         
-        int rating = 1;
-        if (percentage >= 80) {
-            rating = 5;
-        } else if (percentage >= 60) {
-            rating = 4;
-        } else if (percentage >= 40) {
-            rating = 3;
-        } else if (percentage >= 20) {
-            rating = 2;
-        }
-        
-        String title;
-        String message;
-
-        if (percentage == 100) {
-            title = "Absolute Perfection!";
-            message = "You've mastered the basics! Ready for the Intermediate challenge?";
-        } else if (percentage >= 80) {
-            title = "Excellent Work!";
-            message = "You have a solid foundation. Keep pushing forward!";
-        } else if (percentage >= 50) {
-            title = "Good Job!";
-            message = "You're on the right track. A bit more practice and you'll be an expert.";
+        // The earned percentage scaled properly for this specific level's weight.
+        int levelPercentage = 0;
+        String levelStr = result.getLevel();
+        if ("Beginner".equalsIgnoreCase(levelStr) || "Easy".equalsIgnoreCase(levelStr)) {
+            levelPercentage = (int) Math.round(percentage * 0.20); // 20% max for easy
+        } else if ("Intermediate".equalsIgnoreCase(levelStr) || "Moderate".equalsIgnoreCase(levelStr) || "Medium".equalsIgnoreCase(levelStr)) {
+            levelPercentage = (int) Math.round(percentage * 0.40); // 40% max for moderate
+        } else if ("Advanced".equalsIgnoreCase(levelStr) || "Hard".equalsIgnoreCase(levelStr)) {
+            levelPercentage = (int) Math.round(percentage * 0.40); // 40% max for hard
         } else {
-            title = "Keep Learning!";
-            message = "Review the basics and try again. Practice makes perfect.";
+            levelPercentage = result.getScore() * 2; // Default fallback
         }
 
+        
         // Save the result to the database
         QuizResult savedResult = quizResultRepository.save(result);
 
         // Update Separate Level Ratings in SkillRating table
-        updateSkillRating(username, result.getCategory(), result.getLevel(), rating, student);
+        updateSkillRating(username, result.getCategory(), result.getLevel(), levelPercentage, student);
 
         // Trigger Progress Sync
         progressService.syncProgress(username);
@@ -100,10 +86,6 @@ public class QuizResultService {
         // Prepare the response
         response.put("result", savedResult);
         response.put("attemptCount", savedResult.getAttemptNumber());
-        response.put("feedback", Map.of(
-            "title", title,
-            "message", message
-        ));
 
         return response;
     }
@@ -112,7 +94,7 @@ public class QuizResultService {
         return quizResultRepository.findByStudentUsername(username);
     }
 
-    private void updateSkillRating(String username, String category, String level, int newRating, Student student) {
+    private void updateSkillRating(String username, String category, String level, int newPercentage, Student student) {
         SkillRating skillRating = skillRatingRepository.findByStudentUsernameAndCategory(username, category)
                 .orElseGet(() -> {
                     SkillRating newSkillRating = new SkillRating();
@@ -126,27 +108,27 @@ public class QuizResultService {
 
         boolean updated = false;
         if ("Beginner".equalsIgnoreCase(level) || "Easy".equalsIgnoreCase(level)) {
-            if (newRating > skillRating.getEasyRating()) {
-                skillRating.setEasyRating(newRating);
+            if (newPercentage > skillRating.getEasyRating()) {
+                skillRating.setEasyRating(newPercentage);
                 updated = true;
             }
         } else if ("Intermediate".equalsIgnoreCase(level) || "Moderate".equalsIgnoreCase(level) || "Medium".equalsIgnoreCase(level)) {
-            if (newRating > skillRating.getModerateRating()) {
-                skillRating.setModerateRating(newRating);
+            if (newPercentage > skillRating.getModerateRating()) {
+                skillRating.setModerateRating(newPercentage);
                 updated = true;
             }
         } else if ("Advanced".equalsIgnoreCase(level) || "Hard".equalsIgnoreCase(level)) {
-            if (newRating > skillRating.getHardRating()) {
-                skillRating.setHardRating(newRating);
+            if (newPercentage > skillRating.getHardRating()) {
+                skillRating.setHardRating(newPercentage);
                 updated = true;
             }
         }
 
         if (updated) {
-            double avg = ((skillRating.getEasyRating() * 20.0) + 
-                          (skillRating.getModerateRating() * 20.0) + 
-                          (skillRating.getHardRating() * 20.0)) / 3.0;
-            skillRating.setAverage(avg);
+            double cumulativeScore = skillRating.getEasyRating() + 
+                                     skillRating.getModerateRating() + 
+                                     skillRating.getHardRating();
+            skillRating.setAverage(cumulativeScore);
             skillRatingRepository.save(skillRating);
         }
     }

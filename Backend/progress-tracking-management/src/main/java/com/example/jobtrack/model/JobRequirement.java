@@ -11,15 +11,13 @@ public class JobRequirement {
     private Long id;
 
     private String language;
-    private String level;
-    private Integer rating;
+    private Integer percentage;
 
     public JobRequirement() {}
 
-    public JobRequirement(String language, String level, Integer rating) {
+    public JobRequirement(String language, Integer percentage) {
         this.language = language;
-        this.level = level;
-        this.rating = rating;
+        this.percentage = percentage;
     }
 
     public Long getId() { return id; }
@@ -28,9 +26,7 @@ public class JobRequirement {
     public String getLanguage() { return language; }
     public void setLanguage(String language) { this.language = language; }
 
-    public String getLevel() { return level; }
-    public void setLevel(String level) { this.level = level; }
 
-    public Integer getRating() { return rating; }
-    public void setRating(Integer rating) { this.rating = rating; }
+    public Integer getPercentage() { return percentage; }
+    public void setPercentage(Integer percentage) { this.percentage = percentage; }
 }

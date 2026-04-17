@@ -19,8 +19,6 @@ const IT_LANGUAGES = [
     "Docker", "Kubernetes", "HTML","CSS", "Flutter", "React Native", "Angular", "Vue.js"
 ];
 
-const JOB_LEVELS = ["Easy", "Intermediate", "Hard"];
-const RATINGS = ["1", "2", "3", "4", "5"];
 
 export default function JobManagement() {
     const role = localStorage.getItem("role");
@@ -42,7 +40,7 @@ export default function JobManagement() {
         salaryMin: "",
         salaryMax: "",
         sourceUrl: "",
-        requirements: [{ language: "", level: "", rating: "" }],
+        requirements: [{ language: "", percentage: "" }],
     };
 
     const [form, setForm] = useState(emptyForm);
@@ -88,7 +86,7 @@ export default function JobManagement() {
     const addRequirement = () => {
         setForm((prev) => ({
             ...prev,
-            requirements: [...prev.requirements, { language: "", level: "", rating: "" }],
+            requirements: [...prev.requirements, { language: "", percentage: "" }],
         }));
     };
 
@@ -154,8 +152,11 @@ export default function JobManagement() {
             salaryMax: job.salaryMax || "",
             sourceUrl: job.sourceUrl || "",
             requirements: job.requirements && job.requirements.length > 0
-                ? job.requirements
-                : [{ language: "", level: "", rating: "" }],
+                ? job.requirements.map(r => ({
+                    ...r,
+                    percentage: r.percentage || (r.rating ? r.rating * 20 : "")
+                }))
+                : [{ language: "", percentage: "" }],
         });
         window.scrollTo({ top: 0, behavior: "smooth" });
     };
@@ -239,28 +240,15 @@ export default function JobManagement() {
                                             </select>
                                         </div>
                                         <div className="jobman-field">
-                                            <select
-                                                value={req.level}
-                                                onChange={(e) => handleRequirementChange(index, "level", e.target.value)}
+                                            <input
+                                                type="number"
+                                                placeholder="Percentage (%)"
+                                                min="0"
+                                                max="100"
+                                                value={req.percentage}
+                                                onChange={(e) => handleRequirementChange(index, "percentage", e.target.value)}
                                                 required
-                                            >
-                                                <option value="">Select Level</option>
-                                                {JOB_LEVELS.map((lvl) => (
-                                                    <option key={lvl} value={lvl}>{lvl}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                        <div className="jobman-field">
-                                            <select
-                                                value={req.rating}
-                                                onChange={(e) => handleRequirementChange(index, "rating", e.target.value)}
-                                                required
-                                            >
-                                                <option value="">Select Rating</option>
-                                                {RATINGS.map((rating) => (
-                                                    <option key={rating} value={rating}>{rating}</option>
-                                                ))}
-                                            </select>
+                                            />
                                         </div>
                                         <button
                                             type="button"
@@ -355,7 +343,7 @@ export default function JobManagement() {
                                         {job.requirements && job.requirements.length > 0 ? (
                                             job.requirements.map((req, idx) => (
                                                 <span key={idx}>
-                                                    {req.language}: {req.level} - Rating {req.rating}
+                                                    {req.language} - {req.percentage}%
                                                 </span>
                                             ))
                                         ) : (

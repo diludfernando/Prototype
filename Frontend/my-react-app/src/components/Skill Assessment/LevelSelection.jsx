@@ -113,7 +113,7 @@ const LevelSelection = () => {
             icon: <Brain size={48} />,
             description: 'Test your practical knowledge and problem-solving skills.',
             color: '#f59e0b', // Amber
-            questions: '15 Questions'
+            questions: '20 Questions'
         },
         {
             id: 'hard',

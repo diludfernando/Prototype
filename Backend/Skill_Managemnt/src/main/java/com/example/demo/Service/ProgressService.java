@@ -49,9 +49,9 @@ public class ProgressService {
         boolean advancedPassed = false;
 
         for (SkillRating sr : ratings) {
-            if (sr.getEasyRating() >= 3) beginnerPassed = true;
-            if (sr.getModerateRating() >= 3) intermediatePassed = true;
-            if (sr.getHardRating() >= 3) advancedPassed = true;
+            if (sr.getEasyRating() >= 14) beginnerPassed = true;
+            if (sr.getModerateRating() >= 28) intermediatePassed = true;
+            if (sr.getHardRating() >= 28) advancedPassed = true;
         }
 
         if (advancedPassed) highestLevel = "Advanced";
@@ -80,29 +80,15 @@ public class ProgressService {
     }
 
     public String getHighestLevelPassedByCategory(String username, String category) {
-        List<QuizResult> results = quizResultRepository.findByStudentUsername(username);
+        Optional<SkillRating> ratingOpt = skillRatingRepository.findByStudentUsernameAndCategory(username, category);
         
-        boolean beginnerPassed = false;
-        boolean intermediatePassed = false;
-        boolean advancedPassed = false;
-
-        for (QuizResult res : results) {
-            String dbCategory = res.getCategory() != null ? res.getCategory().trim() : "";
-            if (category.trim().equalsIgnoreCase(dbCategory)) {
-                double percentage = (double) res.getScore() / res.getTotalQuestions() * 100;
-                System.out.println("Match found! Category: " + category + ", Level: " + res.getLevel() + ", Score: " + res.getScore() + "/" + res.getTotalQuestions() + " (" + percentage + "%)");
-                if (percentage >= 50) {
-                    String level = res.getLevel();
-                    if ("Beginner".equalsIgnoreCase(level)) beginnerPassed = true;
-                    if ("Intermediate".equalsIgnoreCase(level)) intermediatePassed = true;
-                    if ("Advanced".equalsIgnoreCase(level)) advancedPassed = true;
-                }
-            }
+        if (ratingOpt.isPresent()) {
+            SkillRating sr = ratingOpt.get();
+            if (sr.getHardRating() >= 28) return "Advanced";
+            if (sr.getModerateRating() >= 28) return "Intermediate";
+            if (sr.getEasyRating() >= 14) return "Beginner";
         }
 
-        if (advancedPassed) return "Advanced";
-        if (intermediatePassed) return "Intermediate";
-        if (beginnerPassed) return "Beginner";
         return "None";
     }
 }

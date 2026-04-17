@@ -5,6 +5,5 @@ import lombok.Data;
 @Data
 public class JobRequirementDto {
     private String language;
-    private String level;
-    private Integer rating;
+    private Integer percentage;
 }

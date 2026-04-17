@@ -62,24 +62,11 @@ public class SkillGapService {
 
         for (JobRequirementDto req : targetJob.getRequirements()) {
             String language = req.getLanguage();
-            String requiredLevelStr = req.getLevel() != null ? req.getLevel() : "Beginner";
-            int requiredRating = req.getRating() != null ? req.getRating() : 1; 
+            int requiredPercentage = req.getPercentage() != null ? req.getPercentage() : 20; 
 
             SkillRating userSr = userSkillMap.get(language.toLowerCase());
-            int userRating = 0;
-            
-            if (userSr != null) {
-                String reqLower = requiredLevelStr.toLowerCase();
-                if (reqLower.contains("hard") || reqLower.contains("advanced") || reqLower.contains("high")) {
-                    userRating = userSr.getHardRating();
-                } else if (reqLower.contains("moderate") || reqLower.contains("intermediate") || reqLower.contains("medium")) {
-                    userRating = userSr.getModerateRating();
-                } else {
-                    userRating = userSr.getEasyRating();
-                }
-            }
-
-            boolean isMatched = userRating >= requiredRating;
+            double userScore = userSr != null ? userSr.getAverage() : 0.0;
+            boolean isMatched = userScore >= requiredPercentage;
 
             if (isMatched) {
                 matchedCount++;
@@ -87,14 +74,14 @@ public class SkillGapService {
 
             SkillGapAnalysisResultDto resultDto = new SkillGapAnalysisResultDto();
             resultDto.setLanguage(language);
-            resultDto.setRequiredLevel(requiredLevelStr + " (" + requiredRating + ")");
-            resultDto.setUserRating(userRating);
+            resultDto.setRequiredLevel(requiredPercentage + "%");
+            resultDto.setUserRating((int)userScore);
             resultDto.setMatched(isMatched);
 
-            if (userSr == null || userRating == 0) {
-                resultDto.setMessage("You need to learn " + language + " at " + requiredLevelStr + " level");
-            } else if (userRating < requiredRating) {
-                resultDto.setMessage("You need to improve to reach rating " + requiredRating + " on " + requiredLevelStr + " level");
+            if (userSr == null || userScore == 0) {
+                resultDto.setMessage("You need to learn " + language);
+            } else if (userScore < requiredPercentage) {
+                resultDto.setMessage("You need to improve to reach " + requiredPercentage + "% proficiency");
             } else {
                 resultDto.setMessage("Skill matched!");
             }

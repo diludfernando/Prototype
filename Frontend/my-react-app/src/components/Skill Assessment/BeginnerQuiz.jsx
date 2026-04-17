@@ -272,20 +272,7 @@ const BeginnerQuiz = () => {
                                         <span className="stat-label">Total</span>
                                     </div>
                                 </div>
-                                <div className="stat-item-premium">
-                                    <div className="stat-icon-wrapper rating">
-                                        <Star size={20} />
-                                    </div>
-                                    <div className="stat-info">
-                                        <span className="stat-value">
-                                            {Math.round((score / questions.length) * 100) >= 80 ? 5 :
-                                                Math.round((score / questions.length) * 100) >= 60 ? 4 :
-                                                    Math.round((score / questions.length) * 100) >= 40 ? 3 :
-                                                        Math.round((score / questions.length) * 100) >= 20 ? 2 : 1}/5
-                                        </span>
-                                        <span className="stat-label">Rating</span>
-                                    </div>
-                                </div>
+
                             </div>
                         </div>
 

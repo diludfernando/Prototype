@@ -22,9 +22,9 @@ public class SkillRating {
 
     private String category; // e.g. "Java", "Python"
     
-    private int easyRating;     // 1-5 (Beginner)
-    private int moderateRating; // 1-5 (Intermediate)
-    private int hardRating;     // 1-5 (Advanced)
+    private int easyRating;     // 0-20% (Beginner)
+    private int moderateRating; // 0-40% (Intermediate)
+    private int hardRating;     // 0-40% (Advanced)
     
-    private double average;
+    private double average; // Cumulative score (0-100%)
 }
