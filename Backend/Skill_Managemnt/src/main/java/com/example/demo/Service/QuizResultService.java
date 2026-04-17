@@ -6,7 +6,6 @@ import com.example.demo.Model.SkillRating;
 import com.example.demo.Repository.QuizResultRepository;
 import com.example.demo.Repository.StudentRepository;
 import com.example.demo.Repository.SkillRatingRepository;
-import com.example.demo.Service.ProgressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
