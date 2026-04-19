@@ -3,6 +3,36 @@ import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus } from 'lucide-react';
 import './Register.css';
 
+const getPasswordChecks = (password) => ({
+  minLength: password.length >= 8,
+  hasUppercase: /[A-Z]/.test(password),
+  hasLowercase: /[a-z]/.test(password),
+  hasNumber: /\d/.test(password),
+  hasSpecial: /[@#$%^&*]/.test(password),
+});
+
+const getPasswordStrength = (password, checks) => {
+  if (!password) {
+    return { score: 0, label: '' };
+  }
+
+  let score = Object.values(checks).filter(Boolean).length;
+
+  if (password.length >= 12) {
+    score += 1;
+  }
+
+  if (score <= 2) {
+    return { score, label: 'Weak' };
+  }
+
+  if (score <= 4) {
+    return { score, label: 'Medium' };
+  }
+
+  return { score, label: 'Strong' };
+};
+
 const Register = () => {
   const navigate = useNavigate();
 
@@ -21,6 +51,8 @@ const Register = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const currentPasswordChecks = getPasswordChecks(formData.password);
+  const passwordStrength = getPasswordStrength(formData.password, currentPasswordChecks);
 
   const careerPaths = [
     { value: 'Software Engineer', label: 'Software Engineer' },
@@ -42,6 +74,8 @@ const Register = () => {
     setError('');
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordChecks = getPasswordChecks(formData.password);
+    const passwordStrengthForSubmit = getPasswordStrength(formData.password, passwordChecks);
 
     // Password Confirmation Check
     if (formData.password !== formData.confirmPassword) {
@@ -62,8 +96,8 @@ const Register = () => {
       return;
     }
 
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+    if (passwordStrengthForSubmit.label === 'Weak') {
+      setError('Password is too weak. Please use at least a medium-strength password.');
       setLoading(false);
       return;
     }
@@ -138,11 +172,33 @@ const Register = () => {
             <input
               type="password"
               id="password"
-              placeholder="Enter password"
+              placeholder="Enter a strong password"
               value={formData.password}
               onChange={handleChange}
               required
             />
+            {formData.password.length > 0 && (
+                <div className="password-requirements" aria-live="polite">
+                  <div className="password-strength-row">
+                    <span className="password-strength-label">Strength: {passwordStrength.label}</span>
+                    <span className="password-strength-score">{Math.min(passwordStrength.score, 6)}/6</span>
+                  </div>
+                  <div className="password-strength-track" role="progressbar" aria-valuemin="0" aria-valuemax="6" aria-valuenow={Math.min(passwordStrength.score, 6)}>
+                    <div
+                        className={`password-strength-fill strength-${passwordStrength.label.toLowerCase()}`}
+                        style={{ width: `${(Math.min(passwordStrength.score, 6) / 6) * 100}%` }}
+                    />
+                  </div>
+                  <p className="password-requirements-title">For a stronger password, include:</p>
+                  <ul>
+                    <li className={currentPasswordChecks.minLength ? 'met' : 'unmet'}>Minimum 8 characters (12+ for strong)</li>
+                    <li className={currentPasswordChecks.hasUppercase ? 'met' : 'unmet'}>At least 1 uppercase letter (A-Z)</li>
+                    <li className={currentPasswordChecks.hasLowercase ? 'met' : 'unmet'}>At least 1 lowercase letter (a-z)</li>
+                    <li className={currentPasswordChecks.hasNumber ? 'met' : 'unmet'}>At least 1 number (0-9)</li>
+                    <li className={currentPasswordChecks.hasSpecial ? 'met' : 'unmet'}>At least 1 special character (@#$%^&*)</li>
+                  </ul>
+                </div>
+            )}
           </div>
 
           <div className="form-group">

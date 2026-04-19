@@ -38,6 +38,11 @@ public class AuthService {
                         throw new RuntimeException("Email already registered");
                 }
 
+                // Validate password strength on backend
+                if (isWeakPassword(request.getPassword())) {
+                        throw new RuntimeException("Password is too weak. Please use at least a medium-strength password.");
+                }
+
                 // Create user
                 User user = User.builder()
                                 .email(request.getEmail())
@@ -72,6 +77,47 @@ public class AuthService {
                                 .expiresIn(jwtUtil.getJwtExpirationMs())
                                 .expiryTime(LocalDateTime.now().plusSeconds(jwtUtil.getJwtExpirationMs() / 1000))
                                 .build();
+        }
+
+        private boolean isWeakPassword(String password) {
+                if (password == null || password.length() < 8) {
+                        return true;
+                }
+
+                int score = 0;
+
+                // Check for length (8 chars minimum)
+                if (password.length() >= 8) {
+                        score++;
+                }
+
+                // Check for uppercase
+                if (password.matches(".*[A-Z].*")) {
+                        score++;
+                }
+
+                // Check for lowercase
+                if (password.matches(".*[a-z].*")) {
+                        score++;
+                }
+
+                // Check for number
+                if (password.matches(".*\\d.*")) {
+                        score++;
+                }
+
+                // Check for special character
+                if (password.matches(".*[@#$%^&*].*")) {
+                        score++;
+                }
+
+                // Bonus for long password (12+ chars)
+                if (password.length() >= 12) {
+                        score++;
+                }
+
+                // Weak if score <= 2
+                return score <= 2;
         }
 
         public LoginResponse login(LoginRequest request) {

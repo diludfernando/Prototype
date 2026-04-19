@@ -17,7 +17,7 @@ public class RegisterRequest {
     private String email;
 
     @NotBlank(message = "Password is required")
-    @Size(min = 6, max = 50, message = "Password must be between 6 and 50 characters")
+    @Size(min = 8, max = 50, message = "Password must be between 8 and 50 characters")
     private String password;
 
     @NotBlank(message = "Full name is required")
@@ -31,7 +31,7 @@ public class RegisterRequest {
     private String degreeProgram;
 
     @Min(value = 1, message = "Year level must be at least 1")
-    @Max(value = 7, message = "Year level cannot exceed 7")
+    @Max(value = 4, message = "Year level cannot exceed 4")
     private Integer yearLevel;
 
     @NotBlank(message = "Selected career path is required")
