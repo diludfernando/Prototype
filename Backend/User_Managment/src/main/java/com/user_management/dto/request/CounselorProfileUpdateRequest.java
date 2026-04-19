@@ -19,7 +19,7 @@ public class CounselorProfileUpdateRequest {
     private String fullName;
 
     @Size(max = 20, message = "Phone number cannot exceed 20 characters")
-    @Pattern(regexp = "^$|^\\+?[0-9]{10,15}$", message = "Phone number must be 10-15 digits and can start with +")
+    @Pattern(regexp = "^$|^(?:\\+94|94|0)[1-9][0-9]{8}$", message = "Enter a valid Sri Lankan phone number")
     private String phoneNumber;
 
     @Size(max = 200, message = "Qualification cannot exceed 200 characters")

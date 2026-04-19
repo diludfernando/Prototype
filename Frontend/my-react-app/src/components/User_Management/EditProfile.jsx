@@ -207,7 +207,7 @@ const EditProfile = () => {
         setError('');
         setFieldErrors({});
 
-        const phoneRegex = /^\+?[0-9]{10,15}$/;
+        const phoneRegex = /^(?:\+94|94|0)[1-9][0-9]{8}$/;
         const linkedinRegex = /^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i;
         const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/.*$/i;
         const numericOnlyRegex = /^\d+$/;
@@ -252,7 +252,7 @@ const EditProfile = () => {
         }
 
         if (trimmedPhone && !phoneRegex.test(trimmedPhone)) {
-            validationErrors.phone = 'Phone number must be 10-15 digits and can start with +';
+            validationErrors.phone = 'Enter a valid Sri Lankan phone number';
         }
 
         if (trimmedUniversity && numericOnlyRegex.test(trimmedUniversity)) {

@@ -21,7 +21,7 @@ public class StudentProfileUpdateRequest {
     private String fullName;
 
     @Size(max = 20, message = "Phone cannot exceed 20 characters")
-    @Pattern(regexp = "^$|^\\+?[0-9]{10,15}$", message = "Phone number must be 10-15 digits and can start with +")
+    @Pattern(regexp = "^$|^(?:\\+94|94|0)[1-9][0-9]{8}$", message = "Enter a valid Sri Lankan phone number")
     private String phone;
 
     @Size(max = 150, message = "University name cannot exceed 150 characters")

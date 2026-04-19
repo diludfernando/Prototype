@@ -59,11 +59,11 @@ const CounselorCompleteProfile = () => {
         setMessage('');
         setError('');
 
-        const phoneRegex = /^\+?[0-9]{10,15}$/;
+        const phoneRegex = /^(?:\+94|94|0)[1-9][0-9]{8}$/;
         const yearsOfExperienceValue = parseInt(formData.yearsOfExperience, 10);
 
         if (!phoneRegex.test(formData.phone.trim())) {
-            setError('Phone number must be 10-15 digits and can start with +');
+            setError('Enter a valid Sri Lankan phone number');
             return;
         }
 
