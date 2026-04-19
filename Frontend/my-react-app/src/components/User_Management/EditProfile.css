@@ -18,6 +18,24 @@
     margin-bottom: 28px;
 }
 
+.back-profile-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: transparent;
+    color: #0284c7;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 0;
+    margin-bottom: 10px;
+    cursor: pointer;
+}
+
+.back-profile-btn:hover {
+    color: #0369a1;
+}
+
 .edit-header h1 {
     font-size: 32px;
     font-weight: 800;
@@ -122,6 +140,51 @@
     margin: 0;
 }
 
+.photo-actions {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.photo-upload-input {
+    font-size: 14px;
+    color: #475569;
+}
+
+.remove-photo-btn {
+    margin-top: 0;
+}
+
+.password-reset-section h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0f172a;
+    margin: 0;
+}
+
+.password-reset-section p {
+    font-size: 14px;
+    color: #5f748d;
+    margin: 6px 0 16px 0;
+}
+
+.password-reset-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.password-actions {
+    margin-top: 0;
+    padding-top: 12px;
+}
+
+.password-alert {
+    margin-bottom: 12px;
+}
+
 /* Form Styles */
 .edit-form {
     display: flex;
@@ -176,6 +239,13 @@
 .input-group textarea {
     min-height: 100px;
     resize: vertical;
+}
+
+.field-error {
+    margin: 4px 0 0;
+    font-size: 13px;
+    font-weight: 600;
+    color: #b91c1c;
 }
 
 /* Actions */

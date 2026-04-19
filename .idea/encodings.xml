@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/Backend/Counselling_Management/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Backend/IT_Learning_Management/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Backend/Skill_Managemnt/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Backend/User_Managment/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/Backend/progress-tracking-management/src/main/java" charset="UTF-8" />
+  </component>
+</project>

@@ -7,7 +7,7 @@
   "variable": [
     {
       "key": "baseUrl",
-      "value": "http://localhost:8080/api",
+      "value": "http://localhost:8081/api",
       "type": "string"
     },
     {
@@ -32,7 +32,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"email\": \"john.doe@university.lk\",\n  \"password\": \"SecurePass123\",\n  \"fullName\": \"John Doe\",\n  \"university\": \"University of Colombo\",\n  \"degreeProgram\": \"Computer Science\",\n  \"yearLevel\": 3\n}"
+              "raw": "{\n  \"email\": \"john.doe.test1@university.lk\",\n  \"password\": \"SecurePass123\",\n  \"fullName\": \"John Doe\",\n  \"university\": \"University of Colombo\",\n  \"degreeProgram\": \"Computer Science\",\n  \"yearLevel\": 3,\n  \"selectedCareerPath\": \"Full Stack Developer\"\n}"
             },
             "url": {
               "raw": "{{baseUrl}}/auth/register",
@@ -171,6 +171,73 @@
               "path": ["student", "profile", "completion"]
             }
           }
+        },
+        {
+          "name": "Complete Mandatory Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"John Doe\",\n  \"phone\": \"+94771234567\",\n  \"university\": \"University of Colombo\",\n  \"degreeProgram\": \"Computer Science\",\n  \"yearLevel\": 3,\n  \"selectedCareerPath\": \"Full Stack Developer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student/profile/complete-mandatory",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile", "complete-mandatory"]
+            }
+          }
+        },
+        {
+          "name": "Check Mandatory Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/student/profile/check-mandatory",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile", "check-mandatory"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"SecurePass123\",\n  \"newPassword\": \"SecurePass456\",\n  \"confirmPassword\": \"SecurePass456\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/student/profile/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["student", "profile", "reset-password"]
+            }
+          }
         }
       ]
     },
@@ -235,6 +302,65 @@
               "path": ["admin", "counselors"]
             }
           }
+        },
+        {
+          "name": "Update User",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Updated User\",\n  \"enabled\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "2"]
+            }
+          }
+        },
+        {
+          "name": "Toggle User Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/2/toggle-status",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "2", "toggle-status"]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/admin/users/2",
+              "host": ["{{baseUrl}}"],
+              "path": ["admin", "users", "2"]
+            }
+          }
         }
       ]
     },
@@ -255,6 +381,115 @@
               "raw": "{{baseUrl}}/counselor/dashboard",
               "host": ["{{baseUrl}}"],
               "path": ["counselor", "dashboard"]
+            }
+          }
+        },
+        {
+          "name": "Get My Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/counselor/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["counselor", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Smith\",\n  \"phoneNumber\": \"+94771234567\",\n  \"qualification\": \"BSc Psychology\",\n  \"specialization\": \"Career Guidance\",\n  \"yearsOfExperience\": 5,\n  \"shortBio\": \"Experienced counselor\",\n  \"availability\": \"Weekdays 9am-5pm\",\n  \"linkedinUrl\": \"https://linkedin.com/in/janesmith\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/counselor/profile",
+              "host": ["{{baseUrl}}"],
+              "path": ["counselor", "profile"]
+            }
+          }
+        },
+        {
+          "name": "Complete Mandatory Profile",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fullName\": \"Jane Smith\",\n  \"phoneNumber\": \"+94771234567\",\n  \"qualification\": \"BSc Psychology\",\n  \"specialization\": \"Career Guidance\",\n  \"yearsOfExperience\": 5,\n  \"newPassword\": \"TempPass@1234\",\n  \"confirmPassword\": \"TempPass@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/counselor/profile/complete-mandatory",
+              "host": ["{{baseUrl}}"],
+              "path": ["counselor", "profile", "complete-mandatory"]
+            }
+          }
+        },
+        {
+          "name": "Check Mandatory Profile",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/counselor/profile/check-mandatory",
+              "host": ["{{baseUrl}}"],
+              "path": ["counselor", "profile", "check-mandatory"]
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"currentPassword\": \"TempPass@123\",\n  \"newPassword\": \"TempPass@1234\",\n  \"confirmPassword\": \"TempPass@1234\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/counselor/profile/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["counselor", "profile", "reset-password"]
             }
           }
         }

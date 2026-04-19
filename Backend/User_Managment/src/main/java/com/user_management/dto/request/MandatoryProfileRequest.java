@@ -14,6 +14,7 @@ public class MandatoryProfileRequest {
 
     @NotBlank(message = "University is required")
     @Size(max = 150, message = "University name cannot exceed 150 characters")
+    @Pattern(regexp = "^(?!\\d+$).+", message = "University name cannot be only numbers")
     private String university;
 
     @NotBlank(message = "Degree program is required")

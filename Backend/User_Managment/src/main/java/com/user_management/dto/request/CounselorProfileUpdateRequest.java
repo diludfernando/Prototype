@@ -35,6 +35,9 @@ public class CounselorProfileUpdateRequest {
     @Size(max = 1000, message = "Short bio cannot exceed 1000 characters")
     private String shortBio;
 
+    @Size(max = 200, message = "Availability cannot exceed 200 characters")
+    private String availability;
+
     @Size(max = 200, message = "LinkedIn URL cannot exceed 200 characters")
     @Pattern(regexp = "^$|^(https?://)?(www\\.)?linkedin\\.com/.*$", message = "LinkedIn URL must be a valid linkedin.com link")
     private String linkedinUrl;

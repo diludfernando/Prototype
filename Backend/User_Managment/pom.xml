@@ -5,13 +5,13 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.13</version>
+        <version>3.5.11</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com</groupId>
-    <artifactId>user-management</artifactId>
+    <artifactId>User_Management</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>user-management</name>
+    <name>User_Management</name>
     <description>User_Management</description>
     <url/>
     <licenses>

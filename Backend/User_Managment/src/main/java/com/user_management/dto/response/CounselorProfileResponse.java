@@ -20,6 +20,7 @@ public class CounselorProfileResponse {
     private String specialization;
     private Integer yearsOfExperience;
     private String shortBio;
+    private String availability;
     private String linkedinUrl;
     private String profileImageUrl;
     private LocalDateTime updatedAt;

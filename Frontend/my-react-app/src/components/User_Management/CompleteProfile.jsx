@@ -48,7 +48,7 @@ const CompleteProfile = () => {
                         careerGoals: cleanValue(profile.careerGoals),
                         skills: cleanValue(profile.skills),
                         interests: cleanValue(profile.interests),
-                        phone: cleanValue(profile.phone),
+                        phone: '',
                     });
                 } else {
                     setError('Failed to fetch profile details.');
@@ -74,6 +74,28 @@ const CompleteProfile = () => {
         setMessage('');
         setError('');
 
+        const phoneRegex = /^\+?[0-9]{10,15}$/;
+        const numericOnlyRegex = /^\d+$/;
+        const yearLevelValue = formData.yearLevel ? parseInt(formData.yearLevel, 10) : null;
+
+        if (numericOnlyRegex.test(formData.university.trim())) {
+            setError('University name cannot be only numbers');
+            setLoading(false);
+            return;
+        }
+
+        if (!phoneRegex.test(formData.phone.trim())) {
+            setError('Phone number must be 10-15 digits and can start with +');
+            setLoading(false);
+            return;
+        }
+
+        if (yearLevelValue === null || yearLevelValue < 1 || yearLevelValue > 7) {
+            setError('Year level must be between 1 and 7');
+            setLoading(false);
+            return;
+        }
+
         const token = localStorage.getItem('token');
         if (!token) {
             setError('You must be logged in to complete your profile.');
@@ -90,7 +112,7 @@ const CompleteProfile = () => {
                 },
                 body: JSON.stringify({
                     ...formData,
-                    yearLevel: formData.yearLevel ? parseInt(formData.yearLevel) : null
+                    yearLevel: yearLevelValue
                 }),
             });
 

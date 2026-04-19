@@ -61,12 +61,12 @@ const ViewProfile = () => {
     }, [navigate]);
 
     const calculateCompletion = () => {
-        if (!profile) return { percentage: 0, completedCount: 0, total: 11 };
+        if (!profile) return { percentage: 0, completedCount: 0, total: 14 };
 
         const coreFields = [
             'fullName', 'phone', 'university', 'degreeProgram',
             'yearLevel', 'gpa', 'selectedCareerPath', 'careerGoals',
-            'skills', 'interests', 'about'
+            'skills', 'interests', 'about', 'profileImageUrl', 'linkedinUrl', 'githubUrl'
         ];
 
         let completedCount = 0;

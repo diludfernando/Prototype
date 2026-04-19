@@ -41,9 +41,29 @@ const Register = () => {
     setMessage('');
     setError('');
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     // Password Confirmation Check
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
+      return;
+    }
+
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      setLoading(false);
+      return;
+    }
+
+    if (/\d/.test(formData.fullName)) {
+      setError('Full name cannot contain numbers');
+      setLoading(false);
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      setError('Password must be at least 6 characters');
       setLoading(false);
       return;
     }

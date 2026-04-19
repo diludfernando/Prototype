@@ -1,15 +1,19 @@
 package com.user_management.service;
 
 import com.user_management.dto.request.MandatoryProfileRequest;
+import com.user_management.dto.request.StudentPasswordResetRequest;
 import com.user_management.dto.request.StudentProfileUpdateRequest;
 import com.user_management.dto.response.ProfileCompletionResponse;
 import com.user_management.dto.response.StudentProfileResponse;
 import com.user_management.entity.StudentProfile;
+import com.user_management.entity.User;
 import com.user_management.repository.StudentProfileRepository;
+import com.user_management.repository.UserRepository;
 import com.user_management.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +23,8 @@ public class StudentProfileService {
 
     private final StudentProfileRepository studentProfileRepository;
     private final ProfileCompletionService profileCompletionService;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public StudentProfileResponse getMyProfile() {
         Long userId = getCurrentUserId();
@@ -65,9 +71,7 @@ public class StudentProfileService {
         if (request.getAbout() != null) {
             profile.setAbout(request.getAbout());
         }
-        if (request.getGpa() != null) {
-            profile.setGpa(request.getGpa());
-        }
+        profile.setGpa(request.getGpa());
         if (request.getLinkedinUrl() != null) {
             profile.setLinkedinUrl(request.getLinkedinUrl());
         }
@@ -152,6 +156,24 @@ public class StudentProfileService {
                 profile.getSkills() != null && !profile.getSkills().isEmpty() &&
                 profile.getInterests() != null && !profile.getInterests().isEmpty() &&
                 profile.getPhone() != null && !profile.getPhone().isEmpty();
+    }
+
+    @Transactional
+    public void resetPassword(StudentPasswordResetRequest request) {
+        Long userId = getCurrentUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        if (request.getCurrentPassword().equals(request.getNewPassword())) {
+            throw new RuntimeException("New password must be different from current password");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
     }
 
     private Long getCurrentUserId() {

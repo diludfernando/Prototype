@@ -116,19 +116,55 @@ public class AdminService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
-        if (request.getEmail() != null && !request.getEmail().isEmpty()) {
-            if (!user.getEmail().equals(request.getEmail()) && userRepository.existsByEmail(request.getEmail())) {
-                throw new RuntimeException("Email already registered");
-            }
-            user.setEmail(request.getEmail());
+        if (request.getRole() != null && !request.getRole().isBlank()) {
+            throw new RuntimeException("Changing user role is not allowed");
         }
 
-        if (request.getRole() != null) {
-            try {
-                user.setRole(Role.valueOf(request.getRole().toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                throw new RuntimeException("Invalid role provided");
+        String trimmedEmail = request.getEmail() != null ? request.getEmail().trim() : null;
+        String trimmedFullName = request.getFullName() != null ? request.getFullName().trim() : null;
+        String trimmedPhoneNumber = request.getPhoneNumber() != null ? request.getPhoneNumber().trim() : null;
+        String newPassword = request.getNewPassword() != null ? request.getNewPassword().trim() : null;
+
+        if (trimmedEmail != null && !trimmedEmail.isEmpty()) {
+            if (!user.getEmail().equals(trimmedEmail) && userRepository.existsByEmail(trimmedEmail)) {
+                throw new RuntimeException("Email already registered");
             }
+            user.setEmail(trimmedEmail);
+        }
+
+        if (user.getRole() == Role.STUDENT) {
+            StudentProfile profile = studentProfileRepository.findByUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("Student profile not found"));
+
+            if (trimmedFullName != null && !trimmedFullName.isEmpty()) {
+                profile.setFullName(trimmedFullName);
+            }
+            if (trimmedPhoneNumber != null && !trimmedPhoneNumber.isEmpty()) {
+                profile.setPhone(trimmedPhoneNumber);
+            }
+
+            studentProfileRepository.save(profile);
+        }
+
+        if (user.getRole() == Role.COUNSELOR) {
+            CounselorProfile profile = counselorProfileRepository.findByUserId(userId)
+                    .orElseThrow(() -> new RuntimeException("Counselor profile not found"));
+
+            if (trimmedFullName != null && !trimmedFullName.isEmpty()) {
+                profile.setFullName(trimmedFullName);
+            }
+            if (trimmedPhoneNumber != null && !trimmedPhoneNumber.isEmpty()) {
+                profile.setPhoneNumber(trimmedPhoneNumber);
+            }
+
+            counselorProfileRepository.save(profile);
+        }
+
+        if (newPassword != null && !newPassword.isEmpty()) {
+            if (user.getRole() != Role.ADMIN) {
+                throw new RuntimeException("Password reset from this edit flow is allowed only for admin account");
+            }
+            user.setPasswordHash(passwordEncoder.encode(newPassword));
         }
 
         user = userRepository.save(user);

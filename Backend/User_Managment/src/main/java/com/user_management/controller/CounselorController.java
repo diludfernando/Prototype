@@ -1,6 +1,7 @@
 package com.user_management.controller;
 
 import com.user_management.dto.request.CounselorProfileUpdateRequest;
+import com.user_management.dto.request.CounselorPasswordResetRequest;
 import com.user_management.dto.request.MandatoryCounselorProfileRequest;
 import com.user_management.dto.response.ApiResponse;
 import com.user_management.dto.response.CounselorProfileResponse;
@@ -65,6 +66,18 @@ public class CounselorController {
         try {
             boolean isComplete = counselorProfileService.isMandatoryProfileComplete();
             return ResponseEntity.ok(ApiResponse.success("Mandatory profile status checked", isComplete));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/profile/reset-password")
+    public ResponseEntity<ApiResponse<String>> resetPassword(
+            @Valid @RequestBody CounselorPasswordResetRequest request) {
+        try {
+            counselorProfileService.resetPassword(request);
+            return ResponseEntity.ok(ApiResponse.success("Password reset successfully", "OK"));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.error(e.getMessage()));

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Save, X, CheckCircle } from 'lucide-react';
+import { User, Save, X, CheckCircle, ArrowLeft } from 'lucide-react';
 import './EditProfile.css';
 
 const EditProfile = () => {
@@ -24,8 +24,17 @@ const EditProfile = () => {
 
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [resettingPassword, setResettingPassword] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
+    const [passwordMessage, setPasswordMessage] = useState('');
+    const [passwordError, setPasswordError] = useState('');
+    const [passwordData, setPasswordData] = useState({
+        currentPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    });
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -79,7 +88,7 @@ const EditProfile = () => {
         const coreFields = [
             'fullName', 'phone', 'university', 'degreeProgram',
             'yearLevel', 'gpa', 'selectedCareerPath', 'careerGoals',
-            'skills', 'interests', 'about'
+            'skills', 'interests', 'about', 'profileImageUrl', 'linkedinUrl', 'githubUrl'
         ];
 
         let completedCount = 0;
@@ -97,6 +106,7 @@ const EditProfile = () => {
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData({ ...formData, [id]: value });
+        setFieldErrors((prev) => ({ ...prev, [id]: '' }));
     };
 
     const handleImageUpload = (e) => {
@@ -120,47 +130,153 @@ const EditProfile = () => {
         reader.readAsDataURL(file);
     };
 
+    const handleRemovePhoto = () => {
+        const confirmed = window.confirm('Are you sure you want to remove your profile photo?');
+        if (!confirmed) {
+            return;
+        }
+
+        setFormData((prev) => ({
+            ...prev,
+            profileImageUrl: ''
+        }));
+    };
+
+    const handlePasswordChange = (e) => {
+        const { id, value } = e.target;
+        setPasswordData((prev) => ({
+            ...prev,
+            [id]: value
+        }));
+    };
+
+    const handlePasswordReset = async (e) => {
+        e.preventDefault();
+        setPasswordMessage('');
+        setPasswordError('');
+
+        if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
+            setPasswordError('Please fill in all password fields.');
+            return;
+        }
+
+        if (passwordData.newPassword.length < 6) {
+            setPasswordError('New password must be at least 6 characters.');
+            return;
+        }
+
+        if (passwordData.newPassword !== passwordData.confirmPassword) {
+            setPasswordError('New password and confirmation do not match.');
+            return;
+        }
+
+        setResettingPassword(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch('http://localhost:8081/api/student/profile/reset-password', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(passwordData)
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                setPasswordMessage('Password reset successfully.');
+                setPasswordData({
+                    currentPassword: '',
+                    newPassword: '',
+                    confirmPassword: ''
+                });
+            } else {
+                setPasswordError(data.message || 'Failed to reset password.');
+            }
+        } catch (err) {
+            setPasswordError('An error occurred. Please check your connection.');
+        } finally {
+            setResettingPassword(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
         setMessage('');
         setError('');
+        setFieldErrors({});
 
         const phoneRegex = /^\+?[0-9]{10,15}$/;
         const linkedinRegex = /^(https?:\/\/)?(www\.)?linkedin\.com\/.*$/i;
         const githubRegex = /^(https?:\/\/)?(www\.)?github\.com\/.*$/i;
+        const numericOnlyRegex = /^\d+$/;
         const trimmedPhone = formData.phone.trim();
+        const trimmedUniversity = formData.university.trim();
+        const trimmedDegreeProgram = formData.degreeProgram.trim();
+        const trimmedCareerGoals = formData.careerGoals.trim();
+        const trimmedSkills = formData.skills.trim();
+        const trimmedInterests = formData.interests.trim();
         const trimmedLinkedinUrl = formData.linkedinUrl.trim();
         const trimmedGithubUrl = formData.githubUrl.trim();
         const yearLevelValue = formData.yearLevel ? parseInt(formData.yearLevel, 10) : null;
         const gpaValue = formData.gpa ? parseFloat(formData.gpa) : null;
+        const validationErrors = {};
+
+        if (!trimmedPhone) {
+            validationErrors.phone = 'Phone number is required';
+        }
+
+        if (!trimmedUniversity) {
+            validationErrors.university = 'University is required';
+        }
+
+        if (!trimmedDegreeProgram) {
+            validationErrors.degreeProgram = 'Degree program is required';
+        }
+
+        if (yearLevelValue === null || Number.isNaN(yearLevelValue)) {
+            validationErrors.yearLevel = 'Year level is required';
+        }
+
+        if (!trimmedCareerGoals) {
+            validationErrors.careerGoals = 'Career goals are required';
+        }
+
+        if (!trimmedSkills) {
+            validationErrors.skills = 'Skills are required';
+        }
+
+        if (!trimmedInterests) {
+            validationErrors.interests = 'Interests are required';
+        }
 
         if (trimmedPhone && !phoneRegex.test(trimmedPhone)) {
-            setError('Phone number must be 10-15 digits and can start with +');
-            setSaving(false);
-            return;
+            validationErrors.phone = 'Phone number must be 10-15 digits and can start with +';
+        }
+
+        if (trimmedUniversity && numericOnlyRegex.test(trimmedUniversity)) {
+            validationErrors.university = 'University name cannot be only numbers';
         }
 
         if (yearLevelValue !== null && (yearLevelValue < 1 || yearLevelValue > 7)) {
-            setError('Year level must be between 1 and 7');
-            setSaving(false);
-            return;
+            validationErrors.yearLevel = 'Year level must be between 1 and 7';
         }
 
         if (gpaValue !== null && (Number.isNaN(gpaValue) || gpaValue < 0 || gpaValue > 4)) {
-            setError('GPA must be between 0.0 and 4.0');
-            setSaving(false);
-            return;
+            validationErrors.gpa = 'GPA must be between 0.0 and 4.0';
         }
 
         if (trimmedLinkedinUrl && !linkedinRegex.test(trimmedLinkedinUrl)) {
-            setError('LinkedIn URL must be a valid linkedin.com link');
-            setSaving(false);
-            return;
+            validationErrors.linkedinUrl = 'LinkedIn URL must be a valid linkedin.com link';
         }
 
         if (trimmedGithubUrl && !githubRegex.test(trimmedGithubUrl)) {
-            setError('GitHub URL must be a valid github.com link');
+            validationErrors.githubUrl = 'GitHub URL must be a valid github.com link';
+        }
+
+        if (Object.keys(validationErrors).length > 0) {
+            setFieldErrors(validationErrors);
             setSaving(false);
             return;
         }
@@ -210,6 +326,13 @@ const EditProfile = () => {
         <div className="edit-profile-page">
             <div className="edit-container">
                 <header className="edit-header">
+                    <button
+                        type="button"
+                        className="back-profile-btn"
+                        onClick={() => navigate('/view-profile')}
+                    >
+                        <ArrowLeft size={16} /> Back to Profile
+                    </button>
                     <h1>Student Profile</h1>
                     <p>Edit your personal information</p>
                 </header>
@@ -236,6 +359,23 @@ const EditProfile = () => {
                     <div className="pic-text">
                         <h3>Profile Photo</h3>
                         <p>Upload a profile photo from your device.</p>
+                        <div className="photo-actions">
+                            <input
+                                type="file"
+                                id="profileImage"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="photo-upload-input"
+                            />
+                            <button
+                                type="button"
+                                className="cancel-btn remove-photo-btn"
+                                onClick={handleRemovePhoto}
+                                disabled={!formData.profileImageUrl}
+                            >
+                                Remove Photo
+                            </button>
+                        </div>
                     </div>
                 </div>
 
@@ -255,44 +395,50 @@ const EditProfile = () => {
                             />
                         </div>
                         <div className="input-group">
-                            <label htmlFor="phone">Phone</label>
+                            <label htmlFor="phone">Phone *</label>
                             <input
                                 type="text"
                                 id="phone"
                                 value={formData.phone}
                                 onChange={handleChange}
                                 placeholder="Enter phone number"
+                                required
                             />
+                            {fieldErrors.phone && <p className="field-error">{fieldErrors.phone}</p>}
                         </div>
                     </div>
 
                     <div className="form-row">
                         <div className="input-group">
-                            <label htmlFor="university">University</label>
+                            <label htmlFor="university">University *</label>
                             <input
                                 type="text"
                                 id="university"
                                 value={formData.university}
                                 onChange={handleChange}
                                 placeholder="Enter university"
+                                required
                             />
+                            {fieldErrors.university && <p className="field-error">{fieldErrors.university}</p>}
                         </div>
                     </div>
 
                     <div className="form-row">
                         <div className="input-group">
-                            <label htmlFor="degreeProgram">Degree Program</label>
+                            <label htmlFor="degreeProgram">Degree Program *</label>
                             <input
                                 type="text"
                                 id="degreeProgram"
                                 value={formData.degreeProgram}
                                 onChange={handleChange}
                                 placeholder="Enter degree program"
+                                required
                             />
+                            {fieldErrors.degreeProgram && <p className="field-error">{fieldErrors.degreeProgram}</p>}
                         </div>
                         <div className="input-group">
-                            <label htmlFor="yearLevel">Year Level</label>
-                            <select id="yearLevel" value={formData.yearLevel} onChange={handleChange}>
+                            <label htmlFor="yearLevel">Year Level *</label>
+                            <select id="yearLevel" value={formData.yearLevel} onChange={handleChange} required>
                                 <option value="">Select Year</option>
                                 <option value="1">1st Year</option>
                                 <option value="2">2nd Year</option>
@@ -300,6 +446,7 @@ const EditProfile = () => {
                                 <option value="4">4th Year</option>
                                 <option value="5">5th Year</option>
                             </select>
+                            {fieldErrors.yearLevel && <p className="field-error">{fieldErrors.yearLevel}</p>}
                         </div>
                     </div>
 
@@ -315,33 +462,39 @@ const EditProfile = () => {
                     </div>
 
                     <div className="input-group full">
-                        <label htmlFor="careerGoals">Career Goals</label>
+                        <label htmlFor="careerGoals">Career Goals *</label>
                         <textarea
                             id="careerGoals"
                             value={formData.careerGoals}
                             onChange={handleChange}
                             placeholder="Describe your career goals"
+                            required
                         ></textarea>
+                        {fieldErrors.careerGoals && <p className="field-error">{fieldErrors.careerGoals}</p>}
                     </div>
 
                     <div className="input-group full">
-                        <label htmlFor="skills">Skills</label>
+                        <label htmlFor="skills">Skills *</label>
                         <textarea
                             id="skills"
                             value={formData.skills}
                             onChange={handleChange}
                             placeholder="List your skills"
+                            required
                         ></textarea>
+                        {fieldErrors.skills && <p className="field-error">{fieldErrors.skills}</p>}
                     </div>
 
                     <div className="input-group full">
-                        <label htmlFor="interests">Interests</label>
+                        <label htmlFor="interests">Interests *</label>
                         <textarea
                             id="interests"
                             value={formData.interests}
                             onChange={handleChange}
                             placeholder="List your interests"
+                            required
                         ></textarea>
+                        {fieldErrors.interests && <p className="field-error">{fieldErrors.interests}</p>}
                     </div>
 
                     <div className="input-group full">
@@ -363,6 +516,7 @@ const EditProfile = () => {
                             onChange={handleChange}
                             placeholder="Enter your GPA (0-4)"
                         />
+                        {fieldErrors.gpa && <p className="field-error">{fieldErrors.gpa}</p>}
                     </div>
 
                     <div className="input-group full">
@@ -374,6 +528,7 @@ const EditProfile = () => {
                             onChange={handleChange}
                             placeholder="https://linkedin.com/in/yourprofile"
                         />
+                        {fieldErrors.linkedinUrl && <p className="field-error">{fieldErrors.linkedinUrl}</p>}
                     </div>
 
                     <div className="input-group full">
@@ -385,16 +540,7 @@ const EditProfile = () => {
                             onChange={handleChange}
                             placeholder="https://github.com/yourusername"
                         />
-                    </div>
-
-                    <div className="input-group full">
-                        <label htmlFor="profileImage">Profile Photo</label>
-                        <input
-                            type="file"
-                            id="profileImage"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                        />
+                        {fieldErrors.githubUrl && <p className="field-error">{fieldErrors.githubUrl}</p>}
                     </div>
 
                     <div className="form-actions">
@@ -406,6 +552,56 @@ const EditProfile = () => {
                         </button>
                     </div>
                 </form>
+
+                <div className="edit-card password-reset-section">
+                    <h3>Reset Password</h3>
+                    <p>Reset your account password if needed.</p>
+
+                    {passwordMessage && <div className="alert success password-alert">{passwordMessage}</div>}
+                    {passwordError && <div className="alert error password-alert">{passwordError}</div>}
+
+                    <form className="password-reset-form" onSubmit={handlePasswordReset}>
+                        <div className="input-group full">
+                            <label htmlFor="currentPassword">Current Password</label>
+                            <input
+                                type="password"
+                                id="currentPassword"
+                                value={passwordData.currentPassword}
+                                onChange={handlePasswordChange}
+                                placeholder="Enter current password"
+                            />
+                        </div>
+
+                        <div className="form-row">
+                            <div className="input-group">
+                                <label htmlFor="newPassword">New Password</label>
+                                <input
+                                    type="password"
+                                    id="newPassword"
+                                    value={passwordData.newPassword}
+                                    onChange={handlePasswordChange}
+                                    placeholder="Enter new password"
+                                />
+                            </div>
+                            <div className="input-group">
+                                <label htmlFor="confirmPassword">Confirm New Password</label>
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    value={passwordData.confirmPassword}
+                                    onChange={handlePasswordChange}
+                                    placeholder="Confirm new password"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="form-actions password-actions">
+                            <button type="submit" className="save-btn" disabled={resettingPassword}>
+                                {resettingPassword ? 'Resetting...' : 'Reset Password'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );

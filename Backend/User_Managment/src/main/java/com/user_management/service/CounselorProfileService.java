@@ -1,6 +1,7 @@
 package com.user_management.service;
 
 import com.user_management.dto.request.CounselorProfileUpdateRequest;
+import com.user_management.dto.request.CounselorPasswordResetRequest;
 import com.user_management.dto.request.MandatoryCounselorProfileRequest;
 import com.user_management.dto.response.CounselorProfileResponse;
 import com.user_management.entity.CounselorProfile;
@@ -55,6 +56,9 @@ public class CounselorProfileService {
         }
         if (request.getShortBio() != null) {
             profile.setShortBio(request.getShortBio());
+        }
+        if (request.getAvailability() != null) {
+            profile.setAvailability(request.getAvailability());
         }
         if (request.getLinkedinUrl() != null) {
             profile.setLinkedinUrl(request.getLinkedinUrl());
@@ -140,6 +144,24 @@ public class CounselorProfileService {
                 profile.getShortBio() != null && !profile.getShortBio().isEmpty();
     }
 
+    @Transactional
+    public void resetPassword(CounselorPasswordResetRequest request) {
+        Long userId = getCurrentUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        if (request.getCurrentPassword().equals(request.getNewPassword())) {
+            throw new RuntimeException("New password must be different from current password");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
     private CounselorProfileResponse mapToResponse(CounselorProfile profile) {
         return CounselorProfileResponse.builder()
                 .id(profile.getId())
@@ -150,6 +172,7 @@ public class CounselorProfileService {
                 .specialization(profile.getSpecialization())
                 .yearsOfExperience(profile.getYearsOfExperience())
                 .shortBio(profile.getShortBio())
+                .availability(profile.getAvailability())
                 .linkedinUrl(profile.getLinkedinUrl())
                 .profileImageUrl(profile.getProfileImageUrl())
                 .updatedAt(profile.getUpdatedAt())

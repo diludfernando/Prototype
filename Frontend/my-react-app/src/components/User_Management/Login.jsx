@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, Lock, Mail, ShieldCheck } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
@@ -11,10 +12,7 @@ const Login = () => {
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-
-  // --- HARDCODED CREDENTIALS ---
-  const ADMIN_EMAIL = "admin@skillbridge.lk";
-  const ADMIN_PASS = "Admin@123";
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -26,7 +24,6 @@ const Login = () => {
     setMessage('');
     setError('');
 
-    // 1. Proceed to API call for all users
     try {
       const response = await fetch('http://localhost:8081/api/auth/login', {
         method: 'POST',
@@ -67,8 +64,8 @@ const Login = () => {
             const checkData = await checkResponse.json();
             
             if (checkResponse.ok && checkData.success && checkData.data === true) {
-              // Profile is complete, go to new dashboard
-              setTimeout(() => navigate('/counselor/dashboard'), 1500); 
+              // Profile is complete, go to profile page (dashboard pending)
+              setTimeout(() => navigate('/counselor/profile'), 1500);
             } else {
               // Profile is NOT complete, go to completion page
               setTimeout(() => navigate('/counselor/complete-profile'), 1500);
@@ -96,50 +93,76 @@ const Login = () => {
     <div className="login-page">
       <div className="login-card">
         <header className="login-header">
+          <Link to="/" className="login-home-button">Back to Home</Link>
+          <p className="login-eyebrow">Skill Bridge Lanka</p>
+          <span className="login-badge">
+            <ShieldCheck size={14} />
+            Secure Access
+          </span>
           <h2 className="login-title">Welcome Back</h2>
-          <p className="login-subtitle">Enter your credentials to access Skill Bridge</p>
+          <p className="login-subtitle">Sign in to continue to your dashboard</p>
         </header>
 
-        {message && <p className="form-success" style={{ color: 'green' }}>{message}</p>}
-        {error && <p className="form-error" style={{ color: 'red' }}>{error}</p>}
+        {message && <p className="form-success" role="status" aria-live="polite">{message}</p>}
+        {error && <p className="form-error" role="alert" aria-live="assertive">{error}</p>}
 
-        <form className="login-form" onSubmit={handleSubmit}>
+        <form className="login-form" onSubmit={handleSubmit} autoComplete="on" noValidate>
           <div className="form-group">
             <label htmlFor="email">Email Address</label>
-            <input
-              type="email"
-              id="email"
-              placeholder="e.g. alex@skillbridge.lk"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
+            <div className="input-wrap">
+              <Mail size={18} className="input-icon" />
+              <input
+                type="email"
+                id="email"
+                placeholder="e.g. alex@skillbridge.lk"
+                value={formData.email}
+                onChange={handleChange}
+                autoComplete="username"
+                required
+              />
+            </div>
           </div>
 
           <div className="form-group">
             <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              placeholder="••••••••"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
+            <div className="input-wrap">
+              <Lock size={18} className="input-icon" />
+              <input
+                type={showPassword ? 'text' : 'password'}
+                id="password"
+                placeholder="••••••••"
+                value={formData.password}
+                onChange={handleChange}
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                className="password-toggle"
+                onClick={() => setShowPassword((prev) => !prev)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
           <div className="form-actions">
+            <label className="remember-check">
+              <input type="checkbox" />
+              <span>Remember me</span>
+            </label>
             <a href="#forgot" className="link-text">Forgot password?</a>
           </div>
 
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <button type="submit" className="btn-primary" disabled={loading || !formData.email || !formData.password}>
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
         <footer className="login-footer">
           <p>
-            Don't have an account? <a href="/register" className="link-accent">Join Skill Bridge</a>
+            Don't have an account? <Link to="/register" className="link-accent">Join Skill Bridge</Link>
           </p>
         </footer>
       </div>

@@ -45,6 +45,9 @@ public class CounselorProfile {
     private String shortBio;
 
     @Column(length = 200)
+    private String availability;
+
+    @Column(length = 200)
     private String linkedinUrl;
 
     @Lob
