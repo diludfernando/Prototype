@@ -25,6 +25,7 @@ const EditProfile = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [resettingPassword, setResettingPassword] = useState(false);
+    const [deactivating, setDeactivating] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [fieldErrors, setFieldErrors] = useState({});
@@ -197,6 +198,50 @@ const EditProfile = () => {
             setPasswordError('An error occurred. Please check your connection.');
         } finally {
             setResettingPassword(false);
+        }
+    };
+
+    const handleDeactivateAccount = async () => {
+        const confirmed = window.confirm(
+            'Are you sure you want to deactivate your account? You will not be able to log in until an admin re-enables it.'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDeactivating(true);
+        setMessage('');
+        setError('');
+
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            const response = await fetch('http://localhost:8081/api/student/profile/deactivate', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('role');
+                navigate('/login');
+            } else {
+                setError(data.message || 'Failed to deactivate account.');
+            }
+        } catch (err) {
+            setError('An error occurred while deactivating your account.');
+        } finally {
+            setDeactivating(false);
         }
     };
 
@@ -601,6 +646,21 @@ const EditProfile = () => {
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <div className="edit-card danger-zone-section">
+                    <h3>Deactivate Account</h3>
+                    <p>
+                        Deactivating your account will disable sign-in access until an administrator enables it again.
+                    </p>
+                    <button
+                        type="button"
+                        className="deactivate-btn"
+                        onClick={handleDeactivateAccount}
+                        disabled={deactivating}
+                    >
+                        {deactivating ? 'Deactivating Account...' : 'Deactivate Account'}
+                    </button>
                 </div>
             </div>
         </div>

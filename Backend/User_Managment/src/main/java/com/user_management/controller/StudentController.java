@@ -101,4 +101,15 @@ public class StudentController {
                     .body(ApiResponse.error(e.getMessage()));
         }
     }
+
+    @PostMapping("/profile/deactivate")
+    public ResponseEntity<ApiResponse<String>> deactivateAccount() {
+        try {
+            studentProfileService.deactivateMyAccount();
+            return ResponseEntity.ok(ApiResponse.success("Account deactivated successfully", "OK"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.error(e.getMessage()));
+        }
+    }
 }
