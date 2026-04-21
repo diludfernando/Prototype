@@ -38,7 +38,8 @@ public class CounselorOnboardingEmailService {
 				"Temporary Password: %s%n%n" +
 				"Please log in and change your password immediately after signing in.%n%n" +
 				"Regards,%n" +
-				"User Management Team",
+				"User Management Team,%n" +
+				"Skill Bridge Lanka",
 				counselorName,
 				recipientEmail,
 				recipientEmail,
