@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BookOpen, CheckCircle, GraduationCap, PhoneCall, Sparkles, Target } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import './CompleteProfile.css';
 
 const CompleteProfile = () => {
@@ -144,24 +144,14 @@ const CompleteProfile = () => {
         <div className="complete-profile-page">
             <div className="complete-profile-card">
                 <header className="complete-profile-header">
-                    <span className="complete-profile-kicker"><Sparkles size={14} /> Student onboarding</span>
-                    <h1 className="complete-profile-title">Complete your profile</h1>
-                    <p className="complete-profile-subtitle">Add your academic and career details to unlock personalized services.</p>
+                    <h1 className="complete-profile-title">Complete Your Profile</h1>
+                    <p className="complete-profile-subtitle">Please fill in these mandatory fields to continue</p>
                 </header>
-
-                <section className="complete-profile-overview">
-                    <p><GraduationCap size={16} /> Improve recommendation quality with accurate university and degree details.</p>
-                    <p><Target size={16} /> Match opportunities better by defining goals, skills, and interests.</p>
-                    <p><PhoneCall size={16} /> Keep your contact number updated for mentorship and support coordination.</p>
-                </section>
 
                 {message && <p className="form-success">{message}</p>}
                 {error && <p className="form-error">{error}</p>}
 
                 <form className="complete-profile-form" onSubmit={handleSubmit}>
-                    <p className="complete-profile-form-hint"><BookOpen size={14} /> Fields marked with * are required to continue.</p>
-
-                    <div className="form-row-grid">
                     <div className="form-group">
                         <label htmlFor="university">University *</label>
                         <input
@@ -185,9 +175,7 @@ const CompleteProfile = () => {
                             required
                         />
                     </div>
-                    </div>
 
-                    <div className="form-row-grid">
                     <div className="form-group">
                         <label htmlFor="yearLevel">Year Level *</label>
                         <select
@@ -202,19 +190,6 @@ const CompleteProfile = () => {
                                 <option key={level} value={level}>Year {level}</option>
                             ))}
                         </select>
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="phone">Phone Number *</label>
-                        <input
-                            type="text"
-                            id="phone"
-                            placeholder="Enter your phone number"
-                            value={formData.phone}
-                            onChange={handleChange}
-                            required
-                        />
-                    </div>
                     </div>
 
                     <div className="form-group">
@@ -248,6 +223,18 @@ const CompleteProfile = () => {
                             onChange={handleChange}
                             required
                         ></textarea>
+                    </div>
+
+                    <div className="form-group">
+                        <label htmlFor="phone">Phone Number *</label>
+                        <input
+                            type="text"
+                            id="phone"
+                            placeholder="Enter your phone number"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                        />
                     </div>
 
                     <button type="submit" className="btn-primary" disabled={loading}>
