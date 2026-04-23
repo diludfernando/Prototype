@@ -107,6 +107,39 @@ const ViewProfile = () => {
         return value;
     };
 
+    const getSkillTags = (skillsValue) => {
+        if (skillsValue === null || skillsValue === '' || skillsValue === undefined || skillsValue === 'Not Specified') {
+            return [];
+        }
+
+        const raw = String(skillsValue).trim();
+        let parts = raw
+            .split(/[\n,;|/]+/)
+            .map((item) => item.trim())
+            .filter(Boolean);
+
+        if (parts.length <= 1) {
+            parts = raw
+                .split(/\s+/)
+                .map((item) => item.trim())
+                .filter(Boolean);
+        }
+
+        const unique = [];
+        const seen = new Set();
+        parts.forEach((part) => {
+            const key = part.toLowerCase();
+            if (!seen.has(key)) {
+                seen.add(key);
+                unique.push(part);
+            }
+        });
+
+        return unique;
+    };
+
+    const skillTags = getSkillTags(profile?.skills);
+
     return (
         <div className="view-profile-page">
             <div className="profile-container">
@@ -230,7 +263,15 @@ const ViewProfile = () => {
                         </div>
                         <div className="info-group full-width mt-4">
                             <label>Skills</label>
-                            <p className="info-value">{renderValue(profile?.skills)}</p>
+                            {skillTags.length > 0 ? (
+                                <div className="skills-tags-wrap" role="list" aria-label="Student skills">
+                                    {skillTags.map((skill) => (
+                                        <span key={skill} className="skill-tag" role="listitem">{skill}</span>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className="info-value">{renderValue(profile?.skills)}</p>
+                            )}
                         </div>
                         <div className="info-group full-width mt-4">
                             <label>Interests</label>
