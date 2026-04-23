@@ -379,14 +379,39 @@
 .c-profile-page {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  width: min(1100px, 100%);
+  gap: 18px;
+  width: min(1120px, 100%);
   margin: 0 auto;
+}
+
+.c-profile-page .c-page-header {
+  margin-bottom: 0;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  border: 1px solid var(--color-border);
+  border-left: 5px solid var(--color-accent);
+  border-radius: 16px;
+  padding: 20px 22px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+}
+
+.c-profile-page .c-page-header h1 {
+  font-size: clamp(1.75rem, 2.4vw, 2.2rem);
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
+}
+
+.c-profile-page .c-page-header p {
+  font-size: 1rem;
+  color: #64748b;
 }
 
 .c-inline-state {
   font-size: 0.95rem;
   color: var(--color-text-muted);
+  background: #ffffff;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
 .c-inline-error {
@@ -408,30 +433,44 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  border-radius: 999px;
+  padding: 11px 20px;
+  font-weight: 700;
+}
+
+.c-profile-actions .c-btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  box-shadow: 0 10px 22px rgba(14, 165, 233, 0.24);
+}
+
+.c-profile-actions .c-btn-primary:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  transform: translateY(-1px);
 }
 
 .c-profile-card {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 24px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.05);
 }
 
 .c-profile-top-card {
-  padding: 20px 24px;
+  padding: 22px 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
 .c-profile-top {
   display: flex;
   align-items: flex-start;
-  gap: 18px;
+  gap: 20px;
 }
 
 .c-profile-top-meta {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   flex: 1;
 }
 
@@ -445,13 +484,13 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border: 1px solid var(--color-border);
-  background: #f8fafc;
-  color: var(--color-text-main);
+  border: 1px solid #bae6fd;
+  background: #f0f9ff;
+  color: #075985;
   border-radius: 999px;
-  padding: 6px 12px;
+  padding: 7px 12px;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .c-profile-bio-inline-wrap .c-profile-section-title {
@@ -459,17 +498,19 @@
 }
 
 .c-profile-avatar-lg {
-  width: 68px;
-  height: 68px;
+  width: 82px;
+  height: 82px;
   border-radius: 50%;
-  background-color: var(--color-accent);
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
   color: #fff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
   overflow: hidden;
+  border: 3px solid #ffffff;
+  box-shadow: 0 12px 24px rgba(14, 165, 233, 0.24);
 }
 
 .c-profile-avatar-image {
@@ -480,16 +521,19 @@
 
 .c-profile-titleblock h2 {
   margin: 0;
-  font-size: 1.35rem;
+  font-size: clamp(1.5rem, 2vw, 1.9rem);
   color: var(--color-text-main);
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.015em;
 }
 
 .c-profile-titleblock p {
   margin: 4px 0 0;
-  color: var(--color-text-muted);
+  color: #0284c7;
   font-size: 0.9rem;
-  font-weight: 500;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
 }
 
 .c-photo-actions {
@@ -540,25 +584,26 @@
 
 .c-profile-section-title {
   margin: 0 0 16px;
-  font-size: 1.02rem;
+  font-size: 1.08rem;
   color: var(--color-text-main);
-  font-weight: 700;
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
 
 .c-profile-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .c-profile-field {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 8px;
   padding: 16px;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
-  background-color: #f8fafc;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
 .c-profile-label {
@@ -573,15 +618,15 @@
 }
 
 .c-profile-value {
-  font-size: 0.95rem;
-  font-weight: 600;
+  font-size: 0.97rem;
+  font-weight: 700;
   color: var(--color-text-main);
 }
 
 .c-profile-link {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--color-accent-hover);
+  font-size: 0.97rem;
+  font-weight: 700;
+  color: #0284c7;
   text-decoration: none;
   word-break: break-word;
 }
@@ -595,10 +640,139 @@
   color: var(--color-text-main);
   line-height: 1.6;
   white-space: pre-wrap;
-  background: #f8fafc;
+  background: #ffffff;
   border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border-radius: 12px;
+  padding: 13px 14px;
+}
+
+/* Counselor Edit Profile - page specific refinements */
+.c-edit-profile-page {
+  gap: 16px;
+}
+
+.c-edit-profile-page .c-inline-state {
+  border-radius: 12px;
   padding: 12px 14px;
+}
+
+.c-edit-page-header {
+  background: linear-gradient(180deg, #ffffff 0%, #f4faff 100%) !important;
+}
+
+.c-edit-page-header .c-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #bae6fd;
+  background: #eff6ff;
+  color: #0369a1;
+  border-radius: 999px;
+  padding: 8px 14px;
+  margin-bottom: 14px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  transition: all 0.2s ease;
+}
+
+.c-edit-page-header .c-back-link:hover {
+  background: #dbeafe;
+  color: #075985;
+  transform: translateY(-1px);
+}
+
+.c-edit-main-card,
+.c-edit-password-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.c-edit-main-card .c-edit-helper-text,
+.c-edit-password-card .c-edit-helper-text {
+  margin: -2px 0 14px;
+  color: #64748b;
+}
+
+.c-edit-main-card .c-form-hint {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  font-size: 0.76rem;
+}
+
+.c-edit-profile-page .c-form-row {
+  gap: 16px;
+}
+
+.c-edit-profile-page .c-form-group {
+  gap: 7px;
+}
+
+.c-edit-profile-page .c-form-group label {
+  font-size: 0.83rem;
+  font-weight: 700;
+  color: #334155;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+}
+
+.c-edit-profile-page .c-form-group input,
+.c-edit-profile-page .c-form-group select,
+.c-edit-profile-page .c-form-group textarea {
+  padding: 11px 13px;
+  border-radius: 10px;
+  border: 1px solid #dbe6f1;
+  background: #ffffff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.c-edit-profile-page .c-form-group input:focus,
+.c-edit-profile-page .c-form-group select:focus,
+.c-edit-profile-page .c-form-group textarea:focus {
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.1);
+}
+
+.c-edit-profile-page .c-form-group textarea {
+  min-height: 115px;
+}
+
+.c-edit-profile-page .c-profile-actions {
+  gap: 10px;
+}
+
+.c-edit-profile-page .c-profile-actions .c-btn-primary,
+.c-edit-profile-page .c-profile-actions .c-btn-secondary {
+  border-radius: 999px;
+  padding: 11px 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.c-edit-profile-page .c-profile-actions .c-btn-primary {
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  box-shadow: 0 10px 22px rgba(14, 165, 233, 0.22);
+}
+
+.c-edit-profile-page .c-profile-actions .c-btn-primary:hover {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  transform: translateY(-1px);
+}
+
+.c-edit-profile-page .c-profile-actions .c-btn-secondary {
+  border: 1px solid #dbe6f1;
+  background: #ffffff;
+  color: #475569;
+}
+
+.c-edit-profile-page .c-profile-actions .c-btn-secondary:hover {
+  background: #f8fafc;
+}
+
+.c-edit-profile-page .c-password-reset-actions {
+  margin-top: 8px;
 }
 
 @media (max-width: 900px) {
@@ -613,8 +787,8 @@
   }
 
   .c-profile-avatar-lg {
-    width: 64px;
-    height: 64px;
+    width: 72px;
+    height: 72px;
   }
 
   .c-photo-actions {
@@ -628,10 +802,23 @@
   .c-password-reset-row {
     grid-template-columns: 1fr;
   }
-}
 
-@media (max-width: 900px) {
-  .c-profile-grid {
-    grid-template-columns: 1fr;
+  .c-profile-page .c-page-header {
+    padding: 16px 16px;
+  }
+
+  .c-profile-actions {
+    justify-content: flex-start;
+  }
+
+  .c-profile-actions .c-btn-primary,
+  .c-profile-actions .c-btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .c-edit-profile-page .c-form-row {
+    gap: 12px;
   }
 }
+
