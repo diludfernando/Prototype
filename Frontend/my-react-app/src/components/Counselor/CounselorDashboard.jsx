@@ -10,6 +10,7 @@ import {
   GraduationCap,
   Briefcase,
   BadgeCheck,
+  CalendarDays,
   Link as LinkIcon,
   Clock
 } from 'lucide-react';
@@ -168,6 +169,10 @@ const CounselorDashboard = () => {
                                   <span>{displayValue(profile.yearsOfExperience)} years</span>
                                 </div>
                                 <div className="c-highlight-chip" role="listitem">
+                                  <CalendarDays size={14} />
+                                  <span>{displayValue(profile.availability)}</span>
+                                </div>
+                                <div className="c-highlight-chip" role="listitem">
                                   <GraduationCap size={14} />
                                   <span>{displayValue(profile.qualification)}</span>
                                 </div>
@@ -198,6 +203,10 @@ const CounselorDashboard = () => {
                             <div className="c-profile-field">
                               <span className="c-profile-label"><BadgeCheck size={14} /> Years of Experience</span>
                               <span className="c-profile-value">{displayValue(profile.yearsOfExperience)}</span>
+                            </div>
+                            <div className="c-profile-field">
+                              <span className="c-profile-label"><CalendarDays size={14} /> Availability</span>
+                              <span className="c-profile-value">{displayValue(profile.availability)}</span>
                             </div>
                           </div>
                         </section>
