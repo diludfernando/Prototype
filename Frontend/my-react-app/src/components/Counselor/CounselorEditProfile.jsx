@@ -577,6 +577,9 @@ const CounselorEditProfile = () => {
                               onChange={handleEditFormChange}
                           />
                         </div>
+                      </div>
+
+                      <div className="c-form-row">
                         <div className="c-form-group">
                           <label htmlFor="linkedinUrl"><LinkIcon size={14} /> LinkedIn URL</label>
                           <input
