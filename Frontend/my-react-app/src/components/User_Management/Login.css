@@ -211,9 +211,22 @@
 }
 
 .input-wrap input {
+  width: 100%;
   border: none;
   background: transparent;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
   padding: 0.82rem 0;
+}
+
+.login-form .input-wrap > input,
+.login-form .input-wrap > input:focus,
+.login-form .input-wrap > input:active {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none;
 }
 
 .input-wrap:focus-within {
@@ -235,6 +248,20 @@
   justify-content: center;
   cursor: pointer;
   padding: 0;
+}
+
+/* Hide browser-native password reveal controls so only the custom toggle is shown */
+.login-form input[type="password"]::-ms-reveal,
+.login-form input[type="password"]::-ms-clear {
+  display: none;
+}
+
+.login-form input[type="password"]::-webkit-credentials-auto-fill-button,
+.login-form input[type="password"]::-webkit-textfield-decoration-container {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
 }
 
 .form-group input:focus {
