@@ -1,6 +1,7 @@
 package com.user_management.service;
 
 import com.user_management.dto.request.MandatoryProfileRequest;
+import com.user_management.dto.request.StudentDeactivateAccountRequest;
 import com.user_management.dto.request.StudentPasswordResetRequest;
 import com.user_management.dto.request.StudentProfileUpdateRequest;
 import com.user_management.dto.response.ProfileCompletionResponse;
@@ -178,7 +179,7 @@ public class StudentProfileService {
     }
 
     @Transactional
-    public void deactivateMyAccount() {
+    public void deactivateMyAccount(StudentDeactivateAccountRequest request) {
         Long userId = getCurrentUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -189,6 +190,10 @@ public class StudentProfileService {
 
         if (!user.getEnabled()) {
             throw new RuntimeException("Account is already deactivated");
+        }
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Current password is incorrect");
         }
 
         user.setEnabled(false);

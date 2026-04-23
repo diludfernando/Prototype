@@ -315,6 +315,14 @@
     line-height: 1.5;
 }
 
+.danger-password-group {
+    margin-bottom: 14px;
+}
+
+.danger-password-group input {
+    max-width: 420px;
+}
+
 .deactivate-btn {
     display: inline-flex;
     align-items: center;

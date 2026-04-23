@@ -1,6 +1,7 @@
 package com.user_management.controller;
 
 import com.user_management.dto.request.MandatoryProfileRequest;
+import com.user_management.dto.request.StudentDeactivateAccountRequest;
 import com.user_management.dto.request.StudentPasswordResetRequest;
 import com.user_management.dto.request.StudentProfileUpdateRequest;
 import com.user_management.dto.response.ApiResponse;
@@ -103,9 +104,10 @@ public class StudentController {
     }
 
     @PostMapping("/profile/deactivate")
-    public ResponseEntity<ApiResponse<String>> deactivateAccount() {
+    public ResponseEntity<ApiResponse<String>> deactivateAccount(
+            @Valid @RequestBody StudentDeactivateAccountRequest request) {
         try {
-            studentProfileService.deactivateMyAccount();
+            studentProfileService.deactivateMyAccount(request);
             return ResponseEntity.ok(ApiResponse.success("Account deactivated successfully", "OK"));
         } catch (Exception e) {
             return ResponseEntity.badRequest()

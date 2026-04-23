@@ -36,6 +36,8 @@ const EditProfile = () => {
         newPassword: '',
         confirmPassword: ''
     });
+    const [deactivatePassword, setDeactivatePassword] = useState('');
+    const [deactivatePasswordError, setDeactivatePasswordError] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -202,6 +204,13 @@ const EditProfile = () => {
     };
 
     const handleDeactivateAccount = async () => {
+        setDeactivatePasswordError('');
+
+        if (!deactivatePassword.trim()) {
+            setDeactivatePasswordError('Please enter your current password to confirm deactivation.');
+            return;
+        }
+
         const confirmed = window.confirm(
             'Are you sure you want to deactivate your account? You will not be able to log in until an admin re-enables it.'
         );
@@ -216,20 +225,48 @@ const EditProfile = () => {
 
         try {
             const token = localStorage.getItem('token');
+            const username = localStorage.getItem('username');
             if (!token) {
                 navigate('/login');
+                return;
+            }
+
+            if (!username) {
+                setError('Session information is missing. Please log in again.');
+                return;
+            }
+
+            const verifyResponse = await fetch('http://localhost:8081/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: username,
+                    password: deactivatePassword
+                })
+            });
+
+            const verifyData = await verifyResponse.json();
+            if (!verifyResponse.ok || !verifyData.success) {
+                setDeactivatePasswordError('Current password is incorrect.');
                 return;
             }
 
             const response = await fetch('http://localhost:8081/api/student/profile/deactivate', {
                 method: 'POST',
                 headers: {
+                    'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                body: JSON.stringify({
+                    currentPassword: deactivatePassword
+                })
             });
 
             const data = await response.json();
             if (response.ok && data.success) {
+                setDeactivatePassword('');
                 localStorage.removeItem('token');
                 localStorage.removeItem('username');
                 localStorage.removeItem('userId');
@@ -673,6 +710,22 @@ const EditProfile = () => {
                     <p>
                         Deactivating your account will disable sign-in access until an administrator enables it again.
                     </p>
+                    <div className="input-group full danger-password-group">
+                        <label htmlFor="deactivatePassword">Confirm with current password</label>
+                        <input
+                            type="password"
+                            id="deactivatePassword"
+                            value={deactivatePassword}
+                            onChange={(e) => {
+                                setDeactivatePassword(e.target.value);
+                                if (deactivatePasswordError) {
+                                    setDeactivatePasswordError('');
+                                }
+                            }}
+                            placeholder="Enter current password to deactivate"
+                        />
+                        {deactivatePasswordError && <p className="field-error">{deactivatePasswordError}</p>}
+                    </div>
                     <button
                         type="button"
                         className="deactivate-btn"
