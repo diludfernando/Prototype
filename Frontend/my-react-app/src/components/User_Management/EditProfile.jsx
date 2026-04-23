@@ -371,20 +371,33 @@ const EditProfile = () => {
         <div className="edit-profile-page">
             <div className="edit-container">
                 <header className="edit-header">
-                    <button
-                        type="button"
-                        className="back-profile-btn"
-                        onClick={() => navigate('/view-profile')}
-                    >
-                        <ArrowLeft size={16} /> Back to Profile
-                    </button>
-                    <h1>Student Profile</h1>
-                    <p>Edit your personal information</p>
+                    <div className="edit-header-topline">
+                        <button
+                            type="button"
+                            className="back-profile-btn"
+                            onClick={() => navigate('/view-profile')}
+                        >
+                            <ArrowLeft size={16} /> Back to Profile
+                        </button>
+                        <span className="edit-section-tag">User Management</span>
+                    </div>
+                    <div className="edit-header-copy">
+                        <div>
+                            <h1>Student Profile</h1>
+                            <p>Update your details, profile photo, security settings, and links in one streamlined workspace.</p>
+                        </div>
+                        <div className="edit-header-badge">
+                            <CheckCircle size={16} /> {completion.percentage}% complete
+                        </div>
+                    </div>
                 </header>
 
                 <div className="edit-card completion-summary">
                     <div className="completion-header">
-                        <h3>Profile Completion</h3>
+                        <div>
+                            <p className="card-kicker">Profile health</p>
+                            <h3>Completion snapshot</h3>
+                        </div>
                         <span className="percentage">{completion.percentage}%</span>
                     </div>
                     <div className="progress-bar">
@@ -402,8 +415,8 @@ const EditProfile = () => {
                         )}
                     </div>
                     <div className="pic-text">
-                        <h3>Profile Photo</h3>
-                        <p>Upload a profile photo from your device.</p>
+                        <p className="pic-title">Profile photo</p>
+                        <p>Upload a clean profile photo from your device to personalize your account.</p>
                         <div className="photo-actions">
                             <input
                                 type="file"
@@ -428,6 +441,11 @@ const EditProfile = () => {
                 {error && <div className="alert error">{error}</div>}
 
                 <form className="edit-form" onSubmit={handleSubmit}>
+                    <div className="form-section-heading">
+                        <p className="card-kicker">Profile details</p>
+                        <h3>Personal and academic information</h3>
+                    </div>
+
                     <div className="form-row">
                         <div className="input-group">
                             <label htmlFor="fullName">Full Name</label>
@@ -599,8 +617,9 @@ const EditProfile = () => {
                 </form>
 
                 <div className="edit-card password-reset-section">
-                    <h3>Reset Password</h3>
-                    <p>Reset your account password if needed.</p>
+                    <p className="card-kicker">Security</p>
+                    <h3>Reset password</h3>
+                    <p>Update your account password whenever you want to refresh your credentials.</p>
 
                     {passwordMessage && <div className="alert success password-alert">{passwordMessage}</div>}
                     {passwordError && <div className="alert error password-alert">{passwordError}</div>}
@@ -649,7 +668,8 @@ const EditProfile = () => {
                 </div>
 
                 <div className="edit-card danger-zone-section">
-                    <h3>Deactivate Account</h3>
+                    <p className="card-kicker">Danger zone</p>
+                    <h3>Deactivate account</h3>
                     <p>
                         Deactivating your account will disable sign-in access until an administrator enables it again.
                     </p>
