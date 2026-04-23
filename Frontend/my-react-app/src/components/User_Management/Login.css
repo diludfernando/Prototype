@@ -362,6 +362,56 @@
   text-align: center;
 }
 
+.disabled-account-card {
+  margin: 0 auto 1.1rem;
+  max-width: 380px;
+  border: 1px solid #fecaca;
+  background: linear-gradient(180deg, #fff5f5 0%, #fff1f2 100%);
+  border-radius: 0.9rem;
+  padding: 1rem 1rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.disabled-account-title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #991b1b;
+  letter-spacing: -0.01em;
+}
+
+.disabled-account-text {
+  margin: 0;
+  color: #7f1d1d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.disabled-account-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid #fca5a5;
+  background: #ffffff;
+  color: #b91c1c;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.disabled-account-contact-btn:hover {
+  background: #b91c1c;
+  color: #ffffff;
+  border-color: #b91c1c;
+}
+
 .btn-primary:disabled {
   background: #8ec9ea;
   box-shadow: none;

@@ -5,6 +5,7 @@ import './Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
+  const adminEmail = 'admin@skillbridge.lk';
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -13,6 +14,23 @@ const Login = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const isDisabledAccountError = /disabled|deactivated|inactive/i.test(error);
+  const prefilledConcernMessage = [
+    'Hello Admin,',
+    '',
+    'I am unable to log in because my account appears to be disabled.',
+    'Please review and reactivate my account.',
+    '',
+    `Account Email: ${formData.email || '[Enter your email]'}`,
+    '',
+    'Thank you.'
+  ].join('\n');
+  const contactAdminHref = `https://mail.google.com/mail/u/0/?view=cm&fs=1&tf=1&to=${encodeURIComponent(adminEmail)}&su=${encodeURIComponent('Account Reactivation Request')}&body=${encodeURIComponent(prefilledConcernMessage)}`;
+
+  const openAdminContact = (e) => {
+    e.preventDefault();
+    window.open(contactAdminHref, '_blank', 'noopener,noreferrer');
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
@@ -104,7 +122,16 @@ const Login = () => {
         </header>
 
         {message && <p className="form-success" role="status" aria-live="polite">{message}</p>}
-        {error && <p className="form-error" role="alert" aria-live="assertive">{error}</p>}
+        {error && !isDisabledAccountError && <p className="form-error" role="alert" aria-live="assertive">{error}</p>}
+        {error && isDisabledAccountError && (
+          <div className="disabled-account-card" role="alert" aria-live="assertive">
+            <h3 className="disabled-account-title">Account Access Disabled</h3>
+            <p className="disabled-account-text">{error}</p>
+            <a className="disabled-account-contact-btn" href={contactAdminHref} target="_blank" rel="noreferrer noopener" onClick={openAdminContact}>
+              Contact Admin
+            </a>
+          </div>
+        )}
 
         <form className="login-form" onSubmit={handleSubmit} autoComplete="on" noValidate>
           <div className="form-group">
