@@ -1,7 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Briefcase, Building2, MapPin, Send } from "lucide-react";
+import { Briefcase, Building2, MapPin, Send, BadgeDollarSign, Globe, Layers3 } from "lucide-react";
+import cloudCover from "../../assets/progress/cloud-cover.svg";
+import securityCover from "../../assets/progress/security-cover.svg";
+import programmingCover from "../../assets/progress/programming-cover.svg";
 import "./JobApply.css";
+
+const normalizeText = (value) => String(value || "").trim().toLowerCase();
+
+const getJobTheme = (job) => {
+    const category = normalizeText(job?.category);
+    const title = normalizeText(job?.title);
+
+    if (category.includes("cloud") || title.includes("cloud") || title.includes("devops")) {
+        return cloudCover;
+    }
+    if (category.includes("security") || title.includes("security") || title.includes("cyber")) {
+        return securityCover;
+    }
+    return programmingCover;
+};
+
+const formatSalary = (job) => {
+    if (job?.salaryMin && job?.salaryMax) return `LKR ${job.salaryMin} - ${job.salaryMax}`;
+    if (job?.salaryMin) return `From LKR ${job.salaryMin}`;
+    if (job?.salaryMax) return `Up to LKR ${job.salaryMax}`;
+    return "Salary Negotiable";
+};
 
 export default function JobApply() {
     const { id } = useParams();
@@ -99,6 +124,9 @@ export default function JobApply() {
         <div className="apply-page">
             <div className="apply-shell">
                 <section className="apply-job-summary">
+                    <div className="apply-job-hero">
+                        <img src={getJobTheme(job)} alt={job.category || "Job category"} className="apply-job-hero-image" />
+                    </div>
                     <p className="apply-eyebrow">JOB APPLICATION</p>
                     <h1>Apply for {job.title}</h1>
 
@@ -115,11 +143,33 @@ export default function JobApply() {
               <Briefcase size={15} />
                             {job.jobType || "Full Time"}
             </span>
+                        <span>
+              <BadgeDollarSign size={15} />
+                            {formatSalary(job)}
+            </span>
                     </div>
 
                     <p className="apply-description">
                         {job.description || "No job description available."}
                     </p>
+
+                    {Array.isArray(job.requirements) && job.requirements.length > 0 && (
+                        <div className="apply-job-requirements">
+                            <p><Layers3 size={15} /> Key requirements</p>
+                            <div className="apply-job-requirement-list">
+                                {job.requirements.slice(0, 4).map((req, index) => (
+                                    <span key={`req-${index}`}>{req.language} {req.percentage ? `${req.percentage}%` : ""}</span>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {job.sourceUrl && (
+                        <a className="apply-job-source" href={job.sourceUrl} target="_blank" rel="noreferrer">
+                            <Globe size={15} />
+                            View original posting
+                        </a>
+                    )}
                 </section>
 
                 <section className="apply-form-card">

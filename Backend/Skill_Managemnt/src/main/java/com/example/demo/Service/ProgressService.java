@@ -48,7 +48,18 @@ public class ProgressService {
         boolean intermediatePassed = false;
         boolean advancedPassed = false;
 
+        int totalEasy = 0;
+        int totalMedium = 0;
+        int totalHard = 0;
+        double totalAverage = 0.0;
+        int count = ratings.size();
+
         for (SkillRating sr : ratings) {
+            totalEasy += sr.getEasyRating();
+            totalMedium += sr.getModerateRating();
+            totalHard += sr.getHardRating();
+            totalAverage += sr.getAverage();
+
             if (sr.getEasyRating() >= 14) beginnerPassed = true;
             if (sr.getModerateRating() >= 28) intermediatePassed = true;
             if (sr.getHardRating() >= 28) advancedPassed = true;
@@ -65,10 +76,19 @@ public class ProgressService {
 
         // Update or create UserProgress
         UserProgress progress = userProgressRepository.findByStudentUsername(username)
-                .orElse(new UserProgress(null, student, highestLevel, advancedPassed));
+                .orElseGet(() -> {
+                    UserProgress up = new UserProgress();
+                    up.setStudent(student);
+                    return up;
+                });
         
         progress.setHighestLevelPassed(highestLevel);
         progress.setClearedHardestLevel(advancedPassed);
+        
+        progress.setEasy(count > 0 ? totalEasy / count : 0);
+        progress.setMedium(count > 0 ? totalMedium / count : 0);
+        progress.setHard(count > 0 ? totalHard / count : 0);
+        progress.setOverallAverage(count > 0 ? totalAverage / count : 0.0);
         
         userProgressRepository.save(progress);
         System.out.println("Progress saved successfully for " + username);

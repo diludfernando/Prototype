@@ -13,8 +13,8 @@ public class ProgressController {
     @Autowired
     private ProgressService progressService;
 
-    @GetMapping("/{username:.+}")
-    public ResponseEntity<?> getProgress(@PathVariable String username) {
+    @GetMapping
+    public ResponseEntity<?> getProgress(@RequestParam String username) {
         try {
             System.out.println("GET Progress requested for: " + username);
             return progressService.getProgress(username)
@@ -26,8 +26,8 @@ public class ProgressController {
         }
     }
 
-    @GetMapping("/{username}/category/{category}")
-    public ResponseEntity<?> getProgressByCategory(@PathVariable String username, @PathVariable String category) {
+    @GetMapping("/category/{category}")
+    public ResponseEntity<?> getProgressByCategory(@RequestParam String username, @PathVariable String category) {
         try {
             String highestLevel = progressService.getHighestLevelPassedByCategory(username, category);
             return ResponseEntity.ok(java.util.Map.of("highestLevelPassed", highestLevel));
@@ -36,8 +36,8 @@ public class ProgressController {
         }
     }
 
-    @PostMapping("/{username}/sync")
-    public ResponseEntity<Void> syncProgress(@PathVariable String username) {
+    @PostMapping("/sync")
+    public ResponseEntity<Void> syncProgress(@RequestParam String username) {
         progressService.syncProgress(username);
         return ResponseEntity.ok().build();
     }

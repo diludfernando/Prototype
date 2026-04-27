@@ -23,6 +23,21 @@ public class CourseEnrollmentController {
         return repository.findByUserId(userId);
     }
 
+    @GetMapping("/user/{userId}/summary")
+    public ResponseEntity<Map<String, Object>> getEnrollmentSummaryByUserId(@PathVariable Long userId) {
+        List<CourseEnrollment> enrollments = repository.findByUserId(userId);
+        long completedCount = enrollments.stream()
+                .filter(e -> (e.getProgress() != null && e.getProgress() >= 100) || 
+                             (e.getCompleted() != null && e.getCompleted() > 0) ||
+                             ("Purchased Externally".equals(e.getEnrollmentType()) && "APPROVED".equals(e.getVerificationStatus())))
+                .count();
+        return ResponseEntity.ok(Map.of(
+                "userId", userId,
+                "completedCount", completedCount,
+                "totalEnrollments", enrollments.size()
+        ));
+    }
+
     @GetMapping("/pending")
     public List<CourseEnrollment> getPendingVerifications() {
         return repository.findByVerificationStatus("PENDING");

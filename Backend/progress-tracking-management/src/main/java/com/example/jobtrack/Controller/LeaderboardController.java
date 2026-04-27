@@ -35,8 +35,11 @@ public class LeaderboardController {
             Map<String, Object> row = new HashMap<>();
             row.put("userId", u.getId());
             row.put("name", u.getName());
+            row.put("fullName", u.getName());
+            row.put("email", u.getEmail());
             row.put("careerId", careerId);
             row.put("careerReadinessScore", dto.getCareerReadinessScore());
+            row.put("breakdown", dto.getBreakdown());
             results.add(row);
         }
 

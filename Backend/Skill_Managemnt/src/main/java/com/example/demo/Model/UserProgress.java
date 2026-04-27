@@ -22,4 +22,9 @@ public class UserProgress {
 
     private String highestLevelPassed; // Beginner, Intermediate, Advanced
     private boolean clearedHardestLevel; // True if Advanced is passed with high score
+
+    private Integer easy;
+    private Integer medium;
+    private Integer hard;
+    private Double overallAverage;
 }
