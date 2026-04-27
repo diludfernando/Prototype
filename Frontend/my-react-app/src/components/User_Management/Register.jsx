@@ -33,6 +33,8 @@ const getPasswordStrength = (password, checks) => {
   return { score, label: 'Strong' };
 };
 
+const isAcceptablePasswordStrength = (label) => label === 'Medium' || label === 'Strong';
+
 const Register = () => {
   const navigate = useNavigate();
 
@@ -98,8 +100,8 @@ const Register = () => {
       return;
     }
 
-    if (passwordStrengthForSubmit.label === 'Weak') {
-      setError('Password is too weak. Please use at least a medium-strength password.');
+    if (!isAcceptablePasswordStrength(passwordStrengthForSubmit.label)) {
+      setError('Password must be medium or strong. Weak passwords are not allowed.');
       setLoading(false);
       return;
     }
