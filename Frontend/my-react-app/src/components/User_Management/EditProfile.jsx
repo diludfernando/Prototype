@@ -3,6 +3,38 @@ import { useNavigate } from 'react-router-dom';
 import { User, Save, X, CheckCircle, ArrowLeft } from 'lucide-react';
 import './EditProfile.css';
 
+const getPasswordChecks = (password) => ({
+    minLength: password.length >= 8,
+    hasUppercase: /[A-Z]/.test(password),
+    hasLowercase: /[a-z]/.test(password),
+    hasNumber: /\d/.test(password),
+    hasSpecial: /[@#$%^&*]/.test(password),
+});
+
+const getPasswordStrength = (password, checks) => {
+    if (!password) {
+        return { score: 0, label: '' };
+    }
+
+    let score = Object.values(checks).filter(Boolean).length;
+
+    if (password.length >= 12) {
+        score += 1;
+    }
+
+    if (score <= 2) {
+        return { score, label: 'Weak' };
+    }
+
+    if (score <= 4) {
+        return { score, label: 'Medium' };
+    }
+
+    return { score, label: 'Strong' };
+};
+
+const isAcceptablePasswordStrength = (label) => label === 'Medium' || label === 'Strong';
+
 const EditProfile = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -31,6 +63,7 @@ const EditProfile = () => {
     const [fieldErrors, setFieldErrors] = useState({});
     const [passwordMessage, setPasswordMessage] = useState('');
     const [passwordError, setPasswordError] = useState('');
+    const [passwordFieldErrors, setPasswordFieldErrors] = useState({});
     const [passwordData, setPasswordData] = useState({
         currentPassword: '',
         newPassword: '',
@@ -38,6 +71,8 @@ const EditProfile = () => {
     });
     const [deactivatePassword, setDeactivatePassword] = useState('');
     const [deactivatePasswordError, setDeactivatePasswordError] = useState('');
+    const currentPasswordChecks = getPasswordChecks(passwordData.newPassword);
+    const passwordStrength = getPasswordStrength(passwordData.newPassword, currentPasswordChecks);
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -151,25 +186,53 @@ const EditProfile = () => {
             ...prev,
             [id]: value
         }));
+
+        if (passwordError) {
+            setPasswordError('');
+        }
+
+        if (passwordFieldErrors[id]) {
+            setPasswordFieldErrors((prev) => {
+                const next = { ...prev };
+                delete next[id];
+                return next;
+            });
+        }
+    };
+
+    const validatePasswordResetForm = () => {
+        const errors = {};
+        const strength = getPasswordStrength(passwordData.newPassword, getPasswordChecks(passwordData.newPassword));
+
+        if (!passwordData.currentPassword) {
+            errors.currentPassword = 'Current password is required';
+        }
+
+        if (!passwordData.newPassword) {
+            errors.newPassword = 'New password is required';
+        } else if (!isAcceptablePasswordStrength(strength.label)) {
+            errors.newPassword = 'Password must be medium or strong. Weak passwords are not allowed.';
+        } else if (passwordData.currentPassword && passwordData.currentPassword === passwordData.newPassword) {
+            errors.newPassword = 'New password must be different from current password.';
+        }
+
+        if (!passwordData.confirmPassword) {
+            errors.confirmPassword = 'Please confirm your new password';
+        } else if (passwordData.newPassword !== passwordData.confirmPassword) {
+            errors.confirmPassword = 'New password and confirmation do not match.';
+        }
+
+        return errors;
     };
 
     const handlePasswordReset = async (e) => {
         e.preventDefault();
         setPasswordMessage('');
         setPasswordError('');
+        const nextErrors = validatePasswordResetForm();
+        setPasswordFieldErrors(nextErrors);
 
-        if (!passwordData.currentPassword || !passwordData.newPassword || !passwordData.confirmPassword) {
-            setPasswordError('Please fill in all password fields.');
-            return;
-        }
-
-        if (passwordData.newPassword.length < 6) {
-            setPasswordError('New password must be at least 6 characters.');
-            return;
-        }
-
-        if (passwordData.newPassword !== passwordData.confirmPassword) {
-            setPasswordError('New password and confirmation do not match.');
+        if (Object.keys(nextErrors).length > 0) {
             return;
         }
 
@@ -188,6 +251,7 @@ const EditProfile = () => {
             const data = await response.json();
             if (response.ok && data.success) {
                 setPasswordMessage('Password reset successfully.');
+                setPasswordFieldErrors({});
                 setPasswordData({
                     currentPassword: '',
                     newPassword: '',
@@ -671,6 +735,7 @@ const EditProfile = () => {
                                 onChange={handlePasswordChange}
                                 placeholder="Enter current password"
                             />
+                            {passwordFieldErrors.currentPassword && <p className="field-error">{passwordFieldErrors.currentPassword}</p>}
                         </div>
 
                         <div className="form-row">
@@ -683,6 +748,7 @@ const EditProfile = () => {
                                     onChange={handlePasswordChange}
                                     placeholder="Enter new password"
                                 />
+                                {passwordFieldErrors.newPassword && <p className="field-error">{passwordFieldErrors.newPassword}</p>}
                             </div>
                             <div className="input-group">
                                 <label htmlFor="confirmPassword">Confirm New Password</label>
@@ -693,8 +759,32 @@ const EditProfile = () => {
                                     onChange={handlePasswordChange}
                                     placeholder="Confirm new password"
                                 />
+                                {passwordFieldErrors.confirmPassword && <p className="field-error">{passwordFieldErrors.confirmPassword}</p>}
                             </div>
                         </div>
+
+                        {passwordData.newPassword.length > 0 && (
+                            <div className="password-requirements" aria-live="polite">
+                                <div className="password-strength-row">
+                                    <span className="password-strength-label">Strength: {passwordStrength.label}</span>
+                                    <span className="password-strength-score">{Math.min(passwordStrength.score, 6)}/6</span>
+                                </div>
+                                <div className="password-strength-track" role="progressbar" aria-valuemin="0" aria-valuemax="6" aria-valuenow={Math.min(passwordStrength.score, 6)}>
+                                    <div
+                                        className={`password-strength-fill strength-${passwordStrength.label.toLowerCase()}`}
+                                        style={{ width: `${(Math.min(passwordStrength.score, 6) / 6) * 100}%` }}
+                                    />
+                                </div>
+                                <p className="password-requirements-title">For a stronger password, include:</p>
+                                <ul>
+                                    <li className={currentPasswordChecks.minLength ? 'met' : 'unmet'}>Minimum 8 characters (12+ for strong)</li>
+                                    <li className={currentPasswordChecks.hasUppercase ? 'met' : 'unmet'}>At least 1 uppercase letter (A-Z)</li>
+                                    <li className={currentPasswordChecks.hasLowercase ? 'met' : 'unmet'}>At least 1 lowercase letter (a-z)</li>
+                                    <li className={currentPasswordChecks.hasNumber ? 'met' : 'unmet'}>At least 1 number (0-9)</li>
+                                    <li className={currentPasswordChecks.hasSpecial ? 'met' : 'unmet'}>At least 1 special character (@#$%^&*)</li>
+                                </ul>
+                            </div>
+                        )}
 
                         <div className="form-actions password-actions">
                             <button type="submit" className="save-btn" disabled={resettingPassword}>

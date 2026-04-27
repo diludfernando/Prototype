@@ -18,7 +18,7 @@ public class StudentPasswordResetRequest {
     private String currentPassword;
 
     @NotBlank(message = "New password is required")
-    @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
+    @Size(max = 100, message = "Password cannot exceed 100 characters")
     private String newPassword;
 
     @NotBlank(message = "Password confirmation is required")

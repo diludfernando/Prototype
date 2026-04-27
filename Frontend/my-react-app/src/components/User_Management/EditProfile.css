@@ -288,6 +288,85 @@
     padding-top: 12px;
 }
 
+.password-reset-section .password-requirements {
+    margin-top: 0.2rem;
+    border: 1px solid #dbe7f3;
+    background: #f8fbff;
+    border-radius: 0.75rem;
+    padding: 0.8rem 0.9rem;
+}
+
+.password-reset-section .password-strength-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.45rem;
+}
+
+.password-reset-section .password-strength-label,
+.password-reset-section .password-strength-score {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #334155;
+}
+
+.password-reset-section .password-strength-track {
+    width: 100%;
+    height: 0.42rem;
+    border-radius: 999px;
+    background: #dbe7f3;
+    overflow: hidden;
+    margin-bottom: 0.6rem;
+}
+
+.password-reset-section .password-strength-fill {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 0.25s ease, background-color 0.25s ease;
+}
+
+.password-reset-section .password-strength-fill.strength-weak {
+    background: #ef4444;
+}
+
+.password-reset-section .password-strength-fill.strength-medium {
+    background: #f59e0b;
+}
+
+.password-reset-section .password-strength-fill.strength-strong {
+    background: #0ea5e9;
+}
+
+.password-reset-section .password-requirements-title {
+    margin: 0 0 0.45rem;
+    font-size: 0.82rem;
+    color: #35516d;
+    font-weight: 700;
+}
+
+.password-reset-section .password-requirements ul {
+    margin: 0;
+    padding-left: 1rem;
+}
+
+.password-reset-section .password-requirements li {
+    font-size: 0.82rem;
+    margin-bottom: 0.28rem;
+    line-height: 1.35;
+}
+
+.password-reset-section .password-requirements li:last-child {
+    margin-bottom: 0;
+}
+
+.password-reset-section .password-requirements li.met {
+    color: #166534;
+}
+
+.password-reset-section .password-requirements li.unmet {
+    color: #475569;
+}
+
 .password-alert {
     margin-bottom: 12px;
 }
