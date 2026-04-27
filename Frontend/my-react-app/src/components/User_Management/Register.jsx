@@ -52,6 +52,7 @@ const Register = () => {
 
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -68,7 +69,53 @@ const Register = () => {
   ];
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value });
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+
+    if (fieldErrors[id]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[id];
+        return next;
+      });
+    }
+  };
+
+  const validateForm = () => {
+    const nextErrors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const passwordChecks = getPasswordChecks(formData.password);
+    const passwordStrengthForSubmit = getPasswordStrength(formData.password, passwordChecks);
+
+    if (!formData.fullName.trim()) {
+      nextErrors.fullName = 'Full name is required';
+    } else if (/\d/.test(formData.fullName)) {
+      nextErrors.fullName = 'Full name cannot contain numbers';
+    }
+
+    if (!formData.email.trim()) {
+      nextErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      nextErrors.email = 'Please enter a valid email address';
+    }
+
+    if (!formData.password) {
+      nextErrors.password = 'Password is required';
+    } else if (!isAcceptablePasswordStrength(passwordStrengthForSubmit.label)) {
+      nextErrors.password = 'Password must be medium or strong. Weak passwords are not allowed.';
+    }
+
+    if (!formData.confirmPassword) {
+      nextErrors.confirmPassword = 'Please confirm your password';
+    } else if (formData.password !== formData.confirmPassword) {
+      nextErrors.confirmPassword = 'Passwords do not match';
+    }
+
+    if (!formData.selectedCareerPath) {
+      nextErrors.selectedCareerPath = 'Please select a career path';
+    }
+
+    return nextErrors;
   };
 
   const handleSubmit = async (e) => {
@@ -76,32 +123,10 @@ const Register = () => {
     setLoading(true);
     setMessage('');
     setError('');
+    const nextFieldErrors = validateForm();
+    setFieldErrors(nextFieldErrors);
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const passwordChecks = getPasswordChecks(formData.password);
-    const passwordStrengthForSubmit = getPasswordStrength(formData.password, passwordChecks);
-
-    // Password Confirmation Check
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-
-    if (!emailRegex.test(formData.email)) {
-      setError('Please enter a valid email address');
-      setLoading(false);
-      return;
-    }
-
-    if (/\d/.test(formData.fullName)) {
-      setError('Full name cannot contain numbers');
-      setLoading(false);
-      return;
-    }
-
-    if (!isAcceptablePasswordStrength(passwordStrengthForSubmit.label)) {
-      setError('Password must be medium or strong. Weak passwords are not allowed.');
+    if (Object.keys(nextFieldErrors).length > 0) {
       setLoading(false);
       return;
     }
@@ -123,6 +148,7 @@ const Register = () => {
 
       const data = await response.json();
       if (response.ok && data.success) {
+        setFieldErrors({});
         setMessage(data.message || 'Registration successful!');
         setTimeout(() => navigate('/login'), 1500);
       } else {
@@ -155,8 +181,10 @@ const Register = () => {
               placeholder="Enter your full name"
               value={formData.fullName}
               onChange={handleChange}
+              aria-invalid={Boolean(fieldErrors.fullName)}
               required
             />
+            {fieldErrors.fullName && <p className="field-error">{fieldErrors.fullName}</p>}
           </div>
 
           <div className="form-group">
@@ -167,8 +195,10 @@ const Register = () => {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
+              aria-invalid={Boolean(fieldErrors.email)}
               required
             />
+            {fieldErrors.email && <p className="field-error">{fieldErrors.email}</p>}
           </div>
 
           <div className="form-group">
@@ -180,6 +210,7 @@ const Register = () => {
                 placeholder="Enter a strong password"
                 value={formData.password}
                 onChange={handleChange}
+                aria-invalid={Boolean(fieldErrors.password)}
                 required
               />
               <button
@@ -191,6 +222,7 @@ const Register = () => {
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            {fieldErrors.password && <p className="field-error">{fieldErrors.password}</p>}
             {formData.password.length > 0 && (
                 <div className="password-requirements" aria-live="polite">
                   <div className="password-strength-row">
@@ -224,6 +256,7 @@ const Register = () => {
                 placeholder="Confirm your password"
                 value={formData.confirmPassword}
                 onChange={handleChange}
+                aria-invalid={Boolean(fieldErrors.confirmPassword)}
                 required
               />
               <button
@@ -235,6 +268,7 @@ const Register = () => {
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               </button>
             </div>
+            {fieldErrors.confirmPassword && <p className="field-error">{fieldErrors.confirmPassword}</p>}
           </div>
 
           <div className="form-group">
@@ -244,6 +278,7 @@ const Register = () => {
               className="form-select"
               value={formData.selectedCareerPath}
               onChange={handleChange}
+              aria-invalid={Boolean(fieldErrors.selectedCareerPath)}
               required
             >
               <option value="" disabled>Select a career path</option>
@@ -253,6 +288,7 @@ const Register = () => {
                 </option>
               ))}
             </select>
+            {fieldErrors.selectedCareerPath && <p className="field-error">{fieldErrors.selectedCareerPath}</p>}
           </div>
 
           <button type="submit" className="btn-primary register-btn" disabled={loading}>
