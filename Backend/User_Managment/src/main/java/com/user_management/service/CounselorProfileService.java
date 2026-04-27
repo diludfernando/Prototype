@@ -150,6 +150,8 @@ public class CounselorProfileService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        validatePasswordStrength(request.getNewPassword());
+
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
             throw new RuntimeException("Current password is incorrect");
         }
@@ -160,6 +162,38 @@ public class CounselorProfileService {
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
+    }
+
+    private void validatePasswordStrength(String password) {
+        int score = 0;
+
+        if (password.length() >= 8) {
+            score++;
+        }
+
+        if (password.matches(".*[A-Z].*")) {
+            score++;
+        }
+
+        if (password.matches(".*[a-z].*")) {
+            score++;
+        }
+
+        if (password.matches(".*\\d.*")) {
+            score++;
+        }
+
+        if (password.matches(".*[@#$%^&*].*")) {
+            score++;
+        }
+
+        if (password.length() >= 12) {
+            score++;
+        }
+
+        if (score <= 2) {
+            throw new RuntimeException("Password must be medium or strong. Weak passwords are not allowed.");
+        }
     }
 
     private CounselorProfileResponse mapToResponse(CounselorProfile profile) {
