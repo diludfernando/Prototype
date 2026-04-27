@@ -27,4 +27,7 @@ public class SkillRating {
     private int hardRating;     // 0-40% (Advanced)
     
     private double average; // Cumulative score (0-100%)
+
+    @Column(name = "rating", columnDefinition = "integer default 0")
+    private int rating;
 }
