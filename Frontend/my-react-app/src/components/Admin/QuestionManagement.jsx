@@ -109,10 +109,18 @@ const QuestionManagement = () => {
     };
 
     const filteredQuestions = questions.filter(q => {
-        const matchesSearch = q.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                            q.category.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesCategory = filterCategory === 'All' || q.category === filterCategory;
-        const matchesLevel = filterLevel === 'All' || q.level === filterLevel;
+        const content = q.content || '';
+        const category = q.category || '';
+        const level = q.level || '';
+
+        const matchesSearch = content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            category.toLowerCase().includes(searchTerm.toLowerCase());
+        
+        const matchesCategory = filterCategory === 'All' || 
+                              category.toLowerCase() === filterCategory.toLowerCase();
+        
+        const matchesLevel = filterLevel === 'All' || 
+                           level.toLowerCase() === filterLevel.toLowerCase();
 
         return matchesSearch && matchesCategory && matchesLevel;
     });
@@ -120,9 +128,9 @@ const QuestionManagement = () => {
 
     // Stats
     const totalQuestions = questions.length;
-    const easyCount = questions.filter(q => q.level === 'Easy').length;
-    const mediumCount = questions.filter(q => q.level === 'Medium').length;
-    const hardCount = questions.filter(q => q.level === 'Hard').length;
+    const easyCount = questions.filter(q => q.level?.toLowerCase() === 'easy').length;
+    const mediumCount = questions.filter(q => q.level?.toLowerCase() === 'medium').length;
+    const hardCount = questions.filter(q => q.level?.toLowerCase() === 'hard').length;
 
 
     return (

@@ -69,6 +69,9 @@ const CounsellingManagement = () => {
         return names[id] || `Counsellor #${id}`;
     };
 
+    const currentCounsellorId = localStorage.getItem('userId');
+    const filteredSessions = sessions.filter(session => String(session.counsellorId) === String(currentCounsellorId));
+
     return (
         <div className="counselling-mgmt text-fade-in">
             <header>
@@ -80,9 +83,9 @@ const CounsellingManagement = () => {
             </header>
 
             {loading ? (
-                <div className="loading-sessions">Loading all sessions...</div>
-            ) : sessions.length === 0 ? (
-                <div className="empty-sessions">No sessions found in the system.</div>
+                <div className="loading-sessions">Loading your sessions...</div>
+            ) : filteredSessions.length === 0 ? (
+                <div className="empty-sessions">No sessions found assigned to you.</div>
             ) : (
                 <div className="sessions-table-container">
                     <table className="sessions-table">
@@ -98,7 +101,7 @@ const CounsellingManagement = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {sessions.map(session => (
+                            {filteredSessions.map(session => (
                                 <tr key={session.id}>
                                     <td>#{session.id}</td>
                                     <td>Student ID: {session.studentId}</td>
