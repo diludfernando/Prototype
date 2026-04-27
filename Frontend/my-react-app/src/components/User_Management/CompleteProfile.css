@@ -143,6 +143,13 @@
     font-family: inherit;
 }
 
+.complete-profile-form input[aria-invalid="true"],
+.complete-profile-form select[aria-invalid="true"],
+.complete-profile-form textarea[aria-invalid="true"] {
+    border-color: #fca5a5;
+    background-color: #fffafa;
+}
+
 .complete-profile-form textarea {
     min-height: 112px;
     resize: vertical;
@@ -214,6 +221,14 @@
     font-weight: 600;
     margin-bottom: 2rem;
     text-align: center;
+}
+
+.field-error {
+    color: #dc2626;
+    font-size: 0.82rem;
+    font-weight: 600;
+    line-height: 1.35;
+    margin-top: -0.15rem;
 }
 
 @media (max-width: 640px) {

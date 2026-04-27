@@ -142,6 +142,13 @@
   font-family: inherit;
 }
 
+.form-group input[aria-invalid="true"],
+.form-group textarea[aria-invalid="true"],
+.form-group select[aria-invalid="true"] {
+  border-color: #fca5a5;
+  background-color: #fffafa;
+}
+
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
@@ -223,6 +230,14 @@
   color: #ef4444;
   font-size: var(--text-sm);
   margin-top: 4px;
+}
+
+.field-error {
+  color: #dc2626;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: -0.15rem;
 }
 
 .form-error-banner {

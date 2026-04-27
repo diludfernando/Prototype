@@ -17,6 +17,7 @@ const CompleteProfile = () => {
 
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [fetching, setFetching] = useState(true);
 
@@ -66,35 +67,74 @@ const CompleteProfile = () => {
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData({ ...formData, [id]: value });
+
+        if (fieldErrors[id]) {
+            setFieldErrors(prev => {
+                const nextErrors = { ...prev };
+                delete nextErrors[id];
+                return nextErrors;
+            });
+        }
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setMessage('');
-        setError('');
-
+    const validateForm = () => {
+        const nextErrors = {};
         const phoneRegex = /^(?:\+94|94|0)[1-9][0-9]{8}$/;
         const numericOnlyRegex = /^\d+$/;
         const yearLevelValue = formData.yearLevel ? parseInt(formData.yearLevel, 10) : null;
 
-        if (numericOnlyRegex.test(formData.university.trim())) {
-            setError('University name cannot be only numbers');
-            setLoading(false);
+        if (!formData.university.trim()) {
+            nextErrors.university = 'University is required';
+        } else if (numericOnlyRegex.test(formData.university.trim())) {
+            nextErrors.university = 'University name cannot be only numbers';
+        }
+
+        if (!formData.degreeProgram.trim()) {
+            nextErrors.degreeProgram = 'Degree program is required';
+        }
+
+        if (!formData.yearLevel) {
+            nextErrors.yearLevel = 'Year level is required';
+        } else if (yearLevelValue === null || yearLevelValue < 1 || yearLevelValue > 7) {
+            nextErrors.yearLevel = 'Year level must be between 1 and 7';
+        }
+
+        if (!formData.phone.trim()) {
+            nextErrors.phone = 'Phone number is required';
+        } else if (!phoneRegex.test(formData.phone.trim())) {
+            nextErrors.phone = 'Enter a valid Sri Lankan phone number';
+        }
+
+        if (!formData.careerGoals.trim()) {
+            nextErrors.careerGoals = 'Career goals are required';
+        }
+
+        if (!formData.skills.trim()) {
+            nextErrors.skills = 'Skills are required';
+        }
+
+        if (!formData.interests.trim()) {
+            nextErrors.interests = 'Interests are required';
+        }
+
+        return nextErrors;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setMessage('');
+        setError('');
+
+        const nextFieldErrors = validateForm();
+        setFieldErrors(nextFieldErrors);
+
+        if (Object.keys(nextFieldErrors).length > 0) {
             return;
         }
 
-        if (!phoneRegex.test(formData.phone.trim())) {
-            setError('Enter a valid Sri Lankan phone number');
-            setLoading(false);
-            return;
-        }
+        setLoading(true);
 
-        if (yearLevelValue === null || yearLevelValue < 1 || yearLevelValue > 7) {
-            setError('Year level must be between 1 and 7');
-            setLoading(false);
-            return;
-        }
+        const yearLevelValue = parseInt(formData.yearLevel, 10);
 
         const token = localStorage.getItem('token');
         if (!token) {
@@ -158,7 +198,7 @@ const CompleteProfile = () => {
                 {message && <p className="form-success">{message}</p>}
                 {error && <p className="form-error">{error}</p>}
 
-                <form className="complete-profile-form" onSubmit={handleSubmit}>
+                <form className="complete-profile-form" onSubmit={handleSubmit} noValidate>
                     <p className="complete-profile-form-hint"><BookOpen size={14} /> Fields marked with * are required to continue.</p>
 
                     <div className="form-row-grid">
@@ -170,8 +210,9 @@ const CompleteProfile = () => {
                             placeholder="Enter your university name"
                             value={formData.university}
                             onChange={handleChange}
-                            required
+                            aria-invalid={Boolean(fieldErrors.university)}
                         />
+                        {fieldErrors.university && <span className="field-error">{fieldErrors.university}</span>}
                     </div>
 
                     <div className="form-group">
@@ -182,8 +223,9 @@ const CompleteProfile = () => {
                             placeholder="Enter your degree program"
                             value={formData.degreeProgram}
                             onChange={handleChange}
-                            required
+                            aria-invalid={Boolean(fieldErrors.degreeProgram)}
                         />
+                        {fieldErrors.degreeProgram && <span className="field-error">{fieldErrors.degreeProgram}</span>}
                     </div>
                     </div>
 
@@ -195,13 +237,14 @@ const CompleteProfile = () => {
                             className="form-select"
                             value={formData.yearLevel}
                             onChange={handleChange}
-                            required
+                            aria-invalid={Boolean(fieldErrors.yearLevel)}
                         >
                             <option value="" disabled>Select year level</option>
                             {[1, 2, 3, 4].map(level => (
                                 <option key={level} value={level}>Year {level}</option>
                             ))}
                         </select>
+                        {fieldErrors.yearLevel && <span className="field-error">{fieldErrors.yearLevel}</span>}
                     </div>
 
                     <div className="form-group">
@@ -212,8 +255,9 @@ const CompleteProfile = () => {
                             placeholder="Enter your phone number"
                             value={formData.phone}
                             onChange={handleChange}
-                            required
+                            aria-invalid={Boolean(fieldErrors.phone)}
                         />
+                        {fieldErrors.phone && <span className="field-error">{fieldErrors.phone}</span>}
                     </div>
                     </div>
 
@@ -224,8 +268,9 @@ const CompleteProfile = () => {
                             placeholder="Describe your career goals"
                             value={formData.careerGoals}
                             onChange={handleChange}
-                            required
+                            aria-invalid={Boolean(fieldErrors.careerGoals)}
                         ></textarea>
+                        {fieldErrors.careerGoals && <span className="field-error">{fieldErrors.careerGoals}</span>}
                     </div>
 
                     <div className="form-group">
@@ -235,8 +280,9 @@ const CompleteProfile = () => {
                             placeholder="List your skills (e.g., JavaScript, Python, React)"
                             value={formData.skills}
                             onChange={handleChange}
-                            required
+                            aria-invalid={Boolean(fieldErrors.skills)}
                         ></textarea>
+                        {fieldErrors.skills && <span className="field-error">{fieldErrors.skills}</span>}
                     </div>
 
                     <div className="form-group">
@@ -246,8 +292,9 @@ const CompleteProfile = () => {
                             placeholder="Describe your interests"
                             value={formData.interests}
                             onChange={handleChange}
-                            required
+                            aria-invalid={Boolean(fieldErrors.interests)}
                         ></textarea>
+                        {fieldErrors.interests && <span className="field-error">{fieldErrors.interests}</span>}
                     </div>
 
                     <button type="submit" className="btn-primary" disabled={loading}>

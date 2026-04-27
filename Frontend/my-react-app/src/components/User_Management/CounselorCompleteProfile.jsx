@@ -18,6 +18,7 @@ const CounselorCompleteProfile = () => {
 
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [fieldErrors, setFieldErrors] = useState({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -51,6 +52,58 @@ const CounselorCompleteProfile = () => {
     const handleChange = (e) => {
         const { id, value } = e.target;
         setFormData({ ...formData, [id]: value });
+
+        if (fieldErrors[id]) {
+            setFieldErrors(prev => {
+                const nextErrors = { ...prev };
+                delete nextErrors[id];
+                return nextErrors;
+            });
+        }
+    };
+
+    const validateForm = () => {
+        const nextErrors = {};
+        const phoneRegex = /^(?:\+94|94|0)[1-9][0-9]{8}$/;
+        const yearsOfExperienceValue = parseInt(formData.yearsOfExperience, 10);
+
+        if (!formData.phone.trim()) {
+            nextErrors.phone = 'Phone number is required';
+        } else if (!phoneRegex.test(formData.phone.trim())) {
+            nextErrors.phone = 'Enter a valid Sri Lankan phone number';
+        }
+
+        if (!formData.yearsOfExperience.trim()) {
+            nextErrors.yearsOfExperience = 'Years of experience is required';
+        } else if (Number.isNaN(yearsOfExperienceValue) || yearsOfExperienceValue < 0 || yearsOfExperienceValue > 50) {
+            nextErrors.yearsOfExperience = 'Years of experience must be between 0 and 50';
+        }
+
+        if (!formData.qualification.trim()) {
+            nextErrors.qualification = 'Qualification is required';
+        }
+
+        if (!formData.specialization.trim()) {
+            nextErrors.specialization = 'Specialization is required';
+        }
+
+        if (!formData.bio.trim()) {
+            nextErrors.bio = 'Short bio is required';
+        }
+
+        if (!formData.newPassword) {
+            nextErrors.newPassword = 'New password is required';
+        } else if (formData.newPassword.length < 6) {
+            nextErrors.newPassword = 'Password must be at least 6 characters';
+        }
+
+        if (!formData.confirmPassword) {
+            nextErrors.confirmPassword = 'Please confirm your password';
+        } else if (formData.newPassword !== formData.confirmPassword) {
+            nextErrors.confirmPassword = 'Passwords do not match';
+        }
+
+        return nextErrors;
     };
 
     const handleSubmit = async (e) => {
@@ -59,28 +112,14 @@ const CounselorCompleteProfile = () => {
         setMessage('');
         setError('');
 
-        const phoneRegex = /^(?:\+94|94|0)[1-9][0-9]{8}$/;
+        const nextFieldErrors = validateForm();
+        setFieldErrors(nextFieldErrors);
+
+        if (Object.keys(nextFieldErrors).length > 0) {
+            return;
+        }
+
         const yearsOfExperienceValue = parseInt(formData.yearsOfExperience, 10);
-
-        if (!phoneRegex.test(formData.phone.trim())) {
-            setError('Enter a valid Sri Lankan phone number');
-            return;
-        }
-
-        if (Number.isNaN(yearsOfExperienceValue) || yearsOfExperienceValue < 0 || yearsOfExperienceValue > 50) {
-            setError('Years of experience must be between 0 and 50');
-            return;
-        }
-
-        if (formData.newPassword !== formData.confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }
-
-        if (formData.newPassword.length < 6) {
-            setError('Password must be at least 6 characters');
-            return;
-        }
 
         setLoading(true);
 
@@ -139,7 +178,7 @@ const CounselorCompleteProfile = () => {
                 {message && <div className="form-success">{message}</div>}
                 {error && <div className="form-error-banner">{error}</div>}
 
-                <form className="profile-form" onSubmit={handleSubmit}>
+                <form className="profile-form" onSubmit={handleSubmit} noValidate>
                     <section className="form-section">
                         <h2 className="section-title">Professional Details</h2>
                         <p className="section-subtitle">This information will be shown to students in your profile.</p>
@@ -164,8 +203,9 @@ const CounselorCompleteProfile = () => {
                                     placeholder="Enter your phone number"
                                     value={formData.phone}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.phone)}
                                 />
+                                {fieldErrors.phone && <span className="field-error">{fieldErrors.phone}</span>}
                             </div>
 
                             <div className="form-group">
@@ -176,8 +216,9 @@ const CounselorCompleteProfile = () => {
                                     placeholder="Enter years of experience"
                                     value={formData.yearsOfExperience}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.yearsOfExperience)}
                                 />
+                                {fieldErrors.yearsOfExperience && <span className="field-error">{fieldErrors.yearsOfExperience}</span>}
                             </div>
 
                             <div className="form-group">
@@ -188,8 +229,9 @@ const CounselorCompleteProfile = () => {
                                     placeholder="e.g., M.A. in Counseling Psychology"
                                     value={formData.qualification}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.qualification)}
                                 />
+                                {fieldErrors.qualification && <span className="field-error">{fieldErrors.qualification}</span>}
                             </div>
 
                             <div className="form-group">
@@ -200,8 +242,9 @@ const CounselorCompleteProfile = () => {
                                     placeholder="e.g., Career Counseling, Academic Guidance"
                                     value={formData.specialization}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.specialization)}
                                 />
+                                {fieldErrors.specialization && <span className="field-error">{fieldErrors.specialization}</span>}
                             </div>
 
                             <div className="form-group full-span">
@@ -212,8 +255,9 @@ const CounselorCompleteProfile = () => {
                                     value={formData.bio}
                                     onChange={handleChange}
                                     rows="4"
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.bio)}
                                 ></textarea>
+                                {fieldErrors.bio && <span className="field-error">{fieldErrors.bio}</span>}
                             </div>
                         </div>
                     </section>
@@ -233,8 +277,9 @@ const CounselorCompleteProfile = () => {
                                     placeholder="Enter new password (min 6 characters)"
                                     value={formData.newPassword}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.newPassword)}
                                 />
+                                {fieldErrors.newPassword && <span className="field-error">{fieldErrors.newPassword}</span>}
                             </div>
 
                             <div className="form-group">
@@ -245,8 +290,9 @@ const CounselorCompleteProfile = () => {
                                     placeholder="Confirm your new password"
                                     value={formData.confirmPassword}
                                     onChange={handleChange}
-                                    required
+                                    aria-invalid={Boolean(fieldErrors.confirmPassword)}
                                 />
+                                {fieldErrors.confirmPassword && <span className="field-error">{fieldErrors.confirmPassword}</span>}
                             </div>
                         </div>
                     </section>
