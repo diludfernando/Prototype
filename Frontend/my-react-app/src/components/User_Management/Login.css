@@ -211,9 +211,22 @@
 }
 
 .input-wrap input {
+  width: 100%;
   border: none;
   background: transparent;
+  border-radius: 0;
+  outline: none;
+  box-shadow: none;
   padding: 0.82rem 0;
+}
+
+.login-form .input-wrap > input,
+.login-form .input-wrap > input:focus,
+.login-form .input-wrap > input:active {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none;
 }
 
 .input-wrap:focus-within {
@@ -235,6 +248,20 @@
   justify-content: center;
   cursor: pointer;
   padding: 0;
+}
+
+/* Hide browser-native password reveal controls so only the custom toggle is shown */
+.login-form input[type="password"]::-ms-reveal,
+.login-form input[type="password"]::-ms-clear {
+  display: none;
+}
+
+.login-form input[type="password"]::-webkit-credentials-auto-fill-button,
+.login-form input[type="password"]::-webkit-textfield-decoration-container {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
 }
 
 .form-group input:focus {
@@ -333,6 +360,56 @@
   font-weight: 600;
   margin-bottom: 1rem;
   text-align: center;
+}
+
+.disabled-account-card {
+  margin: 0 auto 1.1rem;
+  max-width: 380px;
+  border: 1px solid #fecaca;
+  background: linear-gradient(180deg, #fff5f5 0%, #fff1f2 100%);
+  border-radius: 0.9rem;
+  padding: 1rem 1rem 0.95rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  text-align: center;
+}
+
+.disabled-account-title {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #991b1b;
+  letter-spacing: -0.01em;
+}
+
+.disabled-account-text {
+  margin: 0;
+  color: #7f1d1d;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.disabled-account-contact-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  border: 1px solid #fca5a5;
+  background: #ffffff;
+  color: #b91c1c;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.disabled-account-contact-btn:hover {
+  background: #b91c1c;
+  color: #ffffff;
+  border-color: #b91c1c;
 }
 
 .btn-primary:disabled {

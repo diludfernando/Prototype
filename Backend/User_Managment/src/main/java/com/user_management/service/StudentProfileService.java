@@ -1,12 +1,14 @@
 package com.user_management.service;
 
 import com.user_management.dto.request.MandatoryProfileRequest;
+import com.user_management.dto.request.StudentDeactivateAccountRequest;
 import com.user_management.dto.request.StudentPasswordResetRequest;
 import com.user_management.dto.request.StudentProfileUpdateRequest;
 import com.user_management.dto.response.ProfileCompletionResponse;
 import com.user_management.dto.response.StudentProfileResponse;
 import com.user_management.entity.StudentProfile;
 import com.user_management.entity.User;
+import com.user_management.enums.Role;
 import com.user_management.repository.StudentProfileRepository;
 import com.user_management.repository.UserRepository;
 import com.user_management.security.CustomUserDetails;
@@ -173,6 +175,28 @@ public class StudentProfileService {
         }
 
         user.setPasswordHash(passwordEncoder.encode(request.getNewPassword()));
+        userRepository.save(user);
+    }
+
+    @Transactional
+    public void deactivateMyAccount(StudentDeactivateAccountRequest request) {
+        Long userId = getCurrentUserId();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (user.getRole() != Role.STUDENT) {
+            throw new RuntimeException("Only student accounts can be deactivated here");
+        }
+
+        if (!user.getEnabled()) {
+            throw new RuntimeException("Account is already deactivated");
+        }
+
+        if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPasswordHash())) {
+            throw new RuntimeException("Current password is incorrect");
+        }
+
+        user.setEnabled(false);
         userRepository.save(user);
     }
 

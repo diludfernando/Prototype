@@ -28,6 +28,7 @@ public class AdminService {
     private final CounselorProfileRepository counselorProfileRepository;
     private final StudentProfileRepository studentProfileRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CounselorOnboardingEmailService counselorOnboardingEmailService;
 
     public List<UserResponse> getAllUsers() {
         return userRepository.findAll().stream()
@@ -71,6 +72,11 @@ public class AdminService {
                 .build();
 
         counselorProfileRepository.save(counselorProfile);
+
+        counselorOnboardingEmailService.sendOnboardingEmail(
+            counselor.getEmail(),
+            counselorProfile.getFullName(),
+            request.getTempPassword());
 
         return mapToUserResponse(counselor);
     }

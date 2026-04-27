@@ -137,6 +137,60 @@
   transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
 }
 
+.register-password-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid #d9e3ee;
+  border-radius: 0.65rem;
+  background-color: #fbfdff;
+  padding: 0 0.8rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.register-password-wrap > input {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  outline: none;
+  width: 100%;
+  padding: 0.86rem 0;
+}
+
+.register-password-wrap:focus-within {
+  border-color: var(--color-accent);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.register-password-toggle {
+  border: none;
+  background: transparent;
+  color: #6b7f95;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.register-password-toggle:hover {
+  color: #1f2937;
+}
+
+/* Hide browser-native password reveal controls to keep one consistent eye icon */
+.register-page input[type="password"]::-ms-reveal,
+.register-page input[type="password"]::-ms-clear {
+  display: none;
+}
+
+.register-page input[type="password"]::-webkit-credentials-auto-fill-button,
+.register-page input[type="password"]::-webkit-textfield-decoration-container {
+  visibility: hidden;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+}
+
 .register-page .form-select {
   height: 3rem;
   line-height: 1.25;

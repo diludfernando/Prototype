@@ -411,8 +411,8 @@ const CounselorEditProfile = () => {
 
           {/* Dashboard Content */}
           <div className="c-content-body">
-            <div className="c-profile-page">
-              <div className="c-page-header">
+            <div className="c-profile-page c-edit-profile-page">
+              <div className="c-page-header c-edit-page-header">
                 <button
                     className="c-back-link"
                     onClick={() => navigate('/counselor/profile')}
@@ -492,7 +492,7 @@ const CounselorEditProfile = () => {
                       </div>
                     </section>
 
-                    <section className="c-profile-card">
+                    <section className="c-profile-card c-edit-main-card">
                       <h3 className="c-profile-section-title">Edit Professional Details</h3>
                       <p className="c-edit-helper-text">Keep your profile complete and up to date so students can trust your expertise.</p>
                       <p className="c-form-hint">Fields marked with <span className="c-required-mark">*</span> are required.</p>
@@ -577,6 +577,9 @@ const CounselorEditProfile = () => {
                               onChange={handleEditFormChange}
                           />
                         </div>
+                      </div>
+
+                      <div className="c-form-row">
                         <div className="c-form-group">
                           <label htmlFor="linkedinUrl"><LinkIcon size={14} /> LinkedIn URL</label>
                           <input
@@ -621,7 +624,7 @@ const CounselorEditProfile = () => {
                       </div>
                     </section>
 
-                    <section className="c-profile-card c-password-reset-card">
+                    <section className="c-profile-card c-password-reset-card c-edit-password-card">
                       <h3 className="c-profile-section-title">Reset Password</h3>
                       <p className="c-edit-helper-text">Reset your account password if needed.</p>
 

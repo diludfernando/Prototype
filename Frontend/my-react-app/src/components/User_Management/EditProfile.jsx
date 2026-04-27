@@ -25,6 +25,7 @@ const EditProfile = () => {
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [resettingPassword, setResettingPassword] = useState(false);
+    const [deactivating, setDeactivating] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
     const [fieldErrors, setFieldErrors] = useState({});
@@ -35,6 +36,8 @@ const EditProfile = () => {
         newPassword: '',
         confirmPassword: ''
     });
+    const [deactivatePassword, setDeactivatePassword] = useState('');
+    const [deactivatePasswordError, setDeactivatePasswordError] = useState('');
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -200,6 +203,85 @@ const EditProfile = () => {
         }
     };
 
+    const handleDeactivateAccount = async () => {
+        setDeactivatePasswordError('');
+
+        if (!deactivatePassword.trim()) {
+            setDeactivatePasswordError('Please enter your current password to confirm deactivation.');
+            return;
+        }
+
+        const confirmed = window.confirm(
+            'Are you sure you want to deactivate your account? You will not be able to log in until an admin re-enables it.'
+        );
+
+        if (!confirmed) {
+            return;
+        }
+
+        setDeactivating(true);
+        setMessage('');
+        setError('');
+
+        try {
+            const token = localStorage.getItem('token');
+            const username = localStorage.getItem('username');
+            if (!token) {
+                navigate('/login');
+                return;
+            }
+
+            if (!username) {
+                setError('Session information is missing. Please log in again.');
+                return;
+            }
+
+            const verifyResponse = await fetch('http://localhost:8081/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: username,
+                    password: deactivatePassword
+                })
+            });
+
+            const verifyData = await verifyResponse.json();
+            if (!verifyResponse.ok || !verifyData.success) {
+                setDeactivatePasswordError('Current password is incorrect.');
+                return;
+            }
+
+            const response = await fetch('http://localhost:8081/api/student/profile/deactivate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    currentPassword: deactivatePassword
+                })
+            });
+
+            const data = await response.json();
+            if (response.ok && data.success) {
+                setDeactivatePassword('');
+                localStorage.removeItem('token');
+                localStorage.removeItem('username');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('role');
+                navigate('/login');
+            } else {
+                setError(data.message || 'Failed to deactivate account.');
+            }
+        } catch (err) {
+            setError('An error occurred while deactivating your account.');
+        } finally {
+            setDeactivating(false);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setSaving(true);
@@ -326,20 +408,33 @@ const EditProfile = () => {
         <div className="edit-profile-page">
             <div className="edit-container">
                 <header className="edit-header">
-                    <button
-                        type="button"
-                        className="back-profile-btn"
-                        onClick={() => navigate('/view-profile')}
-                    >
-                        <ArrowLeft size={16} /> Back to Profile
-                    </button>
-                    <h1>Student Profile</h1>
-                    <p>Edit your personal information</p>
+                    <div className="edit-header-topline">
+                        <button
+                            type="button"
+                            className="back-profile-btn"
+                            onClick={() => navigate('/view-profile')}
+                        >
+                            <ArrowLeft size={16} /> Back to Profile
+                        </button>
+                        <span className="edit-section-tag">User Management</span>
+                    </div>
+                    <div className="edit-header-copy">
+                        <div>
+                            <h1>Student Profile</h1>
+                            <p>Update your details, profile photo, security settings, and links in one streamlined workspace.</p>
+                        </div>
+                        <div className="edit-header-badge">
+                            <CheckCircle size={16} /> {completion.percentage}% complete
+                        </div>
+                    </div>
                 </header>
 
                 <div className="edit-card completion-summary">
                     <div className="completion-header">
-                        <h3>Profile Completion</h3>
+                        <div>
+                            <p className="card-kicker">Profile health</p>
+                            <h3>Completion snapshot</h3>
+                        </div>
                         <span className="percentage">{completion.percentage}%</span>
                     </div>
                     <div className="progress-bar">
@@ -357,8 +452,8 @@ const EditProfile = () => {
                         )}
                     </div>
                     <div className="pic-text">
-                        <h3>Profile Photo</h3>
-                        <p>Upload a profile photo from your device.</p>
+                        <p className="pic-title">Profile photo</p>
+                        <p>Upload a clean profile photo from your device to personalize your account.</p>
                         <div className="photo-actions">
                             <input
                                 type="file"
@@ -383,6 +478,11 @@ const EditProfile = () => {
                 {error && <div className="alert error">{error}</div>}
 
                 <form className="edit-form" onSubmit={handleSubmit}>
+                    <div className="form-section-heading">
+                        <p className="card-kicker">Profile details</p>
+                        <h3>Personal and academic information</h3>
+                    </div>
+
                     <div className="form-row">
                         <div className="input-group">
                             <label htmlFor="fullName">Full Name</label>
@@ -554,8 +654,9 @@ const EditProfile = () => {
                 </form>
 
                 <div className="edit-card password-reset-section">
-                    <h3>Reset Password</h3>
-                    <p>Reset your account password if needed.</p>
+                    <p className="card-kicker">Security</p>
+                    <h3>Reset password</h3>
+                    <p>Update your account password whenever you want to refresh your credentials.</p>
 
                     {passwordMessage && <div className="alert success password-alert">{passwordMessage}</div>}
                     {passwordError && <div className="alert error password-alert">{passwordError}</div>}
@@ -601,6 +702,38 @@ const EditProfile = () => {
                             </button>
                         </div>
                     </form>
+                </div>
+
+                <div className="edit-card danger-zone-section">
+                    <p className="card-kicker">Danger zone</p>
+                    <h3>Deactivate account</h3>
+                    <p>
+                        Deactivating your account will disable sign-in access until an administrator enables it again.
+                    </p>
+                    <div className="input-group full danger-password-group">
+                        <label htmlFor="deactivatePassword">Confirm with current password</label>
+                        <input
+                            type="password"
+                            id="deactivatePassword"
+                            value={deactivatePassword}
+                            onChange={(e) => {
+                                setDeactivatePassword(e.target.value);
+                                if (deactivatePasswordError) {
+                                    setDeactivatePasswordError('');
+                                }
+                            }}
+                            placeholder="Enter current password to deactivate"
+                        />
+                        {deactivatePasswordError && <p className="field-error">{deactivatePasswordError}</p>}
+                    </div>
+                    <button
+                        type="button"
+                        className="deactivate-btn"
+                        onClick={handleDeactivateAccount}
+                        disabled={deactivating}
+                    >
+                        {deactivating ? 'Deactivating Account...' : 'Deactivate Account'}
+                    </button>
                 </div>
             </div>
         </div>
