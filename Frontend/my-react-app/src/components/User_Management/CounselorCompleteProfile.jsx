@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, BriefcaseBusiness, KeyRound, ShieldCheck } from 'lucide-react';
 import './CounselorCompleteProfile.css';
 
 const CounselorCompleteProfile = () => {
@@ -180,8 +180,15 @@ const CounselorCompleteProfile = () => {
 
                 <form className="profile-form" onSubmit={handleSubmit} noValidate>
                     <section className="form-section">
-                        <h2 className="section-title">Professional Details</h2>
-                        <p className="section-subtitle">This information will be shown to students in your profile.</p>
+                        <div className="section-head">
+                            <div className="section-icon" aria-hidden="true">
+                                <BriefcaseBusiness size={18} />
+                            </div>
+                            <div>
+                                <h2 className="section-title">Professional Details</h2>
+                                <p className="section-subtitle">This information will be shown to students in your profile.</p>
+                            </div>
+                        </div>
 
                         <div className="form-grid">
                             <div className="form-group full-span">
@@ -205,6 +212,7 @@ const CounselorCompleteProfile = () => {
                                     onChange={handleChange}
                                     aria-invalid={Boolean(fieldErrors.phone)}
                                 />
+                                <span className="field-hint">Use a Sri Lankan number format (e.g., 07XXXXXXXX).</span>
                                 {fieldErrors.phone && <span className="field-error">{fieldErrors.phone}</span>}
                             </div>
 
@@ -265,8 +273,19 @@ const CounselorCompleteProfile = () => {
                     <div className="form-divider"></div>
 
                     <section className="form-section">
-                        <h2 className="section-title">Reset Your Password</h2>
-                        <p className="section-subtitle">Change your admin-provided temporary password before continuing.</p>
+                        <div className="section-head">
+                            <div className="section-icon" aria-hidden="true">
+                                <KeyRound size={18} />
+                            </div>
+                            <div>
+                                <h2 className="section-title">Reset Your Password</h2>
+                                <p className="section-subtitle">Change your admin-provided temporary password before continuing.</p>
+                            </div>
+                        </div>
+                        <div className="security-note" role="note" aria-label="Password security guidance">
+                            <ShieldCheck size={16} />
+                            <span>For better security, use at least 8 characters with uppercase, lowercase, and numbers.</span>
+                        </div>
 
                         <div className="form-grid">
                             <div className="form-group">
