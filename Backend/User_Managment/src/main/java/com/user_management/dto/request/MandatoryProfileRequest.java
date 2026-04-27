@@ -23,7 +23,7 @@ public class MandatoryProfileRequest {
 
     @NotNull(message = "Year level is required")
     @Min(value = 1, message = "Year level must be at least 1")
-    @Max(value = 7, message = "Year level cannot exceed 7")
+    @Max(value = 4, message = "Year level cannot exceed 4")
     private Integer yearLevel;
 
     @NotBlank(message = "Career goals are required")
