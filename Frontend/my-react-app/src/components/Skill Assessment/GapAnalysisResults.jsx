@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, ArrowRight, Zap, BookOpen, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ArrowRight, Zap, BookOpen, AlertCircle, CheckCircle2, LayoutDashboard } from 'lucide-react';
 import './GapAnalysisResults.css';
 
 const GapAnalysisResults = () => {
@@ -75,6 +75,29 @@ const GapAnalysisResults = () => {
                         </div>
                     </div>
                 )}
+
+                <div style={{ marginTop: '40px', display: 'flex', justifyContent: 'center' }}>
+                    <button 
+                        className="btn-primary" 
+                        style={{ 
+                            backgroundColor: '#6366F1', 
+                            padding: '12px 24px', 
+                            borderRadius: '12px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            border: 'none',
+                            color: 'white',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                        }}
+                        onClick={() => navigate('/services')}
+                    >
+                        <LayoutDashboard size={20} />
+                        Return to Services
+                    </button>
+                </div>
             </div>
         </div>
     );
